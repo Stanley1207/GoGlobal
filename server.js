@@ -56,28 +56,33 @@ function getGeminiClient() {
 // Build the compliance analysis prompt
 function buildAnalysisPrompt(lang = 'en') {
   const isEn = lang === 'en';
+
+  const langInstruction = isEn
+    ? `CRITICAL LANGUAGE REQUIREMENT: ALL text in your response MUST be in English. Every "name", "note", "value", "summary", "claim", "overallVerdict", and "recommendations" field MUST be written in English only. Do NOT use any Chinese characters anywhere in the response.`
+    : `关键语言要求：你的回复中所有文本必须使用中文。每个 "nameCn"、"note"、"value"、"summary"、"claimCn"、"overallVerdictCn" 和 "recommendationsCn" 字段都必须用中文书写。"name" 和 "claim" 字段使用英文（作为术语标识），但 "note"、"summary"、"value" 等描述性字段必须全部使用中文。`;
+
   return `You are an expert FDA compliance analyst for food and dietary supplement products exported to the US market.
 
 Analyze the uploaded product packaging/label image(s) and provide a structured compliance report.
 
-${isEn ? 'Respond in English.' : 'Respond in Chinese (中文).'}
+${langInstruction}
 
-Provide your analysis in the following JSON format ONLY (no markdown, no extra text):
+Provide your analysis in the following JSON format ONLY (no markdown, no extra text, no code fences):
 {
   "ingredientRisk": {
     "status": "pass|warn|fail",
     "flagCount": <number>,
     "items": [
       {
-        "name": "<ingredient name>",
-        "nameCn": "<中文名>",
+        "name": "<ingredient name in English>",
+        "nameCn": "<ingredient name in Chinese>",
         "status": "pass|warn|fail",
-        "note": "<brief explanation>"
+        "note": "<${isEn ? 'explanation in English' : 'explanation in Chinese'}>"
       }
     ],
     "overallRisk": "<low|medium|high>",
     "riskPercent": <0-100>,
-    "summary": "<1-2 sentence summary>"
+    "summary": "<${isEn ? '1-2 sentence summary in English' : '1-2句中文总结'}>"
   },
   "labelCompliance": {
     "status": "pass|warn|fail",
@@ -85,52 +90,58 @@ Provide your analysis in the following JSON format ONLY (no markdown, no extra t
     "totalCount": <number>,
     "items": [
       {
-        "name": "<check item>",
-        "nameCn": "<中文名>",
+        "name": "<check item in English>",
+        "nameCn": "<check item in Chinese>",
         "status": "pass|warn|fail",
-        "note": "<brief note>"
+        "note": "<${isEn ? 'brief note in English' : 'brief note in Chinese'}>"
       }
     ],
-    "summary": "<1-2 sentence summary>"
+    "summary": "<${isEn ? '1-2 sentence summary in English' : '1-2句中文总结'}>"
   },
   "facilityRegistration": {
     "status": "pass|warn|info",
     "items": [
       {
-        "name": "<check item>",
-        "nameCn": "<中文名>",
-        "value": "<status or value>",
+        "name": "<check item in English>",
+        "nameCn": "<check item in Chinese>",
+        "value": "<${isEn ? 'status or value in English' : 'status or value in Chinese'}>",
         "status": "pass|warn|fail|info"
       }
     ],
-    "summary": "<1-2 sentence summary>"
+    "summary": "<${isEn ? '1-2 sentence summary in English' : '1-2句中文总结'}>"
   },
   "marketingClaims": {
     "status": "pass|warn|fail",
     "issueCount": <number>,
     "items": [
       {
-        "claim": "<the marketing claim found>",
-        "claimCn": "<中文>",
+        "claim": "<the marketing claim found, in original language>",
+        "claimCn": "<claim translated to Chinese>",
         "status": "pass|warn|fail|info",
-        "note": "<explanation>"
+        "note": "<${isEn ? 'explanation in English' : 'explanation in Chinese'}>"
       }
     ],
     "riskLevel": "<low|medium|high>",
     "riskPercent": <0-100>,
-    "summary": "<1-2 sentence summary>"
+    "summary": "<${isEn ? '1-2 sentence summary in English' : '1-2句中文总结'}>"
   },
   "overallScore": <0-100>,
-  "overallVerdict": "<brief verdict>",
-  "overallVerdictCn": "<中文简要结论>",
-  "recommendations": ["<recommendation 1>", "<recommendation 2>", "..."],
-  "recommendationsCn": ["<建议1>", "<建议2>", "..."]
+  "overallVerdict": "<${isEn ? 'brief verdict in English' : 'brief verdict in English'}>",
+  "overallVerdictCn": "<brief verdict in Chinese>",
+  "recommendations": [${isEn ? '"<English recommendation>"' : '"<English recommendation>"'}],
+  "recommendationsCn": ["<Chinese recommendation>"]
 }
 
-Be thorough and realistic. If you cannot determine something from the image, mark it as "info" status with a note explaining what's needed.
-For ingredients, check against FDA GRAS list, banned substances (21 CFR 189), and color additive regulations.
-For labels, check: Nutrition Facts format (2020 update), allergen declaration (FALCPA), net weight dual units, country of origin, English product name, manufacturer info.
-For marketing claims, flag any unauthorized health claims, vague "natural" claims, or unverified certifications.`;
+IMPORTANT RULES:
+1. Return ONLY valid JSON. No markdown code fences, no explanatory text before or after.
+2. ${isEn ? 'All descriptive text (note, summary, value, verdict, recommendations) MUST be in English.' : 'All descriptive text (note, summary, value) MUST be in Chinese. recommendations and recommendationsCn both required.'}
+3. Always provide BOTH "name" (English) and "nameCn" (Chinese) for each item.
+4. Always provide BOTH "overallVerdict" (English) and "overallVerdictCn" (Chinese).
+5. Always provide BOTH "recommendations" (English) and "recommendationsCn" (Chinese).
+6. Be thorough and realistic. If you cannot determine something from the image, mark it as "info" status.
+7. For ingredients, check against FDA GRAS list, banned substances (21 CFR 189), and color additive regulations.
+8. For labels, check: Nutrition Facts format (2020 update), allergen declaration (FALCPA), net weight dual units, country of origin, English product name, manufacturer info.
+9. For marketing claims, flag any unauthorized health claims, vague "natural" claims, or unverified certifications.`;
 }
 
 // --- API Routes ---
@@ -200,19 +211,35 @@ app.post('/api/analyze', upload.array('files', 10), async (req, res) => {
     const response = await result.response;
     let text = response.text();
 
-    // Clean up response — strip markdown code fences if present
-    text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    console.log('--- Gemini raw response (first 300 chars) ---');
+    console.log(text.substring(0, 300));
+    console.log('--- end ---');
 
+    // Robust JSON extraction: find the first { and last matching }
     let data;
     try {
-      data = JSON.parse(text);
-    } catch (parseErr) {
-      console.error('Gemini response parse error:', parseErr);
-      console.error('Raw response:', text);
-      return res.status(500).json({
-        error: 'Failed to parse AI response',
-        raw: text.substring(0, 500)
-      });
+      // Method 1: Try direct parse after stripping code fences
+      let cleaned = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+      data = JSON.parse(cleaned);
+    } catch (e1) {
+      try {
+        // Method 2: Extract JSON object between first { and last }
+        const firstBrace = text.indexOf('{');
+        const lastBrace = text.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace > firstBrace) {
+          const jsonStr = text.substring(firstBrace, lastBrace + 1);
+          data = JSON.parse(jsonStr);
+        } else {
+          throw new Error('No JSON object found in response');
+        }
+      } catch (e2) {
+        console.error('Gemini response parse error:', e2.message);
+        console.error('Full raw response:', text);
+        return res.status(500).json({
+          error: 'Failed to parse AI response',
+          raw: text.substring(0, 800)
+        });
+      }
     }
 
     // Cleanup uploaded files
