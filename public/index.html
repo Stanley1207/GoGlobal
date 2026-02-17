@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoToMarket Compliance Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Sora:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-0: #080B10;
+    --bg-1: #0D1219;
+    --bg-2: #131A24;
+    --bg-3: #1A2435;
+    --bg-4: #223046;
+    --text-0: #F0F4F8;
+    --text-1: #C1CEDC;
+    --text-2: #8299B4;
+    --text-3: #566B84;
+    --accent: #2DD4A8;
+    --accent-dim: #1FA880;
+    --accent-glow: rgba(45,212,168,0.1);
+    --accent-glow2: rgba(45,212,168,0.06);
+    --gold: #E8B94A;
+    --gold-dim: rgba(232,185,74,0.1);
+    --success: #34D399; --success-dim: rgba(52,211,153,0.1);
+    --warn: #FBBF24; --warn-dim: rgba(251,191,36,0.1);
+    --danger: #F87171; --danger-dim: rgba(248,113,113,0.1);
+    --info: #60A5FA; --info-dim: rgba(96,165,250,0.1);
+    --border: rgba(255,255,255,0.06);
+    --border-accent: rgba(45,212,168,0.25);
+    --r: 14px; --r-lg: 20px;
+    --font-d: 'Playfair Display', Georgia, serif;
+    --font-b: 'Sora', sans-serif;
+    --font-cn: 'Noto Sans SC', sans-serif;
+    --font-m: 'JetBrains Mono', monospace;
+    --pad: clamp(20px, 4vw, 56px);
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--font-b);background:var(--bg-0);color:var(--text-0);min-height:100vh;overflow-x:hidden;font-size:15px;line-height:1.6}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:10000}
+  ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg-0)}::-webkit-scrollbar-thumb{background:var(--bg-4);border-radius:3px}
+  a{color:inherit;text-decoration:none}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);background:rgba(8,11,16,0.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+  .nav-brand{display:flex;align-items:center;gap:12px}
+  .nav-logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-dim));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--bg-0)}
+  .nav-name{font-family:var(--font-d);font-size:17px;font-weight:600}.nav-name em{font-style:italic;color:var(--accent)}
+  .nav-r{display:flex;align-items:center;gap:3px}
+  .nav-link{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer;transition:all .2s}
+  .nav-link:hover{color:var(--text-0);background:var(--bg-3)}.nav-link.active{color:var(--accent);background:var(--accent-glow)}
+  .lang-sw{display:flex;margin-left:12px;background:var(--bg-2);border-radius:7px;border:1px solid var(--border);overflow:hidden}
+  .lang-btn{padding:5px 12px;font-size:11px;font-weight:600;background:transparent;border:none;color:var(--text-3);cursor:pointer;font-family:var(--font-b);transition:all .2s}
+  .lang-btn.active{background:var(--accent);color:var(--bg-0)}
+
+  /* HERO — compact */
+  .hero{padding:90px var(--pad) 40px;position:relative;overflow:hidden}
+  .hero-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(90px);opacity:.35}
+  .hero-orb-1{width:500px;height:500px;top:-120px;right:-80px;background:radial-gradient(circle,rgba(45,212,168,.16),transparent 70%);animation:of 12s ease-in-out infinite}
+  .hero-orb-2{width:350px;height:350px;bottom:-80px;left:8%;background:radial-gradient(circle,rgba(96,165,250,.08),transparent 70%);animation:of 15s ease-in-out infinite reverse}
+  @keyframes of{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(25px,-15px) scale(1.06)}}
+  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse at 65% 35%,black 10%,transparent 60%)}
+  .hero-inner{position:relative;max-width:800px;width:100%}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 16px;border-radius:100px;background:var(--accent-glow);border:1px solid var(--border-accent);font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:24px;animation:fu .5s ease both}
+  .hero-badge::before{content:'';width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pu 2s infinite}
+  @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
+  .hero h1{font-family:var(--font-d);font-size:clamp(36px,5vw,60px);line-height:1.1;letter-spacing:-1.5px;font-weight:700;margin-bottom:16px;animation:fu .5s .06s ease both}
+  .hero h1 em{font-style:italic;background:linear-gradient(135deg,var(--accent),#60A5FA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero-desc{font-size:16px;line-height:1.7;color:var(--text-1);max-width:560px;margin-bottom:28px;animation:fu .5s .12s ease both}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px;animation:fu .5s .18s ease both}
+  @keyframes fu{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+  .btn{padding:12px 26px;border-radius:10px;font-size:13px;font-weight:600;font-family:var(--font-b);cursor:pointer;transition:all .25s;border:none;display:inline-flex;align-items:center;gap:9px}
+  .btn-accent{background:linear-gradient(135deg,var(--accent),var(--accent-dim));color:var(--bg-0);box-shadow:0 4px 18px rgba(45,212,168,.22),inset 0 1px 0 rgba(255,255,255,.12)}
+  .btn-accent:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(45,212,168,.32),inset 0 1px 0 rgba(255,255,255,.12)}
+  .btn-ghost{background:var(--bg-3);color:var(--text-0);border:1px solid var(--border)}
+  .btn-ghost:hover{background:var(--bg-4);border-color:var(--text-3)}
+  .btn-sm{padding:9px 20px;font-size:12px;border-radius:8px}
+
+  /* UPLOAD */
+  .upload-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;animation:fu .5s .24s ease both}
+  .upload-zone{background:var(--bg-2);border:2px dashed rgba(45,212,168,.18);border-radius:var(--r-lg);padding:36px 28px;text-align:center;cursor:pointer;transition:all .3s}
+  .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:var(--bg-3);box-shadow:0 0 30px rgba(45,212,168,.05)}
+  .upload-icon-wrap{width:60px;height:60px;margin:0 auto 16px;border-radius:16px;background:linear-gradient(135deg,var(--accent-glow),var(--accent-glow2));border:1px solid var(--border-accent);display:flex;align-items:center;justify-content:center;font-size:28px}
+  .upload-title{font-size:15px;font-weight:600;margin-bottom:5px}
+  .upload-desc{font-size:12px;color:var(--text-3);line-height:1.5}
+  .upload-formats{margin-top:14px;display:flex;justify-content:center;gap:6px}
+  .fmt{padding:3px 10px;border-radius:5px;background:var(--bg-4);font-size:9px;font-weight:700;color:var(--text-3);letter-spacing:.8px;font-family:var(--font-m)}
+  .file-list{margin-top:14px;display:flex;flex-direction:column;gap:6px}
+  .file-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:var(--bg-3);font-size:12px;animation:fu .25s ease both}
+  .file-item .fn{flex:1;color:var(--text-1);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .file-item .fs{color:var(--text-3);font-size:10px;font-family:var(--font-m)}
+  .file-item .fx{width:20px;height:20px;border-radius:5px;background:var(--danger-dim);border:none;color:var(--danger);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s}
+  .file-item .fx:hover{background:var(--danger);color:#fff}
+
+  .upload-info{background:var(--bg-2);border-radius:var(--r-lg);border:1px solid var(--border);padding:28px;display:flex;flex-direction:column;justify-content:center}
+  .info-title{font-size:14px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .info-list{display:flex;flex-direction:column;gap:10px}
+  .info-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text-1)}
+  .info-dot{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+  .iit-t{font-weight:600;font-size:12px;margin-bottom:1px}
+  .iit-d{font-size:11px;color:var(--text-3);line-height:1.4}
+
+  /* Analyze button & status */
+  .analyze-bar{margin-top:20px;display:flex;align-items:center;gap:16px;animation:fu .5s .3s ease both}
+  .analyze-status{font-size:13px;color:var(--text-2)}
+  .analyze-status.error{color:var(--danger)}
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--bg-4);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* SECTION COMMON */
+  .section{padding:60px var(--pad)}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 var(--pad)}
+  .sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--accent);margin-bottom:10px;font-family:var(--font-m)}
+  .sec-title{font-family:var(--font-d);font-size:clamp(26px,3vw,38px);letter-spacing:-.8px;font-weight:700;margin-bottom:10px;line-height:1.15}
+  .sec-desc{font-size:14px;color:var(--text-2);max-width:540px;line-height:1.7;margin-bottom:40px}
+
+  /* SERVICES */
+  .svc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  .svc-card{background:var(--bg-2);border-radius:var(--r-lg);border:1px solid var(--border);padding:26px 20px;transition:all .3s;cursor:default;position:relative;overflow:hidden}
+  .svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+  .svc-card:hover{border-color:var(--border-accent);transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  .svc-card:hover::before{transform:scaleX(1)}
+  .svc-icon{font-size:24px;margin-bottom:14px;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .svc-num{font-family:var(--font-m);font-size:10px;color:var(--text-3);margin-bottom:8px;letter-spacing:1px}
+  .svc-t{font-size:13px;font-weight:600;margin-bottom:8px;line-height:1.3}
+  .svc-d{font-size:11px;color:var(--text-3);line-height:1.5}
+
+  /* LAYERS */
+  .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .ly-card{background:var(--bg-1);border-radius:var(--r-lg);border:1px solid var(--border);overflow:hidden;transition:all .3s}
+  .ly-card:hover{border-color:var(--border-accent);transform:translateY(-2px)}
+  .ly-bar{height:3px}
+  .ly-1 .ly-bar{background:linear-gradient(90deg,var(--accent),transparent)}
+  .ly-2 .ly-bar{background:linear-gradient(90deg,var(--gold),transparent)}
+  .ly-3 .ly-bar{background:linear-gradient(90deg,var(--info),transparent)}
+  .ly-hd{padding:24px 22px 18px;position:relative}
+  .ly-num{font-family:var(--font-d);font-size:60px;font-weight:700;color:rgba(255,255,255,.025);position:absolute;top:8px;right:16px;line-height:1}
+  .ly-tag{display:inline-flex;padding:3px 10px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;font-family:var(--font-m)}
+  .ly-1 .ly-tag{background:var(--accent-glow);color:var(--accent)}
+  .ly-2 .ly-tag{background:var(--gold-dim);color:var(--gold)}
+  .ly-3 .ly-tag{background:var(--info-dim);color:var(--info)}
+  .ly-title{font-family:var(--font-d);font-size:19px;font-weight:700;margin-bottom:4px}
+  .ly-cn{font-family:var(--font-cn);font-size:13px;color:var(--text-2)}
+  .ly-desc{font-size:12px;color:var(--text-3);line-height:1.6;padding:0 22px 22px}
+
+  /* DASHBOARD */
+  .dash-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .dash-card{background:var(--bg-2);border-radius:var(--r-lg);border:1px solid var(--border);overflow:hidden;transition:all .3s}
+  .dash-card:hover{border-color:rgba(255,255,255,.08)}
+  .dash-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .dash-t{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .dash-body{padding:18px 20px}
+  .dash-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.025);font-size:12px}
+  .dash-row:last-child{border-bottom:none}
+  .dash-row-l{color:var(--text-2)}
+  .tag{padding:2px 9px;border-radius:5px;font-size:10px;font-weight:600}
+  .tag-pass{background:var(--success-dim);color:var(--success)}
+  .tag-warn{background:var(--warn-dim);color:var(--warn)}
+  .tag-fail{background:var(--danger-dim);color:var(--danger)}
+  .tag-info{background:var(--info-dim);color:var(--info)}
+  .risk-wrap{margin-top:8px}
+  .risk-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text-3);margin-bottom:4px}
+  .risk-bar{height:5px;border-radius:3px;background:var(--bg-4);overflow:hidden}
+  .risk-fill{height:100%;border-radius:3px;transition:width .8s ease}
+  .dash-summary{padding:10px 20px 16px;font-size:11px;color:var(--text-3);line-height:1.5;border-top:1px solid var(--border);font-style:italic}
+  .dash-actions{margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+  /* Overall Score */
+  .score-banner{margin-top:20px;background:var(--bg-2);border-radius:var(--r-lg);border:1px solid var(--border);padding:28px 32px;display:flex;align-items:center;gap:32px}
+  .score-ring-wrap{position:relative;width:100px;height:100px;flex-shrink:0}
+  .score-ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .sr-bg{fill:none;stroke:var(--bg-4);stroke-width:7}
+  .sr-fill{fill:none;stroke:url(#sg);stroke-width:7;stroke-linecap:round;stroke-dasharray:264;transition:stroke-dashoffset 1s ease}
+  .score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .score-val{font-family:var(--font-d);font-size:32px;color:var(--accent);line-height:1}
+  .score-max{font-size:10px;color:var(--text-3)}
+  .score-text{flex:1}
+  .score-verdict{font-size:15px;font-weight:600;margin-bottom:6px}
+  .score-sub{font-size:13px;color:var(--text-2);line-height:1.6}
+  .rec-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+  .rec-item{font-size:12px;color:var(--text-1);display:flex;align-items:flex-start;gap:8px}
+  .rec-item::before{content:'→';color:var(--accent);font-weight:700;flex-shrink:0}
+
+  /* FDA */
+  .fda-box{background:var(--bg-1);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 var(--r-lg) var(--r-lg) 0;padding:36px 40px;position:relative;overflow:hidden}
+  .fda-box::before{content:'§';position:absolute;right:30px;top:12px;font-family:var(--font-d);font-size:120px;font-weight:700;color:rgba(255,255,255,.012);line-height:1}
+  .fda-title{font-family:var(--font-d);font-size:24px;font-weight:700;margin-bottom:4px}
+  .fda-cn{font-family:var(--font-cn);font-size:14px;color:var(--text-2);margin-bottom:24px}
+  .fda-cols{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+  .fda-col h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:14px;font-family:var(--font-m)}
+  .fda-text{font-size:13px;color:var(--text-1);line-height:1.75}
+  .fda-text p{margin-bottom:10px}
+  .fda-hl{margin-top:12px;padding:14px 16px;background:var(--accent-glow2);border:1px solid rgba(45,212,168,.1);border-radius:var(--r)}
+  .fda-hl-t{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px}
+  .fda-kl{list-style:none;display:flex;flex-direction:column;gap:6px}
+  .fda-kl li{font-size:12px;color:var(--text-1);display:flex;align-items:center;gap:8px}
+  .fda-kl li::before{content:'✓';color:var(--accent);font-weight:700;font-size:10px;width:18px;height:18px;border-radius:5px;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+  /* Footer */
+  footer{padding:36px var(--pad);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;margin-top:40px}
+  .footer-l{font-size:11px;color:var(--text-3)}
+  .footer-r{display:flex;gap:20px}
+  .footer-r a{font-size:11px;color:var(--text-3);transition:color .2s}
+  .footer-r a:hover{color:var(--accent)}
+
+  /* CN */
+  .cn .hero h1,.cn .sec-title,.cn .fda-title,.cn .ly-title{font-family:var(--font-cn);letter-spacing:0}
+  .cn .hero-desc,.cn .sec-desc,.cn .svc-d,.cn .ly-desc,.cn .dash-row-l,.cn .fda-text,.cn .info-item,.cn .score-sub,.cn .rec-item,.cn .dash-summary{font-family:var(--font-cn)}
+
+  /* Responsive */
+  @media(max-width:1200px){.svc-grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:900px){.svc-grid{grid-template-columns:repeat(2,1fr)}.layers{grid-template-columns:1fr}.dash-grid{grid-template-columns:1fr}.fda-cols{grid-template-columns:1fr;gap:24px}.upload-row{grid-template-columns:1fr}.score-banner{flex-direction:column;text-align:center}}
+  @media(max-width:600px){.svc-grid{grid-template-columns:1fr}.nav-r .nav-link{display:none}.fda-box{padding:24px 20px}}
+
+  /* hide result sections initially */
+  #resultsSection{display:none}
+  #resultsSection.visible{display:block;animation:fu .5s ease both}
+</style>
+</head>
+<body id="app">
+<svg style="position:absolute;width:0;height:0"><defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2DD4A8"/><stop offset="100%" stop-color="#60A5FA"/></linearGradient></defs></svg>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">GT</div>
+    <div class="nav-name">GoTo<em>Market</em></div>
+  </div>
+  <div class="nav-r">
+    <span class="nav-link active" onclick="sTo('hero')" data-en="Home" data-cn="首页">Home</span>
+    <span class="nav-link" onclick="sTo('services')" data-en="Services" data-cn="服务">Services</span>
+    <span class="nav-link" onclick="sTo('layers')" data-en="Model" data-cn="服务模型">Model</span>
+    <span class="nav-link" onclick="sTo('dashboard')" data-en="Report" data-cn="报告">Report</span>
+    <span class="nav-link" onclick="sTo('fda')" data-en="FDA Info" data-cn="FDA 说明">FDA Info</span>
+    <div class="lang-sw">
+      <button class="lang-btn active" id="lEn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="lCn" onclick="setLang('cn')">中文</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-badge" data-en="Global Regulatory & Market Entry Intelligence Platform" data-cn="全球合规与市场拓展智能平台">Global Regulatory & Market Entry Intelligence Platform</div>
+    <h1 data-en='Get Your Global <em>Compliance Report</em>' data-cn='获取您的产品<em>合规结构评估</em>'>Get Your Global <em>Compliance Report</em></h1>
+    <p class="hero-desc" data-en="From ingredient screening to regulatory architecture and go-to-market readiness." data-cn="从成分筛查到合规架构设计，提升产品国际可信度与规范性。">From ingredient screening to regulatory architecture and go-to-market readiness.</p>
+    <div class="hero-actions">
+      <button class="btn btn-accent" onclick="sTo('uploadArea')" data-en="⚡ Start Compliance Screening" data-cn="⚡ 开始合规筛查">⚡ Start Compliance Screening</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('fInput').click()" data-en="📎 Upload Product Files" data-cn="📎 上传产品资料">📎 Upload Product Files</button>
+    </div>
+    <!-- /hero-actions -->
+  </div>
+  <!-- /hero-inner — upload lives outside to get full width -->
+
+  <!-- Upload -->
+  <div class="upload-row" id="uploadArea">
+    <div class="upload-zone" id="upZone" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)" onclick="document.getElementById('fInput').click()">
+      <input type="file" id="fInput" accept="image/jpeg,image/png,image/webp,application/pdf" multiple style="display:none" onchange="handleFiles(this.files)">
+      <div class="upload-icon-wrap" id="upIcon">📦</div>
+      <div class="upload-title" data-en="Drop product files here" data-cn="拖放产品资料到此处">Drop product files here</div>
+      <div class="upload-desc" data-en="Supports multiple files · packaging photos, labels, ingredients" data-cn="支持多文件上传 · 包装照片、标签、配料表">Supports multiple files · packaging photos, labels, ingredients</div>
+      <div class="upload-formats"><span class="fmt">JPG</span><span class="fmt">PNG</span><span class="fmt">PDF</span><span class="fmt">MULTI</span></div>
+      <div class="file-list" id="fileList"></div>
+    </div>
+    <div class="upload-info">
+      <div class="info-title" data-en="📋 Report modules" data-cn="📋 报告包含模块">📋 Report modules</div>
+      <div class="info-list">
+        <div class="info-item"><div class="info-dot" style="background:var(--accent-glow)">🧪</div><div><div class="iit-t" data-en="Ingredient Risk Screening" data-cn="成分风险筛查">Ingredient Risk Screening</div><div class="iit-d" data-en="AI analysis of ingredient legality & risk" data-cn="AI 成分合法性与风险分析">AI analysis of ingredient legality & risk</div></div></div>
+        <div class="info-item"><div class="info-dot" style="background:var(--gold-dim)">🏷️</div><div><div class="iit-t" data-en="Label Structure Optimization" data-cn="标签结构优化">Label Structure Optimization</div><div class="iit-d" data-en="Nutrition facts, allergens, labeling" data-cn="营养成分表、过敏原、标签规范">Nutrition facts, allergens, labeling</div></div></div>
+        <div class="info-item"><div class="info-dot" style="background:var(--info-dim)">🏭</div><div><div class="iit-t" data-en="Facility Registration Status" data-cn="工厂注册状态核查">Facility Registration Status</div><div class="iit-d" data-en="FDA registration verification" data-cn="FDA 工厂注册验证">FDA registration verification</div></div></div>
+        <div class="info-item"><div class="info-dot" style="background:var(--warn-dim)">⚖️</div><div><div class="iit-t" data-en="Regulatory Advisory Referral" data-cn="法规顾问对接">Regulatory Advisory Referral</div><div class="iit-d" data-en="US regulatory consultant connection" data-cn="美国法规顾问对接">US regulatory consultant connection</div></div></div>
+        <div class="info-item"><div class="info-dot" style="background:var(--success-dim)">🚀</div><div><div class="iit-t" data-en="Market Readiness Advisory" data-cn="市场准备度评估">Market Readiness Advisory</div><div class="iit-d" data-en="Go-to-market readiness assessment" data-cn="上市准备度评估">Go-to-market readiness assessment</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analyze Bar -->
+  <div class="analyze-bar" id="analyzeBar" style="display:none">
+    <button class="btn btn-accent" id="analyzeBtn" onclick="startAnalysis()">
+      <span data-en="🔍 Analyze with AI" data-cn="🔍 AI 智能分析">🔍 Analyze with AI</span>
+    </button>
+    <span class="analyze-status" id="analyzeStatus"></span>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE SERVICES -->
+<section class="section" id="services">
+  <div class="sec-label" data-en="Core Modules" data-cn="核心模块">Core Modules</div>
+  <div class="sec-title" data-en="Compliance Service Modules" data-cn="合规服务模块">Compliance Service Modules</div>
+  <div class="sec-desc" data-en="Five integrated modules covering every aspect of your product's regulatory journey." data-cn="五大集成模块，覆盖产品合规之旅的每个环节。">Five integrated modules covering every aspect of your product's regulatory journey.</div>
+  <div class="svc-grid">
+    <div class="svc-card"><div class="svc-icon" style="background:var(--accent-glow)">🧪</div><div class="svc-num">01</div><div class="svc-t" data-en="Ingredient Risk Screening" data-cn="成分风险筛查">Ingredient Risk Screening</div><div class="svc-d" data-en="Screen against FDA GRAS list, banned substances, and dietary supplement regulations." data-cn="比对 FDA GRAS 清单、禁用物质及膳食补充剂法规。">Screen against FDA GRAS list, banned substances, and dietary supplement regulations.</div></div>
+    <div class="svc-card"><div class="svc-icon" style="background:var(--gold-dim)">🏷️</div><div class="svc-num">02</div><div class="svc-t" data-en="Label Structure Optimization" data-cn="标签结构优化">Label Structure Optimization</div><div class="svc-d" data-en="Review nutrition facts, allergens, net weight, and required label statements." data-cn="审查营养成分表、过敏原、净含量及必需标注。">Review nutrition facts, allergens, net weight, and required label statements.</div></div>
+    <div class="svc-card"><div class="svc-icon" style="background:var(--info-dim)">🏭</div><div class="svc-num">03</div><div class="svc-t" data-en="Facility Registration Check" data-cn="工厂注册核查">Facility Registration Check</div><div class="svc-d" data-en="Verify FDA registration, US Agent, and FSVP importer compliance." data-cn="验证 FDA 注册、美国代理人及 FSVP 进口商合规。">Verify FDA registration, US Agent, and FSVP importer compliance.</div></div>
+    <div class="svc-card"><div class="svc-icon" style="background:var(--warn-dim)">⚖️</div><div class="svc-num">04</div><div class="svc-t" data-en="Regulatory Advisory Referral" data-cn="法规顾问对接">Regulatory Advisory Referral</div><div class="svc-d" data-en="Connect with US regulatory consultants for professional guidance." data-cn="对接美国法规顾问获取专业指导。">Connect with US regulatory consultants for professional guidance.</div></div>
+    <div class="svc-card"><div class="svc-icon" style="background:var(--success-dim)">🚀</div><div class="svc-num">05</div><div class="svc-t" data-en="Market Readiness Advisory" data-cn="市场准备度评估">Market Readiness Advisory</div><div class="svc-d" data-en="Evaluate overall go-to-market readiness and entry strategy." data-cn="评估整体上市准备度与进入策略。">Evaluate overall go-to-market readiness and entry strategy.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LAYERED MODEL -->
+<section class="section" id="layers">
+  <div class="sec-label" data-en="Service Architecture" data-cn="服务架构">Service Architecture</div>
+  <div class="sec-title" data-en="Three-Layer Service Model" data-cn="三层服务结构">Three-Layer Service Model</div>
+  <div class="sec-desc" data-en="From automated screening to expert legal consultation." data-cn="从自动化筛查到专家法务咨询。">From automated screening to expert legal consultation.</div>
+  <div class="layers">
+    <div class="ly-card ly-1"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">01</div><div class="ly-tag" data-en="Layer 1" data-cn="第一层">Layer 1</div><div class="ly-title" data-en="Digital Screening" data-cn="在线合规筛查">Digital Screening</div><div class="ly-cn" data-en="Online Compliance Screening" data-cn="AI 进行初步风险识别">Online Compliance Screening</div></div><div class="ly-desc" data-en="AI-powered initial risk identification. Automated ingredient analysis, label format checking, and preliminary compliance scoring. Future integration with toxicology and regulatory databases." data-cn="AI 驱动的初步风险识别。自动化成分分析、标签格式检查和初步合规评分。后期将接入毒理数据库与法规数据库。">AI-powered initial risk identification. Automated ingredient analysis, label format checking, and preliminary compliance scoring. Future integration with toxicology and regulatory databases.</div></div>
+    <div class="ly-card ly-2"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">02</div><div class="ly-tag" data-en="Layer 2" data-cn="第二层">Layer 2</div><div class="ly-title" data-en="Advisory Optimization" data-cn="人工合规优化">Advisory Optimization</div><div class="ly-cn" data-en="Manual Compliance Optimization" data-cn="人工分析标签、成分与表达">Manual Compliance Optimization</div></div><div class="ly-desc" data-en="Expert human review of labels, ingredient declarations, and marketing language. Professional optimization of compliance structure and bilingual content accuracy." data-cn="专家人工审查标签、成分声明及宣传语言。专业优化合规结构与双语内容准确性。">Expert human review of labels, ingredient declarations, and marketing language. Professional optimization of compliance structure and bilingual content accuracy.</div></div>
+    <div class="ly-card ly-3"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">03</div><div class="ly-tag" data-en="Layer 3" data-cn="第三层">Layer 3</div><div class="ly-title" data-en="Legal & Structural Support" data-cn="法务与结构升级支持">Legal & Structural Support</div><div class="ly-cn" data-en="US Regulatory Consultant Confirmation" data-cn="对接美国法规顾问进行专业确认">US Regulatory Consultant Confirmation</div></div><div class="ly-desc" data-en="Direct engagement with US regulatory attorneys for legal confirmation, structural upgrades, and official documentation support." data-cn="直接对接美国法规律师进行法律确认、结构升级及官方文件支持。">Direct engagement with US regulatory attorneys for legal confirmation, structural upgrades, and official documentation support.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DASHBOARD / REPORT -->
+<section class="section" id="dashboard">
+  <div class="sec-label" data-en="Report Preview" data-cn="报告预览">Report Preview</div>
+  <div class="sec-title" data-en="Structured Compliance Report" data-cn="结构化合规报告">Structured Compliance Report</div>
+  <div class="sec-desc" data-en="Upload your files and run AI analysis to generate a real compliance report below." data-cn="上传文件并运行 AI 分析，即可在下方生成真实合规报告。">Upload your files and run AI analysis to generate a real compliance report below.</div>
+
+  <!-- Dynamic results rendered here -->
+  <div id="reportContent">
+    <!-- Default demo content -->
+    <div class="dash-grid">
+      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🧪 <span data-en="Ingredient Risk Overview" data-cn="成分风险概览">Ingredient Risk Overview</span></span><span class="tag tag-warn" data-en="3 Flags" data-cn="3 项标记">3 Flags</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="Sodium Benzoate (E211)" data-cn="苯甲酸钠 (E211)">Sodium Benzoate (E211)</span><span class="tag tag-pass">GRAS</span></div><div class="dash-row"><span class="dash-row-l" data-en="Red No. 40 (Allura Red)" data-cn="诱惑红40号">Red No. 40 (Allura Red)</span><span class="tag tag-warn" data-en="Requires Listing" data-cn="需标注">Requires Listing</span></div><div class="dash-row"><span class="dash-row-l" data-en="Steviol Glycosides" data-cn="甜菊糖苷">Steviol Glycosides</span><span class="tag tag-pass">GRAS</span></div><div class="dash-row"><span class="dash-row-l" data-en="Titanium Dioxide (E171)" data-cn="二氧化钛 (E171)">Titanium Dioxide (E171)</span><span class="tag tag-fail" data-en="Review" data-cn="需审查">Review</span></div><div class="risk-wrap"><div class="risk-label"><span data-en="Risk Level" data-cn="风险等级">Risk Level</span><span data-en="Medium" data-cn="中等">Medium</span></div><div class="risk-bar"><div class="risk-fill" style="width:55%;background:linear-gradient(90deg,var(--success),var(--warn))"></div></div></div></div></div>
+      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🏷️ <span data-en="Label Compliance Review" data-cn="标签合规审查">Label Compliance Review</span></span><span class="tag tag-pass">7/9</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="Nutrition Facts (2020)" data-cn="营养成分表 (2020)">Nutrition Facts (2020)</span><span class="tag tag-pass" data-en="Pass" data-cn="通过">Pass</span></div><div class="dash-row"><span class="dash-row-l" data-en="Allergen Declaration" data-cn="过敏原声明">Allergen Declaration</span><span class="tag tag-warn" data-en="Review" data-cn="待审查">Review</span></div><div class="dash-row"><span class="dash-row-l" data-en="Net Weight (Dual)" data-cn="净含量（双单位）">Net Weight (Dual)</span><span class="tag tag-fail" data-en="Missing oz" data-cn="缺少 oz">Missing oz</span></div><div class="dash-row"><span class="dash-row-l" data-en="Country of Origin" data-cn="原产国">Country of Origin</span><span class="tag tag-pass" data-en="Pass" data-cn="通过">Pass</span></div></div></div>
+      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🏭 <span data-en="Facility Registration" data-cn="工厂注册状态">Facility Registration</span></span><span class="tag tag-info" data-en="Verify" data-cn="待验证">Verify</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="FDA Registration" data-cn="FDA 注册">FDA Registration</span><span class="tag tag-info" data-en="Needed" data-cn="需提供">Needed</span></div><div class="dash-row"><span class="dash-row-l" data-en="US Agent" data-cn="美国代理人">US Agent</span><span class="tag tag-warn" data-en="Unknown" data-cn="未知">Unknown</span></div><div class="dash-row"><span class="dash-row-l" data-en="FSVP Importer" data-cn="FSVP 进口商">FSVP Importer</span><span class="tag tag-warn" data-en="Pending" data-cn="待确认">Pending</span></div></div></div>
+      <div class="dash-card"><div class="dash-hd"><span class="dash-t">💬 <span data-en="Marketing Claim Risk" data-cn="宣传语言风险">Marketing Claim Risk</span></span><span class="tag tag-warn" data-en="2 Issues" data-cn="2 项问题">2 Issues</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l">"All Natural"</span><span class="tag tag-warn" data-en="Vague" data-cn="模糊">Vague</span></div><div class="dash-row"><span class="dash-row-l">"Boosts Immunity"</span><span class="tag tag-fail" data-en="Unauthorized" data-cn="未授权">Unauthorized</span></div><div class="dash-row"><span class="dash-row-l">"Low Sugar"</span><span class="tag tag-pass" data-en="OK" data-cn="合规">OK</span></div><div class="risk-wrap"><div class="risk-label"><span data-en="Claim Risk" data-cn="宣称风险">Claim Risk</span><span data-en="High" data-cn="较高">High</span></div><div class="risk-bar"><div class="risk-fill" style="width:72%;background:linear-gradient(90deg,var(--warn),var(--danger))"></div></div></div></div></div>
+    </div>
+    <div class="dash-actions">
+      <button class="btn btn-accent btn-sm" data-en="⬇ Export PDF" data-cn="⬇ 导出 PDF">⬇ Export PDF</button>
+      <button class="btn btn-ghost btn-sm" data-en="📧 Email Report" data-cn="📧 邮件发送">📧 Email Report</button>
+      <button class="btn btn-ghost btn-sm" data-en="🔄 Request Expert Review" data-cn="🔄 申请专家审查">🔄 Request Expert Review</button>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FDA DISCLAIMER -->
+<section class="section" id="fda" style="padding-bottom:40px">
+  <div class="fda-box">
+    <div class="fda-title" data-en="Understanding FDA Registration" data-cn="关于 FDA 注册的重要说明">Understanding FDA Registration</div>
+    <div class="fda-cn" data-en="Important clarification for food and supplement exporters" data-cn="食品及膳食补充剂出口商的重要说明">Important clarification for food and supplement exporters</div>
+    <div class="fda-cols">
+      <div class="fda-col"><h4>English</h4><div class="fda-text"><p>For dietary supplements and food products, the U.S. FDA <strong style="color:var(--accent)">does not approve individual products</strong>.</p><p>FDA registration applies to <strong>manufacturing facilities</strong>, not to single SKUs or brand names.</p><p>There is no such thing as an "FDA product certification" for supplements.</p><div class="fda-hl"><div class="fda-hl-t">What truly matters:</div><ul class="fda-kl"><li>Ingredient legality</li><li>Proper labeling structure</li><li>Valid facility registration</li><li>Regulatory-compliant marketing claims</li></ul></div></div></div>
+      <div class="fda-col"><h4>中文</h4><div class="fda-text" style="font-family:var(--font-cn)"><p>对于膳食补充剂及食品类产品，美国 FDA <strong style="color:var(--accent)">不对单个产品进行审批或认证</strong>。</p><p>FDA 注册针对的是<strong>生产设施（工厂）</strong>，而非具体产品或品牌。</p><p>市场上所谓"FDA产品认证"并不存在。</p><div class="fda-hl"><div class="fda-hl-t">真正影响产品合规性的关键在于：</div><ul class="fda-kl"><li>成分合法性</li><li>标签结构规范</li><li>工厂注册状态有效</li><li>宣传语言符合监管要求</li></ul></div></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-l"><span data-en="© 2026 GoToMarket Compliance Lab. For informational purposes only." data-cn="© 2026 GoToMarket Compliance Lab. 仅供信息参考。">© 2026 GoToMarket Compliance Lab. For informational purposes only.</span></div>
+  <div class="footer-r"><a href="#" data-en="Privacy" data-cn="隐私政策">Privacy</a><a href="#" data-en="Terms" data-cn="服务条款">Terms</a><a href="#" data-en="Contact" data-cn="联系我们">Contact</a></div>
+</footer>
+
+<script>
+// ===== State =====
+let lang='en', uploadedFiles=[];
+
+// ===== Lang =====
+function setLang(l){
+  lang=l;
+  document.getElementById('lEn').classList.toggle('active',l==='en');
+  document.getElementById('lCn').classList.toggle('active',l==='cn');
+  document.body.classList.toggle('cn',l==='cn');
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    const v=el.getAttribute(l==='en'?'data-en':'data-cn');
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA')el.placeholder=v;
+    else el.innerHTML=v;
+  });
+}
+
+function sTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'})}
+
+// ===== Upload =====
+function handleDrop(e){e.preventDefault();e.target.closest('.upload-zone')?.classList.remove('dragover');if(e.dataTransfer.files.length)handleFiles(e.dataTransfer.files)}
+
+function handleFiles(files){
+  const ok=['image/jpeg','image/png','image/webp','application/pdf'];
+  for(const f of files){if(ok.includes(f.type))uploadedFiles.push(f)}
+  renderFiles();
+}
+
+function removeFile(i){uploadedFiles.splice(i,1);renderFiles()}
+
+function renderFiles(){
+  const list=document.getElementById('fileList');
+  const bar=document.getElementById('analyzeBar');
+  if(!uploadedFiles.length){list.innerHTML='';document.getElementById('upIcon').textContent='📦';bar.style.display='none';return}
+  document.getElementById('upIcon').textContent='✅';
+  bar.style.display='flex';
+  list.innerHTML=uploadedFiles.map((f,i)=>{
+    const ext=f.name.split('.').pop().toUpperCase();
+    const icon=ext==='PDF'?'📄':'🖼️';
+    const sz=f.size>1048576?(f.size/1048576).toFixed(1)+' MB':(f.size/1024).toFixed(0)+' KB';
+    return `<div class="file-item" style="animation-delay:${i*0.04}s"><span>${icon}</span><span class="fn">${f.name}</span><span class="fs">${sz}</span><button class="fx" onclick="event.stopPropagation();removeFile(${i})">✕</button></div>`;
+  }).join('');
+}
+
+// ===== Analysis =====
+async function startAnalysis(){
+  if(!uploadedFiles.length)return;
+  const btn=document.getElementById('analyzeBtn');
+  const status=document.getElementById('analyzeStatus');
+  btn.disabled=true;
+  btn.style.opacity='.6';
+  status.className='analyze-status';
+  status.innerHTML=`<span class="spinner"></span>${lang==='cn'?'正在分析中，请稍候...':'Analyzing with AI, please wait...'}`;
+
+  const formData=new FormData();
+  formData.append('lang',lang);
+  uploadedFiles.forEach(f=>formData.append('files',f));
+
+  try{
+    const res=await fetch('/api/analyze',{method:'POST',body:formData});
+    const json=await res.json();
+    if(!res.ok)throw new Error(json.error||'Analysis failed');
+    if(json.demo){
+      status.innerHTML=lang==='cn'?'⚠️ 演示模式 — 请配置 GEMINI_API_KEY 获取真实分析':'⚠️ Demo mode — configure GEMINI_API_KEY for real analysis';
+    } else {
+      status.innerHTML=lang==='cn'?'✅ 分析完成':'✅ Analysis complete';
+    }
+    renderReport(json.data);
+    setTimeout(()=>sTo('dashboard'),300);
+  }catch(err){
+    status.className='analyze-status error';
+    status.textContent=`❌ ${err.message}`;
+  }finally{
+    btn.disabled=false;
+    btn.style.opacity='1';
+  }
+}
+
+// ===== Render Report =====
+function renderReport(d){
+  const cn=lang==='cn';
+  const rc=document.getElementById('reportContent');
+
+  function tagClass(s){return s==='pass'?'tag-pass':s==='warn'?'tag-warn':s==='fail'?'tag-fail':'tag-info'}
+  function riskGrad(p){return p>65?'linear-gradient(90deg,var(--warn),var(--danger))':p>35?'linear-gradient(90deg,var(--success),var(--warn))':'linear-gradient(90deg,var(--success),var(--accent))'}
+
+  let html='<div class="dash-grid">';
+
+  // Ingredient Risk
+  const ir=d.ingredientRisk;
+  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🧪 ${cn?'成分风险概览':'Ingredient Risk Overview'}</span><span class="tag ${tagClass(ir.status)}">${ir.flagCount} ${cn?'项标记':'Flags'}</span></div><div class="dash-body">`;
+  ir.items.forEach(it=>{html+=`<div class="dash-row"><span class="dash-row-l">${cn?it.nameCn:it.name}</span><span class="tag ${tagClass(it.status)}">${it.note?.substring(0,25)||it.status}</span></div>`});
+  html+=`<div class="risk-wrap"><div class="risk-label"><span>${cn?'风险等级':'Risk Level'}</span><span>${cn?(ir.overallRisk==='high'?'高':ir.overallRisk==='medium'?'中':'低'):ir.overallRisk}</span></div><div class="risk-bar"><div class="risk-fill" style="width:${ir.riskPercent}%;background:${riskGrad(ir.riskPercent)}"></div></div></div>`;
+  if(ir.summary)html+=`</div><div class="dash-summary">${ir.summary}</div>`;
+  html+=`</div>`;
+
+  // Label Compliance
+  const lc=d.labelCompliance;
+  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🏷️ ${cn?'标签合规审查':'Label Compliance Review'}</span><span class="tag ${tagClass(lc.status)}">${lc.passCount}/${lc.totalCount}</span></div><div class="dash-body">`;
+  lc.items.forEach(it=>{html+=`<div class="dash-row"><span class="dash-row-l">${cn?it.nameCn:it.name}</span><span class="tag ${tagClass(it.status)}">${it.note?.substring(0,20)||it.status}</span></div>`});
+  if(lc.summary)html+=`</div><div class="dash-summary">${lc.summary}</div>`;
+  html+=`</div>`;
+
+  // Facility
+  const fr=d.facilityRegistration;
+  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🏭 ${cn?'工厂注册状态':'Facility Registration'}</span><span class="tag ${tagClass(fr.status)}">${cn?'已验证':'Verified'}</span></div><div class="dash-body">`;
+  fr.items.forEach(it=>{html+=`<div class="dash-row"><span class="dash-row-l">${cn?it.nameCn:it.name}</span><span class="tag ${tagClass(it.status)}">${it.value?.substring(0,20)||it.status}</span></div>`});
+  if(fr.summary)html+=`</div><div class="dash-summary">${fr.summary}</div>`;
+  html+=`</div>`;
+
+  // Marketing Claims
+  const mc=d.marketingClaims;
+  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">💬 ${cn?'宣传语言风险':'Marketing Claim Risk'}</span><span class="tag ${tagClass(mc.status)}">${mc.issueCount} ${cn?'项问题':'Issues'}</span></div><div class="dash-body">`;
+  mc.items.forEach(it=>{html+=`<div class="dash-row"><span class="dash-row-l">${cn?it.claimCn:it.claim}</span><span class="tag ${tagClass(it.status)}">${it.note?.substring(0,20)||it.status}</span></div>`});
+  html+=`<div class="risk-wrap"><div class="risk-label"><span>${cn?'宣称风险':'Claim Risk'}</span><span>${cn?(mc.riskLevel==='high'?'较高':mc.riskLevel==='medium'?'中等':'低'):mc.riskLevel}</span></div><div class="risk-bar"><div class="risk-fill" style="width:${mc.riskPercent}%;background:${riskGrad(mc.riskPercent)}"></div></div></div>`;
+  if(mc.summary)html+=`</div><div class="dash-summary">${mc.summary}</div>`;
+  html+=`</div></div>`;
+
+  // Score Banner
+  const sc=d.overallScore;
+  const circ=264;
+  const off=circ-(circ*sc/100);
+  const recs=cn?d.recommendationsCn:d.recommendations;
+  html+=`<div class="score-banner"><div class="score-ring-wrap"><svg viewBox="0 0 90 90"><circle class="sr-bg" cx="45" cy="45" r="42"/><circle class="sr-fill" cx="45" cy="45" r="42" style="stroke-dashoffset:${off}"/></svg><div class="score-num"><div class="score-val">${sc}</div><div class="score-max">/100</div></div></div><div class="score-text"><div class="score-verdict">${cn?'综合合规评分':'Overall Compliance Score'}</div><div class="score-sub">${cn?d.overallVerdictCn:d.overallVerdict}</div>`;
+  if(recs&&recs.length){
+    html+=`<div class="rec-list">`;
+    recs.forEach(r=>{html+=`<div class="rec-item">${r}</div>`});
+    html+=`</div>`;
+  }
+  html+=`</div></div>`;
+
+  // Actions
+  html+=`<div class="dash-actions"><button class="btn btn-accent btn-sm">${cn?'⬇ 导出 PDF':'⬇ Export PDF'}</button><button class="btn btn-ghost btn-sm">${cn?'📧 邮件发送':'📧 Email Report'}</button><button class="btn btn-ghost btn-sm">${cn?'🔄 申请专家审查':'🔄 Request Expert Review'}</button></div>`;
+
+  rc.innerHTML=html;
+}
+
+// ===== Scroll Reveal =====
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}})},{threshold:.08});
+document.querySelectorAll('.section,.fda-box').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(24px)';el.style.transition='opacity .6s ease,transform .6s ease';obs.observe(el)});
+</script>
+</body>
+</html>
