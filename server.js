@@ -6,7 +6,8 @@ import path from 'path';
 import fs from 'fs';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { fileURLToPath } from 'url';
-import PptxGenJS from 'pptxgenjs/dist/pptxgen.bundle.js';import pg from 'pg';
+// import PptxGenJS from 'pptxgenjs/dist/pptxgen.bundle.js';
+import pg from 'pg';
 import bcrypt from 'bcryptjs';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
@@ -462,201 +463,201 @@ app.post('/api/analyze', upload.array('files', 10), async (req, res) => {
   }
 });
 
-// --- Generate PPTX Slides from report data ---
-app.post('/api/generate-slides', express.json({ limit: '5mb' }), async (req, res) => {
-  try {
-    const { data, lang } = req.body;
-    const d = data || getDemoData(lang || 'en');
-    const cn = lang === 'cn';
+// // --- Generate PPTX Slides from report data ---
+// app.post('/api/generate-slides', express.json({ limit: '5mb' }), async (req, res) => {
+//   try {
+//     const { data, lang } = req.body;
+//     const d = data || getDemoData(lang || 'en');
+//     const cn = lang === 'cn';
 
-    const pptx = new PptxGenJS();
-    pptx.layout = 'LAYOUT_WIDE'; // 13.33 x 7.5 inches
-    pptx.author = 'GoToMarket Compliance Lab';
-    pptx.title = cn ? '产品合规结构评估报告' : 'Product Compliance Assessment Report';
+//     const pptx = new PptxGenJS();
+//     pptx.layout = 'LAYOUT_WIDE'; // 13.33 x 7.5 inches
+//     pptx.author = 'GoToMarket Compliance Lab';
+//     pptx.title = cn ? '产品合规结构评估报告' : 'Product Compliance Assessment Report';
 
-    // Brand colors
-    const ACCENT = '0D9373';
-    const DARK = '1A1A2E';
-    const MID = '64647A';
-    const LIGHT = '9696AA';
-    const BG = 'F5F7FA';
-    const WHITE = 'FFFFFF';
-    const PASS = '16A34A';
-    const WARN = 'D97706';
-    const FAIL = 'DC2626';
-    const INFO = '2563EB';
-    const statusClr = s => s === 'pass' ? PASS : s === 'warn' ? WARN : s === 'fail' ? FAIL : INFO;
+//     // Brand colors
+//     const ACCENT = '0D9373';
+//     const DARK = '1A1A2E';
+//     const MID = '64647A';
+//     const LIGHT = '9696AA';
+//     const BG = 'F5F7FA';
+//     const WHITE = 'FFFFFF';
+//     const PASS = '16A34A';
+//     const WARN = 'D97706';
+//     const FAIL = 'DC2626';
+//     const INFO = '2563EB';
+//     const statusClr = s => s === 'pass' ? PASS : s === 'warn' ? WARN : s === 'fail' ? FAIL : INFO;
 
-    // ============ SLIDE 1: Title ============
-    const s1 = pptx.addSlide();
-    // Top accent bar
-    s1.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.06, fill: { color: ACCENT } });
-    // Background
-    s1.background = { fill: WHITE };
-    // Logo area
-    s1.addText('GT', { x: 0.6, y: 0.5, w: 0.5, h: 0.5, fontSize: 18, bold: true, color: WHITE, align: 'center', valign: 'middle', fill: { color: ACCENT }, shape: pptx.ShapeType.roundRect, rectRadius: 0.08 });
-    s1.addText('GoToMarket Compliance Lab', { x: 1.25, y: 0.52, w: 4, h: 0.45, fontSize: 16, bold: true, color: ACCENT, fontFace: 'Helvetica' });
-    // Main title
-    s1.addText(cn ? 'Product Compliance\nAssessment Report' : 'Product Compliance\nAssessment Report', { x: 0.6, y: 2.0, w: 8, h: 1.8, fontSize: 40, bold: true, color: DARK, fontFace: 'Helvetica', lineSpacingMultiple: 1.1 });
-    // Subtitle
-    s1.addText('Global Regulatory & Market Entry Intelligence Platform', { x: 0.6, y: 3.9, w: 8, h: 0.5, fontSize: 14, color: ACCENT, fontFace: 'Helvetica' });
-    // Meta info
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    const reportId = 'GTM-' + Date.now().toString(36).toUpperCase();
-    s1.addText(`Report Date: ${dateStr}  |  ID: ${reportId}`, { x: 0.6, y: 5.2, w: 8, h: 0.35, fontSize: 10, color: LIGHT, fontFace: 'Helvetica' });
-    // Score circle on right
-    s1.addShape(pptx.ShapeType.ellipse, { x: 9.8, y: 2.2, w: 2.2, h: 2.2, fill: { color: 'F0FAF6' }, line: { color: ACCENT, width: 3 } });
-    s1.addText(String(d.overallScore), { x: 9.8, y: 2.35, w: 2.2, h: 1.5, fontSize: 44, bold: true, color: ACCENT, align: 'center', valign: 'middle', fontFace: 'Helvetica' });
-    s1.addText('/100', { x: 9.8, y: 3.5, w: 2.2, h: 0.5, fontSize: 12, color: LIGHT, align: 'center', fontFace: 'Helvetica' });
-    // Verdict
-    const verdict = cn ? (d.overallVerdictCn || d.overallVerdict) : d.overallVerdict;
-    s1.addText(verdict || '', { x: 0.6, y: 5.7, w: 11, h: 0.5, fontSize: 11, color: MID, fontFace: 'Helvetica', italic: true });
-    // Bottom bar
-    s1.addShape(pptx.ShapeType.rect, { x: 0, y: 7.2, w: '100%', h: 0.3, fill: { color: ACCENT } });
-    s1.addText('Confidential  •  For Internal Use Only', { x: 0.6, y: 7.22, w: 12, h: 0.26, fontSize: 8, color: WHITE, fontFace: 'Helvetica' });
+//     // ============ SLIDE 1: Title ============
+//     const s1 = pptx.addSlide();
+//     // Top accent bar
+//     s1.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.06, fill: { color: ACCENT } });
+//     // Background
+//     s1.background = { fill: WHITE };
+//     // Logo area
+//     s1.addText('GT', { x: 0.6, y: 0.5, w: 0.5, h: 0.5, fontSize: 18, bold: true, color: WHITE, align: 'center', valign: 'middle', fill: { color: ACCENT }, shape: pptx.ShapeType.roundRect, rectRadius: 0.08 });
+//     s1.addText('GoToMarket Compliance Lab', { x: 1.25, y: 0.52, w: 4, h: 0.45, fontSize: 16, bold: true, color: ACCENT, fontFace: 'Helvetica' });
+//     // Main title
+//     s1.addText(cn ? 'Product Compliance\nAssessment Report' : 'Product Compliance\nAssessment Report', { x: 0.6, y: 2.0, w: 8, h: 1.8, fontSize: 40, bold: true, color: DARK, fontFace: 'Helvetica', lineSpacingMultiple: 1.1 });
+//     // Subtitle
+//     s1.addText('Global Regulatory & Market Entry Intelligence Platform', { x: 0.6, y: 3.9, w: 8, h: 0.5, fontSize: 14, color: ACCENT, fontFace: 'Helvetica' });
+//     // Meta info
+//     const now = new Date();
+//     const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+//     const reportId = 'GTM-' + Date.now().toString(36).toUpperCase();
+//     s1.addText(`Report Date: ${dateStr}  |  ID: ${reportId}`, { x: 0.6, y: 5.2, w: 8, h: 0.35, fontSize: 10, color: LIGHT, fontFace: 'Helvetica' });
+//     // Score circle on right
+//     s1.addShape(pptx.ShapeType.ellipse, { x: 9.8, y: 2.2, w: 2.2, h: 2.2, fill: { color: 'F0FAF6' }, line: { color: ACCENT, width: 3 } });
+//     s1.addText(String(d.overallScore), { x: 9.8, y: 2.35, w: 2.2, h: 1.5, fontSize: 44, bold: true, color: ACCENT, align: 'center', valign: 'middle', fontFace: 'Helvetica' });
+//     s1.addText('/100', { x: 9.8, y: 3.5, w: 2.2, h: 0.5, fontSize: 12, color: LIGHT, align: 'center', fontFace: 'Helvetica' });
+//     // Verdict
+//     const verdict = cn ? (d.overallVerdictCn || d.overallVerdict) : d.overallVerdict;
+//     s1.addText(verdict || '', { x: 0.6, y: 5.7, w: 11, h: 0.5, fontSize: 11, color: MID, fontFace: 'Helvetica', italic: true });
+//     // Bottom bar
+//     s1.addShape(pptx.ShapeType.rect, { x: 0, y: 7.2, w: '100%', h: 0.3, fill: { color: ACCENT } });
+//     s1.addText('Confidential  •  For Internal Use Only', { x: 0.6, y: 7.22, w: 12, h: 0.26, fontSize: 8, color: WHITE, fontFace: 'Helvetica' });
 
-    // ============ Helper: Section Slide ============
-    function addSectionSlide(icon, title, badgeText, badgeStatus, items, nameKey, noteKey, summary, riskPercent, riskLabel) {
-      const s = pptx.addSlide();
-      s.background = { fill: WHITE };
-      // Top bar
-      s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.06, fill: { color: ACCENT } });
-      // Section header bar
-      s.addShape(pptx.ShapeType.roundRect, { x: 0.5, y: 0.4, w: 12.3, h: 0.6, fill: { color: BG }, rectRadius: 0.06 });
-      s.addText(`${icon}  ${title}`, { x: 0.7, y: 0.42, w: 8, h: 0.55, fontSize: 16, bold: true, color: DARK, fontFace: 'Helvetica' });
-      // Badge
-      s.addShape(pptx.ShapeType.roundRect, { x: 11.0, y: 0.47, w: 1.6, h: 0.4, fill: { color: statusClr(badgeStatus) }, rectRadius: 0.06 });
-      s.addText(badgeText, { x: 11.0, y: 0.47, w: 1.6, h: 0.4, fontSize: 10, bold: true, color: WHITE, align: 'center', valign: 'middle', fontFace: 'Helvetica' });
+//     // ============ Helper: Section Slide ============
+//     function addSectionSlide(icon, title, badgeText, badgeStatus, items, nameKey, noteKey, summary, riskPercent, riskLabel) {
+//       const s = pptx.addSlide();
+//       s.background = { fill: WHITE };
+//       // Top bar
+//       s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.06, fill: { color: ACCENT } });
+//       // Section header bar
+//       s.addShape(pptx.ShapeType.roundRect, { x: 0.5, y: 0.4, w: 12.3, h: 0.6, fill: { color: BG }, rectRadius: 0.06 });
+//       s.addText(`${icon}  ${title}`, { x: 0.7, y: 0.42, w: 8, h: 0.55, fontSize: 16, bold: true, color: DARK, fontFace: 'Helvetica' });
+//       // Badge
+//       s.addShape(pptx.ShapeType.roundRect, { x: 11.0, y: 0.47, w: 1.6, h: 0.4, fill: { color: statusClr(badgeStatus) }, rectRadius: 0.06 });
+//       s.addText(badgeText, { x: 11.0, y: 0.47, w: 1.6, h: 0.4, fontSize: 10, bold: true, color: WHITE, align: 'center', valign: 'middle', fontFace: 'Helvetica' });
 
-      // Table
-      const headerRow = [
-        { text: cn ? 'Item' : 'Item', options: { bold: true, fontSize: 9, color: LIGHT, fill: { color: BG }, fontFace: 'Helvetica', align: 'left' } },
-        { text: cn ? 'Status / Note' : 'Status / Note', options: { bold: true, fontSize: 9, color: LIGHT, fill: { color: BG }, fontFace: 'Helvetica', align: 'right' } }
-      ];
-      const bodyRows = items.map(it => {
-        const name = cn ? (it[nameKey + 'Cn'] || it[nameKey]) : it[nameKey];
-        const note = it[noteKey] || it.status || '';
-        return [
-          { text: name || '', options: { fontSize: 10, color: DARK, fontFace: 'Helvetica' } },
-          { text: note || '', options: { fontSize: 10, color: statusClr(it.status), fontFace: 'Helvetica', align: 'right', bold: true } }
-        ];
-      });
+//       // Table
+//       const headerRow = [
+//         { text: cn ? 'Item' : 'Item', options: { bold: true, fontSize: 9, color: LIGHT, fill: { color: BG }, fontFace: 'Helvetica', align: 'left' } },
+//         { text: cn ? 'Status / Note' : 'Status / Note', options: { bold: true, fontSize: 9, color: LIGHT, fill: { color: BG }, fontFace: 'Helvetica', align: 'right' } }
+//       ];
+//       const bodyRows = items.map(it => {
+//         const name = cn ? (it[nameKey + 'Cn'] || it[nameKey]) : it[nameKey];
+//         const note = it[noteKey] || it.status || '';
+//         return [
+//           { text: name || '', options: { fontSize: 10, color: DARK, fontFace: 'Helvetica' } },
+//           { text: note || '', options: { fontSize: 10, color: statusClr(it.status), fontFace: 'Helvetica', align: 'right', bold: true } }
+//         ];
+//       });
 
-      s.addTable([headerRow, ...bodyRows], {
-        x: 0.5, y: 1.25, w: 12.3,
-        border: { type: 'solid', pt: 0.5, color: 'E5E7EB' },
-        colW: [6.15, 6.15],
-        rowH: 0.42,
-        autoPage: false,
-        margin: [4, 8, 4, 8]
-      });
+//       s.addTable([headerRow, ...bodyRows], {
+//         x: 0.5, y: 1.25, w: 12.3,
+//         border: { type: 'solid', pt: 0.5, color: 'E5E7EB' },
+//         colW: [6.15, 6.15],
+//         rowH: 0.42,
+//         autoPage: false,
+//         margin: [4, 8, 4, 8]
+//       });
 
-      let yPos = 1.25 + (items.length + 1) * 0.42 + 0.3;
+//       let yPos = 1.25 + (items.length + 1) * 0.42 + 0.3;
 
-      // Risk bar
-      if (typeof riskPercent === 'number') {
-        s.addText(riskLabel || 'Risk', { x: 0.5, y: yPos, w: 3, h: 0.25, fontSize: 8, color: LIGHT, fontFace: 'Helvetica' });
-        const rl = riskPercent > 65 ? 'High' : riskPercent > 35 ? 'Medium' : 'Low';
-        s.addText(rl, { x: 9.8, y: yPos, w: 3, h: 0.25, fontSize: 8, color: LIGHT, fontFace: 'Helvetica', align: 'right' });
-        yPos += 0.28;
-        // Bar bg
-        s.addShape(pptx.ShapeType.roundRect, { x: 0.5, y: yPos, w: 12.3, h: 0.18, fill: { color: 'E5E7EB' }, rectRadius: 0.04 });
-        // Bar fill
-        const barW = 12.3 * riskPercent / 100;
-        const barClr = riskPercent > 65 ? FAIL : riskPercent > 35 ? WARN : PASS;
-        s.addShape(pptx.ShapeType.roundRect, { x: 0.5, y: yPos, w: barW, h: 0.18, fill: { color: barClr }, rectRadius: 0.04 });
-        yPos += 0.4;
-      }
+//       // Risk bar
+//       if (typeof riskPercent === 'number') {
+//         s.addText(riskLabel || 'Risk', { x: 0.5, y: yPos, w: 3, h: 0.25, fontSize: 8, color: LIGHT, fontFace: 'Helvetica' });
+//         const rl = riskPercent > 65 ? 'High' : riskPercent > 35 ? 'Medium' : 'Low';
+//         s.addText(rl, { x: 9.8, y: yPos, w: 3, h: 0.25, fontSize: 8, color: LIGHT, fontFace: 'Helvetica', align: 'right' });
+//         yPos += 0.28;
+//         // Bar bg
+//         s.addShape(pptx.ShapeType.roundRect, { x: 0.5, y: yPos, w: 12.3, h: 0.18, fill: { color: 'E5E7EB' }, rectRadius: 0.04 });
+//         // Bar fill
+//         const barW = 12.3 * riskPercent / 100;
+//         const barClr = riskPercent > 65 ? FAIL : riskPercent > 35 ? WARN : PASS;
+//         s.addShape(pptx.ShapeType.roundRect, { x: 0.5, y: yPos, w: barW, h: 0.18, fill: { color: barClr }, rectRadius: 0.04 });
+//         yPos += 0.4;
+//       }
 
-      // Summary
-      if (summary) {
-        s.addShape(pptx.ShapeType.roundRect, { x: 0.5, y: yPos, w: 12.3, h: 0.6, fill: { color: 'FAFAFA' }, rectRadius: 0.06 });
-        s.addText(summary, { x: 0.7, y: yPos + 0.05, w: 11.9, h: 0.5, fontSize: 9, italic: true, color: LIGHT, fontFace: 'Helvetica' });
-      }
+//       // Summary
+//       if (summary) {
+//         s.addShape(pptx.ShapeType.roundRect, { x: 0.5, y: yPos, w: 12.3, h: 0.6, fill: { color: 'FAFAFA' }, rectRadius: 0.06 });
+//         s.addText(summary, { x: 0.7, y: yPos + 0.05, w: 11.9, h: 0.5, fontSize: 9, italic: true, color: LIGHT, fontFace: 'Helvetica' });
+//       }
 
-      // Footer
-      s.addShape(pptx.ShapeType.rect, { x: 0, y: 7.2, w: '100%', h: 0.3, fill: { color: BG } });
-      s.addText('GoToMarket Compliance Lab  •  Confidential', { x: 0.6, y: 7.22, w: 12, h: 0.26, fontSize: 7, color: LIGHT, fontFace: 'Helvetica' });
-    }
+//       // Footer
+//       s.addShape(pptx.ShapeType.rect, { x: 0, y: 7.2, w: '100%', h: 0.3, fill: { color: BG } });
+//       s.addText('GoToMarket Compliance Lab  •  Confidential', { x: 0.6, y: 7.22, w: 12, h: 0.26, fontSize: 7, color: LIGHT, fontFace: 'Helvetica' });
+//     }
 
-    // ============ SLIDE 2: Ingredient Risk ============
-    const ir = d.ingredientRisk;
-    addSectionSlide('🧪', cn ? 'Ingredient Risk Overview' : 'Ingredient Risk Overview',
-      `${ir.flagCount} Flags`, ir.status, ir.items, 'name', 'note', ir.summary, ir.riskPercent, 'Risk Level');
+//     // ============ SLIDE 2: Ingredient Risk ============
+//     const ir = d.ingredientRisk;
+//     addSectionSlide('🧪', cn ? 'Ingredient Risk Overview' : 'Ingredient Risk Overview',
+//       `${ir.flagCount} Flags`, ir.status, ir.items, 'name', 'note', ir.summary, ir.riskPercent, 'Risk Level');
 
-    // ============ SLIDE 3: Label Compliance ============
-    const lc = d.labelCompliance;
-    addSectionSlide('🏷️', cn ? 'Label Compliance Review' : 'Label Compliance Review',
-      `${lc.passCount}/${lc.totalCount} Pass`, lc.status, lc.items, 'name', 'note', lc.summary);
+//     // ============ SLIDE 3: Label Compliance ============
+//     const lc = d.labelCompliance;
+//     addSectionSlide('🏷️', cn ? 'Label Compliance Review' : 'Label Compliance Review',
+//       `${lc.passCount}/${lc.totalCount} Pass`, lc.status, lc.items, 'name', 'note', lc.summary);
 
-    // ============ SLIDE 4: Facility Registration ============
-    const fr = d.facilityRegistration;
-    addSectionSlide('🏭', cn ? 'Facility Registration Status' : 'Facility Registration Status',
-      'Status', fr.status, fr.items, 'name', 'value', fr.summary);
+//     // ============ SLIDE 4: Facility Registration ============
+//     const fr = d.facilityRegistration;
+//     addSectionSlide('🏭', cn ? 'Facility Registration Status' : 'Facility Registration Status',
+//       'Status', fr.status, fr.items, 'name', 'value', fr.summary);
 
-    // ============ SLIDE 5: Marketing Claims ============
-    const mc = d.marketingClaims;
-    addSectionSlide('💬', cn ? 'Marketing Claim Risk Review' : 'Marketing Claim Risk Review',
-      `${mc.issueCount} Issues`, mc.status, mc.items, 'claim', 'note', mc.summary, mc.riskPercent, 'Claim Risk');
+//     // ============ SLIDE 5: Marketing Claims ============
+//     const mc = d.marketingClaims;
+//     addSectionSlide('💬', cn ? 'Marketing Claim Risk Review' : 'Marketing Claim Risk Review',
+//       `${mc.issueCount} Issues`, mc.status, mc.items, 'claim', 'note', mc.summary, mc.riskPercent, 'Claim Risk');
 
-    // ============ SLIDE 6: Recommendations ============
-    const recs = cn ? (d.recommendationsCn || d.recommendations) : d.recommendations;
-    if (recs && recs.length) {
-      const s6 = pptx.addSlide();
-      s6.background = { fill: WHITE };
-      s6.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.06, fill: { color: ACCENT } });
-      s6.addShape(pptx.ShapeType.roundRect, { x: 0.5, y: 0.4, w: 12.3, h: 0.6, fill: { color: 'FFF8E1' }, rectRadius: 0.06 });
-      s6.addText('📋  Recommendations', { x: 0.7, y: 0.42, w: 8, h: 0.55, fontSize: 16, bold: true, color: '92400E', fontFace: 'Helvetica' });
+//     // ============ SLIDE 6: Recommendations ============
+//     const recs = cn ? (d.recommendationsCn || d.recommendations) : d.recommendations;
+//     if (recs && recs.length) {
+//       const s6 = pptx.addSlide();
+//       s6.background = { fill: WHITE };
+//       s6.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.06, fill: { color: ACCENT } });
+//       s6.addShape(pptx.ShapeType.roundRect, { x: 0.5, y: 0.4, w: 12.3, h: 0.6, fill: { color: 'FFF8E1' }, rectRadius: 0.06 });
+//       s6.addText('📋  Recommendations', { x: 0.7, y: 0.42, w: 8, h: 0.55, fontSize: 16, bold: true, color: '92400E', fontFace: 'Helvetica' });
 
-      recs.forEach((r, i) => {
-        const yy = 1.4 + i * 0.55;
-        s6.addText('→', { x: 0.7, y: yy, w: 0.4, h: 0.45, fontSize: 14, bold: true, color: WARN, fontFace: 'Helvetica' });
-        s6.addText(r, { x: 1.15, y: yy, w: 11.3, h: 0.45, fontSize: 11, color: '78350F', fontFace: 'Helvetica', valign: 'middle' });
-      });
+//       recs.forEach((r, i) => {
+//         const yy = 1.4 + i * 0.55;
+//         s6.addText('→', { x: 0.7, y: yy, w: 0.4, h: 0.45, fontSize: 14, bold: true, color: WARN, fontFace: 'Helvetica' });
+//         s6.addText(r, { x: 1.15, y: yy, w: 11.3, h: 0.45, fontSize: 11, color: '78350F', fontFace: 'Helvetica', valign: 'middle' });
+//       });
 
-      s6.addShape(pptx.ShapeType.rect, { x: 0, y: 7.2, w: '100%', h: 0.3, fill: { color: BG } });
-      s6.addText('GoToMarket Compliance Lab  •  Confidential', { x: 0.6, y: 7.22, w: 12, h: 0.26, fontSize: 7, color: LIGHT, fontFace: 'Helvetica' });
-    }
+//       s6.addShape(pptx.ShapeType.rect, { x: 0, y: 7.2, w: '100%', h: 0.3, fill: { color: BG } });
+//       s6.addText('GoToMarket Compliance Lab  •  Confidential', { x: 0.6, y: 7.22, w: 12, h: 0.26, fontSize: 7, color: LIGHT, fontFace: 'Helvetica' });
+//     }
 
-    // ============ SLIDE 7: Disclaimer ============
-    const s7 = pptx.addSlide();
-    s7.background = { fill: WHITE };
-    s7.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.06, fill: { color: ACCENT } });
-    s7.addText('Important Disclaimer', { x: 0.6, y: 0.5, w: 8, h: 0.6, fontSize: 20, bold: true, color: DARK, fontFace: 'Helvetica' });
-    s7.addText('FDA Registration & Compliance', { x: 0.6, y: 1.1, w: 8, h: 0.4, fontSize: 12, color: ACCENT, fontFace: 'Helvetica' });
+//     // ============ SLIDE 7: Disclaimer ============
+//     const s7 = pptx.addSlide();
+//     s7.background = { fill: WHITE };
+//     s7.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.06, fill: { color: ACCENT } });
+//     s7.addText('Important Disclaimer', { x: 0.6, y: 0.5, w: 8, h: 0.6, fontSize: 20, bold: true, color: DARK, fontFace: 'Helvetica' });
+//     s7.addText('FDA Registration & Compliance', { x: 0.6, y: 1.1, w: 8, h: 0.4, fontSize: 12, color: ACCENT, fontFace: 'Helvetica' });
 
-    const disclaimerPoints = [
-      'FDA does not approve individual dietary supplement or food products.',
-      'Registration applies to manufacturing facilities, not SKUs or brands.',
-      'No "FDA product certification" exists for supplements.',
-      'Key compliance factors: ingredient legality, proper labeling, valid facility registration, compliant marketing claims.',
-      'This report is AI-generated for reference only. Consult licensed regulatory professionals for final compliance confirmation.'
-    ];
-    disclaimerPoints.forEach((p, i) => {
-      s7.addText('•', { x: 0.7, y: 1.8 + i * 0.6, w: 0.3, h: 0.5, fontSize: 12, color: ACCENT, fontFace: 'Helvetica' });
-      s7.addText(p, { x: 1.05, y: 1.8 + i * 0.6, w: 11.3, h: 0.5, fontSize: 11, color: MID, fontFace: 'Helvetica', valign: 'middle' });
-    });
+//     const disclaimerPoints = [
+//       'FDA does not approve individual dietary supplement or food products.',
+//       'Registration applies to manufacturing facilities, not SKUs or brands.',
+//       'No "FDA product certification" exists for supplements.',
+//       'Key compliance factors: ingredient legality, proper labeling, valid facility registration, compliant marketing claims.',
+//       'This report is AI-generated for reference only. Consult licensed regulatory professionals for final compliance confirmation.'
+//     ];
+//     disclaimerPoints.forEach((p, i) => {
+//       s7.addText('•', { x: 0.7, y: 1.8 + i * 0.6, w: 0.3, h: 0.5, fontSize: 12, color: ACCENT, fontFace: 'Helvetica' });
+//       s7.addText(p, { x: 1.05, y: 1.8 + i * 0.6, w: 11.3, h: 0.5, fontSize: 11, color: MID, fontFace: 'Helvetica', valign: 'middle' });
+//     });
 
-    // Branding footer
-    s7.addShape(pptx.ShapeType.rect, { x: 0, y: 5.8, w: '100%', h: 1.7, fill: { color: ACCENT } });
-    s7.addText('GoToMarket Compliance Lab', { x: 0.6, y: 5.95, w: 8, h: 0.5, fontSize: 18, bold: true, color: WHITE, fontFace: 'Helvetica' });
-    s7.addText('Global Regulatory & Market Entry Intelligence Platform', { x: 0.6, y: 6.4, w: 8, h: 0.35, fontSize: 10, color: 'B0E8D8', fontFace: 'Helvetica' });
-    s7.addText(`© ${now.getFullYear()} GoToMarket Compliance Lab. All rights reserved.`, { x: 0.6, y: 6.9, w: 8, h: 0.3, fontSize: 8, color: 'B0E8D8', fontFace: 'Helvetica' });
+//     // Branding footer
+//     s7.addShape(pptx.ShapeType.rect, { x: 0, y: 5.8, w: '100%', h: 1.7, fill: { color: ACCENT } });
+//     s7.addText('GoToMarket Compliance Lab', { x: 0.6, y: 5.95, w: 8, h: 0.5, fontSize: 18, bold: true, color: WHITE, fontFace: 'Helvetica' });
+//     s7.addText('Global Regulatory & Market Entry Intelligence Platform', { x: 0.6, y: 6.4, w: 8, h: 0.35, fontSize: 10, color: 'B0E8D8', fontFace: 'Helvetica' });
+//     s7.addText(`© ${now.getFullYear()} GoToMarket Compliance Lab. All rights reserved.`, { x: 0.6, y: 6.9, w: 8, h: 0.3, fontSize: 8, color: 'B0E8D8', fontFace: 'Helvetica' });
 
-    // Generate and send
-    const pptxBuffer = await pptx.write({ outputType: 'nodebuffer' });
-    const filename = `GoToMarket_Compliance_Report_${now.toISOString().split('T')[0]}.pptx`;
+//     // Generate and send
+//     const pptxBuffer = await pptx.write({ outputType: 'nodebuffer' });
+//     const filename = `GoToMarket_Compliance_Report_${now.toISOString().split('T')[0]}.pptx`;
 
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.send(Buffer.from(pptxBuffer));
+//     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
+//     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+//     res.send(Buffer.from(pptxBuffer));
 
-  } catch (err) {
-    console.error('Slides generation error:', err);
-    res.status(500).json({ error: err.message || 'Failed to generate slides' });
-  }
-});
+//   } catch (err) {
+//     console.error('Slides generation error:', err);
+//     res.status(500).json({ error: err.message || 'Failed to generate slides' });
+//   }
+// });
 
 // --- Demo Data ---
 function getDemoData(lang) {
