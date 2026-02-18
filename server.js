@@ -413,7 +413,7 @@ app.post('/api/analyze', upload.array('files', 10), async (req, res) => {
     }
 
     // Call Gemini
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
     const prompt = buildAnalysisPrompt(lang);
 
     const result = await model.generateContent([prompt, ...imageParts]);
