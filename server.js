@@ -7,6 +7,13 @@ import fs from 'fs';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { fileURLToPath } from 'url';
 import PptxGenJS from 'pptxgenjs';
+import pg from 'pg';
+import bcrypt from 'bcryptjs';
+import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
+
+const { Pool } = pg;
+const PgSession = connectPgSimple(session);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,9 +22,71 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // --- Middleware ---
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// --- PostgreSQL ---
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL?.includes('localhost') ? false : { rejectUnauthorized: false }
+});
+
+async function initDB() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        name VARCHAR(100) NOT NULL,
+        company VARCHAR(200) DEFAULT '',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS reports (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        report_id VARCHAR(50) UNIQUE NOT NULL,
+        title VARCHAR(200) NOT NULL DEFAULT 'Untitled Report',
+        data JSONB NOT NULL,
+        lang VARCHAR(5) DEFAULT 'en',
+        score INTEGER DEFAULT 0,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS idx_reports_user_id ON reports(user_id);
+      CREATE TABLE IF NOT EXISTS "session" (
+        "sid" VARCHAR NOT NULL COLLATE "default",
+        "sess" JSON NOT NULL,
+        "expire" TIMESTAMP(6) NOT NULL,
+        CONSTRAINT "session_pkey" PRIMARY KEY ("sid")
+      );
+      CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
+    `);
+    console.log('   Database: Tables initialized ✓');
+  } catch (err) {
+    console.error('   Database: Init failed -', err.message);
+  }
+}
+
+// --- Session ---
+app.use(session({
+  store: process.env.DATABASE_URL ? new PgSession({ pool, tableName: 'session' }) : undefined,
+  secret: process.env.SESSION_SECRET || 'gotomarket-dev-secret-change-in-prod',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  }
+}));
+
+// Auth helper
+function requireAuth(req, res, next) {
+  if (!req.session.userId) return res.status(401).json({ error: 'Not authenticated' });
+  next();
+}
 
 // --- Multer for file uploads ---
 const uploadDir = path.join(__dirname, 'uploads');
@@ -165,8 +234,134 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     geminiConfigured: !!process.env.GEMINI_API_KEY,
+    dbConfigured: !!process.env.DATABASE_URL,
     timestamp: new Date().toISOString()
   });
+});
+
+// ==================== AUTH ROUTES ====================
+
+// Register
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { email, password, name, company } = req.body;
+    if (!email || !password || !name) return res.status(400).json({ error: 'Email, password, and name are required' });
+    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+
+    const existing = await pool.query('SELECT id FROM users WHERE email=$1', [email.toLowerCase().trim()]);
+    if (existing.rows.length) return res.status(409).json({ error: 'Email already registered' });
+
+    const hash = await bcrypt.hash(password, 12);
+    const result = await pool.query(
+      'INSERT INTO users (email, password_hash, name, company) VALUES ($1,$2,$3,$4) RETURNING id, email, name, company, created_at',
+      [email.toLowerCase().trim(), hash, name.trim(), (company || '').trim()]
+    );
+    const user = result.rows[0];
+    req.session.userId = user.id;
+    res.json({ success: true, user: { id: user.id, email: user.email, name: user.name, company: user.company } });
+  } catch (err) {
+    console.error('Register error:', err);
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+// Login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
+
+    const result = await pool.query('SELECT id, email, name, company, password_hash FROM users WHERE email=$1', [email.toLowerCase().trim()]);
+    if (!result.rows.length) return res.status(401).json({ error: 'Invalid email or password' });
+
+    const user = result.rows[0];
+    const valid = await bcrypt.compare(password, user.password_hash);
+    if (!valid) return res.status(401).json({ error: 'Invalid email or password' });
+
+    req.session.userId = user.id;
+    res.json({ success: true, user: { id: user.id, email: user.email, name: user.name, company: user.company } });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+// Logout
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy(() => res.json({ success: true }));
+});
+
+// Get current user
+app.get('/api/auth/me', async (req, res) => {
+  if (!req.session.userId) return res.json({ user: null });
+  try {
+    const result = await pool.query('SELECT id, email, name, company FROM users WHERE id=$1', [req.session.userId]);
+    if (!result.rows.length) return res.json({ user: null });
+    res.json({ user: result.rows[0] });
+  } catch (err) {
+    res.json({ user: null });
+  }
+});
+
+// ==================== REPORT ROUTES ====================
+
+// Save report
+app.post('/api/reports', requireAuth, async (req, res) => {
+  try {
+    const { reportData, lang, title } = req.body;
+    if (!reportData) return res.status(400).json({ error: 'Report data is required' });
+
+    const reportId = 'GTM-' + Date.now().toString(36).toUpperCase();
+    const score = reportData.overallScore || 0;
+    const reportTitle = title || (lang === 'cn' ? '产品合规风险评估报告' : 'Compliance Risk Assessment Report');
+
+    const result = await pool.query(
+      'INSERT INTO reports (user_id, report_id, title, data, lang, score) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, report_id, title, score, created_at',
+      [req.session.userId, reportId, reportTitle, JSON.stringify(reportData), lang || 'en', score]
+    );
+    res.json({ success: true, report: result.rows[0] });
+  } catch (err) {
+    console.error('Save report error:', err);
+    res.status(500).json({ error: 'Failed to save report' });
+  }
+});
+
+// List user's reports
+app.get('/api/reports', requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, report_id, title, score, lang, created_at FROM reports WHERE user_id=$1 ORDER BY created_at DESC LIMIT 50',
+      [req.session.userId]
+    );
+    res.json({ reports: result.rows });
+  } catch (err) {
+    console.error('List reports error:', err);
+    res.status(500).json({ error: 'Failed to list reports' });
+  }
+});
+
+// Get single report
+app.get('/api/reports/:reportId', requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, report_id, title, data, score, lang, created_at FROM reports WHERE report_id=$1 AND user_id=$2',
+      [req.params.reportId, req.session.userId]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Report not found' });
+    res.json({ report: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load report' });
+  }
+});
+
+// Delete report
+app.delete('/api/reports/:reportId', requireAuth, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM reports WHERE report_id=$1 AND user_id=$2', [req.params.reportId, req.session.userId]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete report' });
+  }
 });
 
 // Analyze uploaded files
@@ -218,7 +413,7 @@ app.post('/api/analyze', upload.array('files', 10), async (req, res) => {
     }
 
     // Call Gemini
-    const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     const prompt = buildAnalysisPrompt(lang);
 
     const result = await model.generateContent([prompt, ...imageParts]);
@@ -544,7 +739,12 @@ app.get('*', (req, res) => {
 });
 
 // --- Start ---
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`✅ GoToMarket Compliance Lab running on port ${PORT}`);
   console.log(`   Gemini API: ${process.env.GEMINI_API_KEY ? 'Configured ✓' : 'Not configured (demo mode)'}`);
+  if (process.env.DATABASE_URL) {
+    await initDB();
+  } else {
+    console.log('   Database: Not configured (set DATABASE_URL for user accounts)');
+  }
 });

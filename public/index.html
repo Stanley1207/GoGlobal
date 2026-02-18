@@ -249,6 +249,58 @@
   .reg-ref{display:block;font-size:10px;color:var(--text-3);font-family:var(--font-m);margin-top:3px;font-style:normal}
   .facility-note{margin-top:10px;padding:10px 14px;background:var(--info-dim);border-radius:8px;font-size:11px;color:var(--info);line-height:1.5}
   .platform-note{padding:12px 24px;font-size:10px;color:var(--text-3);line-height:1.5;border-top:1px solid var(--border);font-style:italic}
+
+  /* Auth Modal */
+  .modal-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+  .modal-overlay.active{display:flex}
+  .modal-box{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r-lg);width:min(420px,90vw);padding:32px;position:relative;animation:fu .3s ease both}
+  .modal-close{position:absolute;top:12px;right:14px;width:32px;height:32px;border-radius:8px;background:transparent;border:none;color:var(--text-2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .modal-close:hover{background:var(--bg-3);color:var(--text-0)}
+  .modal-title{font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:4px}
+  .modal-sub{font-size:12px;color:var(--text-3);margin-bottom:20px}
+  .modal-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border)}
+  .modal-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:500;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+  .modal-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .modal-form{display:none}.modal-form.active{display:block}
+  .form-group{margin-bottom:14px}
+  .form-group label{display:block;font-size:11px;color:var(--text-2);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+  .form-input{width:100%;padding:10px 14px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;color:var(--text-0);font-size:14px;font-family:var(--font-b);outline:none;transition:border-color .2s}
+  .form-input:focus{border-color:var(--accent)}
+  .form-btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:6px}
+  .form-btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-dim));color:var(--bg-0)}
+  .form-btn-primary:hover{filter:brightness(1.1)}
+  .form-error{color:var(--danger);font-size:11px;margin-top:8px;display:none}
+  .form-error.show{display:block}
+
+  /* User menu */
+  .user-menu{display:flex;align-items:center;gap:10px}
+  .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-dim));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--bg-0);cursor:pointer}
+  .user-name{font-size:12px;color:var(--text-1);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .user-dropdown{position:absolute;top:50px;right:var(--pad);background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:6px;min-width:180px;display:none;z-index:101;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+  .user-dropdown.open{display:block}
+  .user-dd-item{padding:10px 14px;border-radius:8px;font-size:13px;color:var(--text-1);cursor:pointer;transition:background .2s;display:flex;align-items:center;gap:8px}
+  .user-dd-item:hover{background:var(--bg-3)}
+  .user-dd-item.danger{color:var(--danger)}
+
+  /* Dashboard overlay */
+  .dash-overlay{display:none;position:fixed;inset:0;z-index:200;background:var(--bg-0);overflow-y:auto;animation:fu .3s ease both}
+  .dash-overlay.active{display:block}
+  .dash-inner{max-width:900px;margin:0 auto;padding:32px 40px 60px}
+  .dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+  .dash-header h2{font-family:var(--font-d);font-size:24px}
+  .saved-reports{display:flex;flex-direction:column;gap:12px}
+  .saved-card{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .2s}
+  .saved-card:hover{border-color:var(--accent);background:var(--bg-2)}
+  .saved-left{flex:1}
+  .saved-title{font-weight:600;font-size:14px;margin-bottom:4px}
+  .saved-meta{font-size:11px;color:var(--text-3);font-family:var(--font-m)}
+  .saved-score{width:48px;height:48px;border-radius:50%;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--accent)}
+  .saved-actions{display:flex;gap:8px;margin-left:12px}
+  .saved-del{width:32px;height:32px;border-radius:8px;background:transparent;border:1px solid var(--border);color:var(--text-3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s}
+  .saved-del:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-dim)}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--text-3)}
+  .empty-state .empty-icon{font-size:48px;margin-bottom:12px}
+  .empty-state p{font-size:14px}
 </style>
 </head>
 <body id="app">
@@ -269,6 +321,20 @@
     <div class="lang-sw">
       <button class="lang-btn active" id="lEn" onclick="setLang('en')">EN</button>
       <button class="lang-btn" id="lCn" onclick="setLang('cn')">中文</button>
+    </div>
+    <!-- Auth: logged out -->
+    <div id="authBtns" style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="openAuthModal('login')" style="padding:6px 14px;font-size:12px" data-en="Log In" data-cn="登录">Log In</button>
+      <button class="btn btn-accent btn-sm" onclick="openAuthModal('register')" style="padding:6px 14px;font-size:12px" data-en="Sign Up" data-cn="注册">Sign Up</button>
+    </div>
+    <!-- Auth: logged in -->
+    <div id="userMenu" class="user-menu" style="display:none">
+      <div class="user-avatar" id="userAvatar" onclick="toggleUserDropdown()"></div>
+      <span class="user-name" id="userName"></span>
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="user-dd-item" onclick="openDashboard()">📋 <span data-en="My Reports" data-cn="我的报告">My Reports</span></div>
+      <div class="user-dd-item danger" onclick="doLogout()">🚪 <span data-en="Log Out" data-cn="退出登录">Log Out</span></div>
     </div>
   </div>
 </nav>
@@ -394,6 +460,45 @@
   <div class="footer-r"><a href="#" data-en="Privacy" data-cn="隐私政策">Privacy</a><a href="#" data-en="Terms" data-cn="服务条款">Terms</a><a href="#" data-en="Contact" data-cn="联系我们">Contact</a></div>
 </footer>
 <div style="text-align:center;padding:0 var(--pad) 24px;font-size:10px;color:var(--text-3);opacity:0.7;line-height:1.6;font-family:var(--font-cn)"><span data-en="This platform provides structural compliance assessment and risk advisory only. It does not constitute legal advice, regulatory approval, or official certification." data-cn="本平台提供的是结构性合规评估与风险提示，不构成法律意见或监管批准。">This platform provides structural compliance assessment and risk advisory only. It does not constitute legal advice, regulatory approval, or official certification.</span></div>
+
+<!-- Auth Modal -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <div class="modal-title" id="authModalTitle">Welcome</div>
+    <div class="modal-sub" id="authModalSub">Sign in to save and access your compliance reports</div>
+    <div class="modal-tabs">
+      <div class="modal-tab active" id="tabLogin" onclick="switchAuthTab('login')" data-en="Log In" data-cn="登录">Log In</div>
+      <div class="modal-tab" id="tabRegister" onclick="switchAuthTab('register')" data-en="Sign Up" data-cn="注册">Sign Up</div>
+    </div>
+    <form class="modal-form active" id="formLogin" onsubmit="doLogin(event)">
+      <div class="form-group"><label>Email</label><input class="form-input" type="email" id="loginEmail" required placeholder="your@email.com"></div>
+      <div class="form-group"><label data-en="Password" data-cn="密码">Password</label><input class="form-input" type="password" id="loginPass" required placeholder="••••••"></div>
+      <div class="form-error" id="loginError"></div>
+      <button class="form-btn form-btn-primary" type="submit" data-en="Log In" data-cn="登录">Log In</button>
+    </form>
+    <form class="modal-form" id="formRegister" onsubmit="doRegister(event)">
+      <div class="form-group"><label data-en="Full Name" data-cn="姓名">Full Name</label><input class="form-input" type="text" id="regName" required placeholder="Your name"></div>
+      <div class="form-group"><label>Email</label><input class="form-input" type="email" id="regEmail" required placeholder="your@email.com"></div>
+      <div class="form-group"><label data-en="Company (Optional)" data-cn="公司（选填）">Company (Optional)</label><input class="form-input" type="text" id="regCompany" placeholder="Company name"></div>
+      <div class="form-group"><label data-en="Password (min 6 chars)" data-cn="密码（至少6位）">Password (min 6 chars)</label><input class="form-input" type="password" id="regPass" required minlength="6" placeholder="••••••"></div>
+      <div class="form-error" id="regError"></div>
+      <button class="form-btn form-btn-primary" type="submit" data-en="Create Account" data-cn="创建账户">Create Account</button>
+    </form>
+  </div>
+</div>
+
+<!-- Dashboard Overlay (My Reports) -->
+<div class="dash-overlay" id="dashOverlay">
+  <button class="report-close" onclick="closeDashboard()">✕</button>
+  <div class="dash-inner">
+    <div class="dash-header">
+      <h2 data-en="📋 My Reports" data-cn="📋 我的报告">📋 My Reports</h2>
+      <button class="btn btn-ghost btn-sm" onclick="closeDashboard()" data-en="Back" data-cn="返回">Back</button>
+    </div>
+    <div class="saved-reports" id="savedReportsList"></div>
+  </div>
+</div>
 
 <!-- Report Full-Screen Overlay -->
 <div class="report-overlay" id="reportOverlay">
@@ -560,10 +665,11 @@ function renderReport(d){
   }
   html+=`</div></div>`;
 
-  // Actions - only 2 buttons
+  // Actions
   html+=`<div class="dash-actions">
     <button class="btn btn-accent btn-sm" onclick="requestConsult()" style="background:linear-gradient(135deg,var(--accent),var(--accent-dim))">💬 ${cn?'申请人工咨询':'Request Expert Consultation'}</button>
     <button class="btn btn-ghost btn-sm" onclick="exportPDF()">⬇ ${cn?'导出 PDF 报告':'Export PDF Report'}</button>
+    <button class="btn btn-ghost btn-sm" onclick="saveReport()" id="saveReportBtn" style="border-color:var(--gold);color:var(--gold)">💾 ${cn?'保存报告':'Save Report'}</button>
   </div>`;
 
   // Legal footer
@@ -588,247 +694,242 @@ function requestConsult(){
 
 // ===== PDF Export (Professional with Cover, TOC, Disclaimer) =====
 function exportPDF(){
-  const d = lastReportData || getDemoReportData();
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const W=210, H=297, M=18, CW=W-M*2;
-  const now=new Date();
-  const dateStr=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  const reportId='GTM-'+Date.now().toString(36).toUpperCase();
+  try {
+    // Check CDN loaded
+    if(!window.jspdf){alert('PDF library not loaded. Please refresh the page and try again.');return;}
+    const d = lastReportData || getDemoReportData();
+    const {jsPDF} = window.jspdf;
+    const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210, H=297, M=18, CW=W-M*2;
+    const now=new Date();
+    const dateStr=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const reportId='GTM-'+Date.now().toString(36).toUpperCase();
 
-  const C={
-    accent:[13,147,115], accentLight:[240,250,246],
-    dark:[26,26,46], mid:[100,100,120], light:[150,150,170],
-    white:[255,255,255], bg:[245,247,250],
-    pass:[22,163,74], passBg:[220,252,231],
-    warn:[217,119,6], warnBg:[254,243,199],
-    fail:[220,38,38], failBg:[254,226,226],
-    info:[37,99,235], infoBg:[219,234,254],
-    border:[229,231,235], recBg:[255,251,235], recBorder:[253,230,138]
-  };
-  function statusColor(s){return s==='pass'?C.pass:s==='warn'?C.warn:s==='fail'?C.fail:C.info}
-  let y=M;
-  function checkPage(need){if(y+need>H-20){doc.addPage();y=M;return true}return false}
-  function pageFooter(){
-    doc.setFontSize(7);doc.setTextColor(...C.light);
-    doc.text('GoToMarket Compliance Lab  |  Confidential',M,H-10);
-    doc.text(`Page ${doc.internal.getNumberOfPages()}`,W-M,H-10,{align:'right'});
-  }
-
-  // ======== PAGE 1: COVER ========
-  doc.setFillColor(...C.accent);
-  doc.rect(0,0,W,H,'F');
-  // White content area
-  doc.setFillColor(...C.white);
-  doc.roundedRect(M,M,CW,H-M*2,4,4,'F');
-  // Brand
-  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.accent);
-  doc.text('GoToMarket Compliance Lab',M+16,M+24);
-  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.mid);
-  doc.text('Global Regulatory & Market Entry Intelligence Platform',M+16,M+31);
-  // Divider
-  doc.setDrawColor(...C.accent);doc.setLineWidth(1);
-  doc.line(M+16,M+38,M+CW-16,M+38);
-  // Title
-  doc.setFont('helvetica','bold');doc.setFontSize(26);doc.setTextColor(...C.dark);
-  doc.text('Product Compliance Risk',M+16,M+62);
-  doc.text('& Structural Assessment Report',M+16,M+72);
-  // Score
-  doc.setFillColor(...C.accentLight);
-  doc.roundedRect(M+16,M+86,CW-32,28,3,3,'F');
-  doc.setFillColor(...C.white);doc.setDrawColor(...C.accent);doc.setLineWidth(1.5);
-  doc.circle(M+32,M+100,10,'FD');
-  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...C.accent);
-  doc.text(String(d.overallScore),M+32,M+102,{align:'center'});
-  doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(...C.dark);
-  doc.text('Overall Compliance Risk Score',M+48,M+96);
-  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...C.mid);
-  const vd=d.overallVerdict||'';
-  doc.text(doc.splitTextToSize(vd,CW-68),M+48,M+102);
-  // Meta
-  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.mid);
-  doc.text(`Report Date: ${dateStr}`,M+16,M+130);
-  doc.text(`Report ID: ${reportId}`,M+16,M+137);
-  // Disclaimer box
-  doc.setFillColor(248,249,250);doc.setDrawColor(...C.border);doc.setLineWidth(0.3);
-  doc.roundedRect(M+16,H-M-70,CW-32,30,2,2,'FD');
-  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.mid);
-  doc.text('DISCLAIMER',M+20,H-M-62);
-  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.light);
-  const disc='This report is generated by AI for structural compliance risk reference only. It does not constitute legal advice, regulatory approval, or official certification. The U.S. FDA does not approve individual food or dietary supplement products. FDA registration applies to manufacturing facilities per 21 CFR 1.225. This platform does not directly access FDA internal databases. Final compliance must be confirmed by licensed regulatory professionals.';
-  doc.text(doc.splitTextToSize(disc,CW-40),M+20,H-M-56);
-  // Bottom brand bar
-  doc.setFillColor(...C.accent);
-  doc.rect(M,H-M-28,CW,28,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.white);
-  doc.text('GoToMarket Compliance Lab',M+16,H-M-16);
-  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(176,232,216);
-  doc.text(`(c) ${now.getFullYear()} GoToMarket Compliance Lab. All rights reserved.`,M+16,H-M-10);
-
-  // ======== PAGE 2: TABLE OF CONTENTS ========
-  doc.addPage();
-  y=M;
-  doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
-  y=20;
-  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(...C.dark);
-  doc.text('Table of Contents',M,y);
-  y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+50,y);
-  y+=14;
-  const toc=[
-    ['1','Ingredient Risk Assessment','ingredientRisk'],
-    ['2','Label Compliance Review','labelCompliance'],
-    ['3','Facility Registration Status','facilityRegistration'],
-    ['4','Marketing Claim Risk Analysis','marketingClaims'],
-    ['5','Recommendations & Action Items','recommendations'],
-    ['6','Disclaimer & Legal Notice','disclaimer']
-  ];
-  toc.forEach(([num,title])=>{
-    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.accent);
-    doc.text(num+'.',M,y);
-    doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...C.dark);
-    doc.text(title,M+10,y);
-    y+=9;
-  });
-  pageFooter();
-
-  // ======== SECTION PAGES ========
-  function drawSection(icon,title,sectionNum,badgeText,badgeStatus,items,nameKey,noteKey,summary,riskPercent,riskLabel,extraNote){
-    doc.addPage();y=M;
-    doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
-    y=16;
-    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
-    doc.text(`SECTION ${sectionNum}`,M,y);
-    y+=7;
-    doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
-    doc.text(`${title}`,M,y);
-    y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);
-    y+=8;
-
-    const tableData=items.map(it=>{
-      const name=it[nameKey+'Cn']||it[nameKey]||'';
-      const note=it[noteKey]||it.status||'';
-      const reg=it.regulation||'';
-      return [name,note,reg];
-    });
-    doc.autoTable({
-      startY:y, margin:{left:M,right:M},
-      head:[['Item','Assessment','Regulation']],
-      body:tableData,
-      theme:'striped',
-      styles:{fontSize:8,cellPadding:{top:3,bottom:3,left:3,right:3},textColor:C.dark,lineColor:C.border,lineWidth:0.15},
-      headStyles:{fillColor:C.bg,textColor:C.mid,fontStyle:'bold',fontSize:7},
-      columnStyles:{0:{cellWidth:CW*0.3},1:{cellWidth:CW*0.42},2:{cellWidth:CW*0.28,fontStyle:'italic',textColor:C.light,fontSize:7}},
-      didParseCell:function(data){
-        if(data.section==='body'&&data.column.index===1){
-          const st=items[data.row.index]?.status;
-          if(st)data.cell.styles.textColor=statusColor(st);
-        }
-      }
-    });
-    y=doc.lastAutoTable.finalY+6;
-
-    if(typeof riskPercent==='number'){
-      checkPage(12);
+    const C={
+      accent:[13,147,115], accentLight:[240,250,246],
+      dark:[26,26,46], mid:[100,100,120], light:[150,150,170],
+      white:[255,255,255], bg:[245,247,250],
+      pass:[22,163,74], passBg:[220,252,231],
+      warn:[217,119,6], warnBg:[254,243,199],
+      fail:[220,38,38], failBg:[254,226,226],
+      info:[37,99,235], infoBg:[219,234,254],
+      border:[229,231,235], recBg:[255,251,235], recBorder:[253,230,138]
+    };
+    function statusColor(s){return s==='pass'?C.pass:s==='warn'?C.warn:s==='fail'?C.fail:C.info}
+    let y=M;
+    function checkPage(need){if(y+need>H-20){doc.addPage();y=M;return true}return false}
+    function pageFooter(){
+      const pn=doc.internal.getNumberOfPages();
       doc.setFontSize(7);doc.setTextColor(...C.light);
-      doc.text(riskLabel||'Risk Level',M,y+2);
-      const rl=riskPercent>65?'HIGH':riskPercent>35?'MEDIUM':'LOW';
-      doc.text(rl,W-M,y+2,{align:'right'});
-      y+=4;
-      doc.setFillColor(...C.border);doc.roundedRect(M,y,CW,3,1,1,'F');
-      const rc=riskPercent>65?C.fail:riskPercent>35?C.warn:C.pass;
-      doc.setFillColor(...rc);doc.roundedRect(M,y,CW*riskPercent/100,3,1,1,'F');
-      y+=8;
+      doc.text('GoToMarket Compliance Lab  |  Confidential',M,H-10);
+      doc.text('Page '+pn,W-M,H-10,{align:'right'});
     }
-    if(summary){
-      checkPage(14);
-      doc.setFillColor(250,250,250);doc.roundedRect(M,y,CW,12,2,2,'F');
-      doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(...C.light);
-      doc.text(doc.splitTextToSize(summary,CW-8),M+4,y+5);
-      y+=16;
-    }
-    if(extraNote){
-      checkPage(14);
-      doc.setFillColor(...C.infoBg);doc.roundedRect(M,y,CW,12,2,2,'F');
-      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.info);
-      doc.text(doc.splitTextToSize(extraNote,CW-8),M+4,y+5);
-      y+=16;
-    }
+
+    // ======== PAGE 1: COVER ========
+    doc.setFillColor(...C.accent);
+    doc.rect(0,0,W,H,'F');
+    doc.setFillColor(...C.white);
+    doc.roundedRect(M,M,CW,H-M*2,4,4,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.accent);
+    doc.text('GoToMarket Compliance Lab',M+16,M+24);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.mid);
+    doc.text('Global Regulatory & Market Entry Intelligence Platform',M+16,M+31);
+    doc.setDrawColor(...C.accent);doc.setLineWidth(1);
+    doc.line(M+16,M+38,M+CW-16,M+38);
+    doc.setFont('helvetica','bold');doc.setFontSize(26);doc.setTextColor(...C.dark);
+    doc.text('Product Compliance Risk',M+16,M+62);
+    doc.text('& Structural Assessment Report',M+16,M+72);
+    // Score box
+    doc.setFillColor(...C.accentLight);
+    doc.roundedRect(M+16,M+86,CW-32,28,3,3,'F');
+    doc.setFillColor(...C.white);doc.setDrawColor(...C.accent);doc.setLineWidth(1.5);
+    doc.circle(M+32,M+100,10,'FD');
+    doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...C.accent);
+    doc.text(String(d.overallScore),M+32,M+102,{align:'center'});
+    doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(...C.dark);
+    doc.text('Overall Compliance Risk Score',M+48,M+96);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...C.mid);
+    const vd=d.overallVerdict||'';
+    doc.text(doc.splitTextToSize(vd,CW-68),M+48,M+102);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.mid);
+    doc.text('Report Date: '+dateStr,M+16,M+130);
+    doc.text('Report ID: '+reportId,M+16,M+137);
+    // Disclaimer box
+    doc.setFillColor(248,249,250);doc.setDrawColor(...C.border);doc.setLineWidth(0.3);
+    doc.roundedRect(M+16,H-M-70,CW-32,30,2,2,'FD');
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.mid);
+    doc.text('DISCLAIMER',M+20,H-M-62);
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.light);
+    var disc='This report is generated by AI for structural compliance risk reference only. It does not constitute legal advice, regulatory approval, or official certification. The U.S. FDA does not approve individual food or dietary supplement products. FDA registration applies to manufacturing facilities per 21 CFR 1.225. This platform does not directly access FDA internal databases. Final compliance must be confirmed by licensed regulatory professionals.';
+    doc.text(doc.splitTextToSize(disc,CW-40),M+20,H-M-56);
+    doc.setFillColor(...C.accent);
+    doc.rect(M,H-M-28,CW,28,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.white);
+    doc.text('GoToMarket Compliance Lab',M+16,H-M-16);
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(176,232,216);
+    doc.text('(c) '+now.getFullYear()+' GoToMarket Compliance Lab. All rights reserved.',M+16,H-M-10);
+
+    // ======== PAGE 2: TABLE OF CONTENTS ========
+    doc.addPage();
+    y=M;
+    doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
+    y=20;
+    doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(...C.dark);
+    doc.text('Table of Contents',M,y);
+    y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+50,y);
+    y+=14;
+    var toc=[['1','Ingredient Risk Assessment'],['2','Label Compliance Review'],['3','Facility Registration Status'],['4','Marketing Claim Risk Analysis'],['5','Recommendations & Action Items'],['6','Disclaimer & Legal Notice']];
+    toc.forEach(function(item){
+      doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.accent);
+      doc.text(item[0]+'.',M,y);
+      doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...C.dark);
+      doc.text(item[1],M+10,y);
+      y+=9;
+    });
     pageFooter();
-  }
 
-  const ir=d.ingredientRisk;
-  drawSection('','Ingredient Risk Assessment','1',`${ir.flagCount} Flags`,ir.status,ir.items,'name','note',ir.summary,ir.riskPercent,'Risk Level');
+    // ======== SECTION PAGES ========
+    function drawSection(title,sectionNum,items,nameKey,noteKey,summary,riskPercent,riskLabel,extraNote){
+      doc.addPage();y=M;
+      doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
+      y=16;
+      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
+      doc.text('SECTION '+sectionNum,M,y);
+      y+=7;
+      doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
+      doc.text(title,M,y);
+      y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);
+      y+=8;
 
-  const lc=d.labelCompliance;
-  drawSection('','Label Compliance Review','2',`${lc.passCount}/${lc.totalCount}`,lc.status,lc.items,'name','note',lc.summary);
+      var tableData=items.map(function(it){
+        var name=it[nameKey+'Cn']||it[nameKey]||'';
+        var note=it[noteKey]||it.status||'';
+        var reg=it.regulation||'';
+        return [name,note,reg];
+      });
+      doc.autoTable({
+        startY:y, margin:{left:M,right:M},
+        head:[['Item','Assessment','Regulation']],
+        body:tableData,
+        theme:'striped',
+        styles:{fontSize:8,cellPadding:{top:3,bottom:3,left:3,right:3},textColor:C.dark,lineColor:C.border,lineWidth:0.15},
+        headStyles:{fillColor:C.bg,textColor:C.mid,fontStyle:'bold',fontSize:7},
+        columnStyles:{0:{cellWidth:CW*0.3},1:{cellWidth:CW*0.42},2:{cellWidth:CW*0.28,fontStyle:'italic',textColor:C.light,fontSize:7}},
+        didParseCell:function(data){
+          if(data.section==='body'&&data.column.index===1){
+            var st=items[data.row.index]?items[data.row.index].status:null;
+            if(st)data.cell.styles.textColor=statusColor(st);
+          }
+        }
+      });
+      y=doc.lastAutoTable.finalY+6;
 
-  const fr=d.facilityRegistration;
-  drawSection('','Facility Registration Status','3','Pending',fr.status,fr.items,'name','value',fr.summary,null,null,
-    'Note: Facility FEI/DUNS information must be confirmed with the manufacturer. This platform does not directly access FDA internal databases; verification is based on publicly available information and client-provided documentation.');
+      if(typeof riskPercent==='number'){
+        checkPage(12);
+        doc.setFontSize(7);doc.setTextColor(...C.light);
+        doc.text(riskLabel||'Risk Level',M,y+2);
+        var rl=riskPercent>65?'HIGH':riskPercent>35?'MEDIUM':'LOW';
+        doc.text(rl,W-M,y+2,{align:'right'});
+        y+=4;
+        doc.setFillColor(...C.border);doc.roundedRect(M,y,CW,3,1,1,'F');
+        var rc=riskPercent>65?C.fail:riskPercent>35?C.warn:C.pass;
+        doc.setFillColor(...rc);doc.roundedRect(M,y,CW*riskPercent/100,3,1,1,'F');
+        y+=8;
+      }
+      if(summary){
+        checkPage(14);
+        doc.setFillColor(250,250,250);doc.roundedRect(M,y,CW,12,2,2,'F');
+        doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(...C.light);
+        doc.text(doc.splitTextToSize(summary,CW-8),M+4,y+5);
+        y+=16;
+      }
+      if(extraNote){
+        checkPage(14);
+        doc.setFillColor(...C.infoBg);doc.roundedRect(M,y,CW,12,2,2,'F');
+        doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.info);
+        doc.text(doc.splitTextToSize(extraNote,CW-8),M+4,y+5);
+        y+=16;
+      }
+      pageFooter();
+    }
 
-  const mc=d.marketingClaims;
-  drawSection('','Marketing Claim Risk Analysis','4',`${mc.issueCount} Issues`,mc.status,mc.items,'claim','note',mc.summary,mc.riskPercent,'Claim Risk');
+    var ir=d.ingredientRisk;
+    drawSection('Ingredient Risk Assessment','1',ir.items,'name','note',ir.summary,ir.riskPercent,'Risk Level',null);
 
-  // ======== RECOMMENDATIONS PAGE ========
-  const recs=d.recommendations||[];
-  if(recs.length){
+    var lc=d.labelCompliance;
+    drawSection('Label Compliance Review','2',lc.items,'name','note',lc.summary,null,null,null);
+
+    var fr=d.facilityRegistration;
+    drawSection('Facility Registration Status','3',fr.items,'name','value',fr.summary,null,null,
+      'Note: Facility FEI/DUNS information must be confirmed with the manufacturer. This platform does not directly access FDA internal databases; verification is based on publicly available information and client-provided documentation.');
+
+    var mc=d.marketingClaims;
+    drawSection('Marketing Claim Risk Analysis','4',mc.items,'claim','note',mc.summary,mc.riskPercent,'Claim Risk',null);
+
+    // ======== RECOMMENDATIONS PAGE ========
+    var recs=d.recommendations||[];
+    if(recs.length){
+      doc.addPage();y=M;
+      doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
+      y=16;
+      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
+      doc.text('SECTION 5',M,y);y+=7;
+      doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
+      doc.text('Recommendations & Action Items',M,y);
+      y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);y+=10;
+
+      doc.setFillColor(...C.recBg);doc.setDrawColor(...C.recBorder);doc.setLineWidth(0.3);
+      var recH=8+recs.length*8;
+      doc.roundedRect(M,y,CW,recH,3,3,'FD');
+      var ry=y+6;
+      recs.forEach(function(rec,idx){
+        doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(146,64,14);
+        doc.text((idx+1)+'.',M+4,ry);
+        doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(120,53,15);
+        doc.text(doc.splitTextToSize(rec,CW-16),M+12,ry);
+        ry+=8;
+      });
+      pageFooter();
+    }
+
+    // ======== DISCLAIMER PAGE ========
     doc.addPage();y=M;
     doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
     y=16;
     doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
-    doc.text('SECTION 5',M,y);y+=7;
+    doc.text('SECTION 6',M,y);y+=7;
     doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
-    doc.text('Recommendations & Action Items',M,y);
+    doc.text('Disclaimer & Legal Notice',M,y);
     y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);y+=10;
 
-    doc.setFillColor(...C.recBg);doc.setDrawColor(...C.recBorder);doc.setLineWidth(0.3);
-    const recH=8+recs.length*8;
-    doc.roundedRect(M,y,CW,recH,3,3,'FD');
-    let ry=y+6;
-    recs.forEach((r,i)=>{
-      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(146,64,14);
-      doc.text(`${i+1}.`,M+4,ry);
-      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(120,53,15);
-      doc.text(doc.splitTextToSize(r,CW-16),M+12,ry);
-      ry+=8;
+    var disclaimers=[
+      'This report is generated by the GoToMarket Compliance Lab AI system for structural compliance risk reference purposes only.',
+      'This report does not constitute legal advice, regulatory approval, or official certification of any kind.',
+      'For dietary supplements and food products, the U.S. FDA does not approve or certify individual products. FDA registration applies to manufacturing facilities (21 CFR 1.225), not to specific products or brands.',
+      'This platform does not directly access FDA internal databases. All verification is based on publicly available information and documentation provided by the client.',
+      'Final product compliance determination must be made by licensed regulatory professionals and/or qualified legal counsel.',
+      'GoToMarket Compliance Lab assumes no liability for actions taken based on the contents of this report.'
+    ];
+    disclaimers.forEach(function(txt,idx){
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.dark);
+      var lines=doc.splitTextToSize((idx+1)+'. '+txt,CW-8);
+      doc.text(lines,M+4,y);
+      y+=lines.length*4.5+4;
     });
+
+    y+=10;
+    doc.setFillColor(...C.accent);doc.roundedRect(M,y,CW,20,3,3,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.white);
+    doc.text('GoToMarket Compliance Lab',M+8,y+8);
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(176,232,216);
+    doc.text('(c) '+now.getFullYear()+' GoToMarket Compliance Lab. All rights reserved.',M+8,y+14);
     pageFooter();
+
+    doc.save('GoToMarket_Compliance_Report_'+now.toISOString().split('T')[0]+'.pdf');
+  } catch(err) {
+    console.error('PDF export error:', err);
+    alert('PDF export failed: ' + err.message + '\n\nPlease try refreshing the page.');
   }
-
-  // ======== DISCLAIMER PAGE ========
-  doc.addPage();y=M;
-  doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
-  y=16;
-  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
-  doc.text('SECTION 6',M,y);y+=7;
-  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
-  doc.text('Disclaimer & Legal Notice',M,y);
-  y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);y+=10;
-
-  const disclaimers=[
-    'This report is generated by the GoToMarket Compliance Lab AI system for structural compliance risk reference purposes only.',
-    'This report does not constitute legal advice, regulatory approval, or official certification of any kind.',
-    'For dietary supplements and food products, the U.S. FDA does not approve or certify individual products. FDA registration applies to manufacturing facilities (21 CFR 1.225), not to specific products or brands.',
-    'This platform does not directly access FDA internal databases. All verification is based on publicly available information and documentation provided by the client.',
-    'Final product compliance determination must be made by licensed regulatory professionals and/or qualified legal counsel.',
-    'GoToMarket Compliance Lab assumes no liability for actions taken based on the contents of this report.'
-  ];
-  disclaimers.forEach((d,i)=>{
-    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.dark);
-    const lines=doc.splitTextToSize(`${i+1}. ${d}`,CW-8);
-    doc.text(lines,M+4,y);
-    y+=lines.length*4.5+4;
-  });
-
-  y+=10;
-  doc.setFillColor(...C.accent);doc.roundedRect(M,y,CW,20,3,3,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.white);
-  doc.text('GoToMarket Compliance Lab',M+8,y+8);
-  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(176,232,216);
-  doc.text(`(c) ${now.getFullYear()} GoToMarket Compliance Lab. All rights reserved.`,M+8,y+14);
-  pageFooter();
-
-  doc.save(`GoToMarket_Compliance_Report_${now.toISOString().split('T')[0]}.pdf`);
 }
 
 // Demo data fallback
@@ -914,6 +1015,204 @@ async function exportPPTX(){
     btns.forEach(b=>{b.disabled=false;b.style.opacity='1';b.textContent=cn?'📊 导出 PPT':'📊 Export PPT'});
   }
 }
+
+// ===== Auth State =====
+let currentUser = null;
+
+async function checkAuth() {
+  try {
+    const res = await fetch('/api/auth/me');
+    const data = await res.json();
+    currentUser = data.user;
+    updateAuthUI();
+  } catch(e) { currentUser = null; updateAuthUI(); }
+}
+
+function updateAuthUI() {
+  const authBtns = document.getElementById('authBtns');
+  const userMenu = document.getElementById('userMenu');
+  if (currentUser) {
+    authBtns.style.display = 'none';
+    userMenu.style.display = 'flex';
+    document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+    document.getElementById('userName').textContent = currentUser.name;
+  } else {
+    authBtns.style.display = 'flex';
+    userMenu.style.display = 'none';
+  }
+}
+
+function openAuthModal(tab) {
+  document.getElementById('authModal').classList.add('active');
+  switchAuthTab(tab || 'login');
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('active');
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('regError').classList.remove('show');
+}
+
+function switchAuthTab(tab) {
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+  document.getElementById('formLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('formRegister').classList.toggle('active', tab === 'register');
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  const errEl = document.getElementById('loginError');
+  errEl.classList.remove('show');
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPass').value
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    currentUser = data.user;
+    updateAuthUI();
+    closeAuthModal();
+  } catch(err) {
+    errEl.textContent = err.message;
+    errEl.classList.add('show');
+  }
+}
+
+async function doRegister(e) {
+  e.preventDefault();
+  const errEl = document.getElementById('regError');
+  errEl.classList.remove('show');
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: document.getElementById('regName').value,
+        email: document.getElementById('regEmail').value,
+        company: document.getElementById('regCompany').value,
+        password: document.getElementById('regPass').value
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    currentUser = data.user;
+    updateAuthUI();
+    closeAuthModal();
+  } catch(err) {
+    errEl.textContent = err.message;
+    errEl.classList.add('show');
+  }
+}
+
+async function doLogout() {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  currentUser = null;
+  updateAuthUI();
+  closeUserDropdown();
+}
+
+function toggleUserDropdown() {
+  document.getElementById('userDropdown').classList.toggle('open');
+}
+function closeUserDropdown() {
+  document.getElementById('userDropdown').classList.remove('open');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.user-menu') && !e.target.closest('.user-dropdown')) closeUserDropdown();
+});
+
+// ===== Dashboard (My Reports) =====
+async function openDashboard() {
+  closeUserDropdown();
+  if (!currentUser) { openAuthModal('login'); return; }
+  document.getElementById('dashOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  loadSavedReports();
+}
+
+function closeDashboard() {
+  document.getElementById('dashOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+async function loadSavedReports() {
+  const cn = lang === 'cn';
+  const list = document.getElementById('savedReportsList');
+  list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-3)">Loading...</div>';
+  try {
+    const res = await fetch('/api/reports');
+    const data = await res.json();
+    if (!data.reports || !data.reports.length) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>${cn ? '暂无已保存的报告。运行合规分析后即可保存。' : 'No saved reports yet. Run a compliance analysis and save it here.'}</p></div>`;
+      return;
+    }
+    list.innerHTML = data.reports.map(r => {
+      const date = new Date(r.created_at).toLocaleDateString(cn ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      return `<div class="saved-card" onclick="loadReport('${r.report_id}')">
+        <div class="saved-left"><div class="saved-title">${r.title}</div><div class="saved-meta">${r.report_id}  ·  ${date}</div></div>
+        <div class="saved-score">${r.score}</div>
+        <div class="saved-actions"><button class="saved-del" onclick="event.stopPropagation();deleteReport('${r.report_id}')" title="Delete">🗑</button></div>
+      </div>`;
+    }).join('');
+  } catch(err) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>${err.message}</p></div>`;
+  }
+}
+
+async function loadReport(reportId) {
+  try {
+    const res = await fetch('/api/reports/' + reportId);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    closeDashboard();
+    renderReport(data.report.data);
+  } catch(err) {
+    alert('Failed to load report: ' + err.message);
+  }
+}
+
+async function deleteReport(reportId) {
+  const cn = lang === 'cn';
+  if (!confirm(cn ? '确定要删除此报告吗？' : 'Delete this report?')) return;
+  try {
+    await fetch('/api/reports/' + reportId, { method: 'DELETE' });
+    loadSavedReports();
+  } catch(err) {
+    alert('Failed to delete: ' + err.message);
+  }
+}
+
+// ===== Save Report =====
+async function saveReport() {
+  const cn = lang === 'cn';
+  if (!currentUser) { openAuthModal('login'); return; }
+  if (!lastReportData) { alert(cn ? '请先运行分析' : 'Please run an analysis first'); return; }
+
+  const btn = document.getElementById('saveReportBtn');
+  if (btn) { btn.disabled = true; btn.textContent = cn ? '⏳ 保存中...' : '⏳ Saving...'; }
+  try {
+    const res = await fetch('/api/reports', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reportData: lastReportData, lang })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    if (btn) { btn.textContent = cn ? '✅ 已保存' : '✅ Saved'; btn.style.borderColor = 'var(--success)'; btn.style.color = 'var(--success)'; }
+  } catch(err) {
+    alert((cn ? '保存失败：' : 'Save failed: ') + err.message);
+    if (btn) { btn.disabled = false; btn.textContent = cn ? '💾 保存报告' : '💾 Save Report'; }
+  }
+}
+
+// Check auth on load
+checkAuth();
 
 // ===== Scroll Reveal =====
 const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}})},{threshold:.08});
