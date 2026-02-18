@@ -217,6 +217,38 @@
   /* hide result sections initially */
   #resultsSection{display:none}
   #resultsSection.visible{display:block;animation:fu .5s ease both}
+
+  /* Report Full-Screen Overlay */
+  .report-overlay{display:none;position:fixed;inset:0;z-index:200;background:var(--bg-0);overflow-y:auto;animation:fu .3s ease both}
+  .report-overlay.active{display:block}
+  .report-inner{max-width:960px;margin:0 auto;padding:32px 40px 60px}
+  .report-close{position:fixed;top:16px;right:24px;z-index:201;width:40px;height:40px;border-radius:10px;background:var(--bg-3);border:1px solid var(--border);color:var(--text-0);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .report-close:hover{background:var(--danger);border-color:var(--danger)}
+  .report-header{text-align:center;padding:24px 0 32px;border-bottom:2px solid var(--border-accent);margin-bottom:32px}
+  .report-brand{font-family:var(--font-d);font-size:14px;color:var(--accent);margin-bottom:8px}
+  .report-title{font-family:var(--font-d);font-size:28px;font-weight:700;margin-bottom:8px}
+  .report-meta{font-size:11px;color:var(--text-3);font-family:var(--font-m)}
+  .report-note{margin-top:12px;padding:10px 16px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--text-3);line-height:1.5;text-align:left;display:inline-block;max-width:600px}
+  /* Bigger dash card styles in overlay */
+  .report-overlay .dash-card{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r-lg)}
+  .report-overlay .dash-hd{padding:18px 24px}
+  .report-overlay .dash-t{font-size:16px}
+  .report-overlay .dash-body{padding:20px 24px}
+  .report-overlay .dash-row{padding:12px 0;font-size:14px}
+  .report-overlay .dash-row-l{font-size:14px;font-weight:500}
+  .report-overlay .tag{font-size:12px;padding:4px 12px}
+  .report-overlay .dash-summary{font-size:13px;padding:14px 24px}
+  .report-overlay .risk-label{font-size:12px}
+  .report-overlay .risk-bar{height:7px}
+  .report-overlay .score-banner{padding:32px 36px}
+  .report-overlay .score-val{font-size:40px}
+  .report-overlay .score-verdict{font-size:18px}
+  .report-overlay .score-sub{font-size:14px}
+  .report-overlay .rec-item{font-size:13px}
+  /* Regulatory footnote */
+  .reg-ref{display:block;font-size:10px;color:var(--text-3);font-family:var(--font-m);margin-top:3px;font-style:normal}
+  .facility-note{margin-top:10px;padding:10px 14px;background:var(--info-dim);border-radius:8px;font-size:11px;color:var(--info);line-height:1.5}
+  .platform-note{padding:12px 24px;font-size:10px;color:var(--text-3);line-height:1.5;border-top:1px solid var(--border);font-style:italic}
 </style>
 </head>
 <body id="app">
@@ -248,10 +280,10 @@
   <div class="hero-grid"></div>
   <div class="hero-inner">
     <div class="hero-badge" data-en="Global Regulatory & Market Entry Intelligence Platform" data-cn="全球合规与市场拓展智能平台">Global Regulatory & Market Entry Intelligence Platform</div>
-    <h1 data-en='Get Your Global <em>Compliance Report</em>' data-cn='获取您的产品<em>合规结构评估</em>'>Get Your Global <em>Compliance Report</em></h1>
-    <p class="hero-desc" data-en="From ingredient screening to regulatory architecture and go-to-market readiness." data-cn="从成分筛查到合规架构设计，提升产品国际可信度与规范性。">From ingredient screening to regulatory architecture and go-to-market readiness.</p>
+    <h1 data-en='Product <em>Compliance Risk Review</em>' data-cn='产品<em>合规风险审查</em>'>Product <em>Compliance Risk Review</em></h1>
+    <p class="hero-desc" data-en="AI-powered regulatory risk screening for food and dietary supplement exports to the U.S. market." data-cn="基于 AI 的食品及膳食补充剂出口美国市场合规风险筛查。">AI-powered regulatory risk screening for food and dietary supplement exports to the U.S. market.</p>
     <div class="hero-actions">
-      <button class="btn btn-accent" onclick="sTo('uploadArea')" data-en="⚡ Start Compliance Screening" data-cn="⚡ 开始合规筛查">⚡ Start Compliance Screening</button>
+      <button class="btn btn-accent" onclick="sTo('uploadArea')" data-en="⚡ Start Risk Screening" data-cn="⚡ 开始风险筛查">⚡ Start Risk Screening</button>
       <button class="btn btn-ghost" onclick="document.getElementById('fInput').click()" data-en="📎 Upload Product Files" data-cn="📎 上传产品资料">📎 Upload Product Files</button>
     </div>
     <!-- /hero-actions -->
@@ -315,7 +347,7 @@
   <div class="layers">
     <div class="ly-card ly-1"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">01</div><div class="ly-tag" data-en="Layer 1" data-cn="第一层">Layer 1</div><div class="ly-title" data-en="Digital Screening" data-cn="在线合规筛查">Digital Screening</div><div class="ly-cn" data-en="Online Compliance Screening" data-cn="AI 进行初步风险识别">Online Compliance Screening</div></div><div class="ly-desc" data-en="AI-powered initial risk identification. Automated ingredient analysis, label format checking, and preliminary compliance scoring. Future integration with toxicology and regulatory databases." data-cn="AI 驱动的初步风险识别。自动化成分分析、标签格式检查和初步合规评分。后期将接入毒理数据库与法规数据库。">AI-powered initial risk identification. Automated ingredient analysis, label format checking, and preliminary compliance scoring. Future integration with toxicology and regulatory databases.</div></div>
     <div class="ly-card ly-2"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">02</div><div class="ly-tag" data-en="Layer 2" data-cn="第二层">Layer 2</div><div class="ly-title" data-en="Advisory Optimization" data-cn="人工合规优化">Advisory Optimization</div><div class="ly-cn" data-en="Manual Compliance Optimization" data-cn="人工分析标签、成分与表达">Manual Compliance Optimization</div></div><div class="ly-desc" data-en="Expert human review of labels, ingredient declarations, and marketing language. Professional optimization of compliance structure and bilingual content accuracy." data-cn="专家人工审查标签、成分声明及宣传语言。专业优化合规结构与双语内容准确性。">Expert human review of labels, ingredient declarations, and marketing language. Professional optimization of compliance structure and bilingual content accuracy.</div></div>
-    <div class="ly-card ly-3"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">03</div><div class="ly-tag" data-en="Layer 3" data-cn="第三层">Layer 3</div><div class="ly-title" data-en="Legal & Structural Support" data-cn="法务与结构升级支持">Legal & Structural Support</div><div class="ly-cn" data-en="US Regulatory Consultant Confirmation" data-cn="对接美国法规顾问进行专业确认">US Regulatory Consultant Confirmation</div></div><div class="ly-desc" data-en="Direct engagement with US regulatory attorneys for legal confirmation, structural upgrades, and official documentation support." data-cn="直接对接美国法规律师进行法律确认、结构升级及官方文件支持。">Direct engagement with US regulatory attorneys for legal confirmation, structural upgrades, and official documentation support.</div></div>
+    <div class="ly-card ly-3"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">03</div><div class="ly-tag" data-en="Layer 3" data-cn="第三层">Layer 3</div><div class="ly-title" data-en="Market Entry & Brand Strategy" data-cn="市场拓展与品牌战略">Market Entry & Brand Strategy</div><div class="ly-cn" data-en="Sales Channels, Legal & Global Expansion" data-cn="销售渠道 · 法务对接 · 全球化战略规划">Sales Channels, Legal & Global Expansion</div></div><div class="ly-desc" data-en="Sales channel development, legal counsel engagement, and strategic market expansion planning. Ensure compliant brand positioning and global distribution readiness." data-cn="销售渠道开发、法务顾问对接及战略性市场拓展规划。提升品牌全球竞争力，确保品牌在目标市场的合规销售与可持续增长。">Sales channel development, legal counsel engagement, and strategic market expansion planning. Ensure compliant brand positioning and global distribution readiness.</div></div>
   </div>
 </section>
 
@@ -323,9 +355,9 @@
 
 <!-- DASHBOARD / REPORT -->
 <section class="section" id="dashboard">
-  <div class="sec-label" data-en="Report Preview" data-cn="报告预览">Report Preview</div>
-  <div class="sec-title" data-en="Structured Compliance Report" data-cn="结构化合规报告">Structured Compliance Report</div>
-  <div class="sec-desc" data-en="Upload your files and run AI analysis to generate a real compliance report below." data-cn="上传文件并运行 AI 分析，即可在下方生成真实合规报告。">Upload your files and run AI analysis to generate a real compliance report below.</div>
+  <div class="sec-label" data-en="Compliance Report" data-cn="合规报告">Compliance Report</div>
+  <div class="sec-title" data-en="Compliance Risk & Structural Assessment" data-cn="产品合规风险与结构评估报告">Compliance Risk & Structural Assessment</div>
+  <div class="sec-desc" data-en="Upload product files for AI-powered regulatory risk analysis. Full report opens in a dedicated view." data-cn="上传产品资料进行 AI 合规风险分析。完整报告将在独立页面展示。">Upload product files for AI-powered regulatory risk analysis. Full report opens in a dedicated view.</div>
 
   <!-- Dynamic results rendered here -->
   <div id="reportContent">
@@ -333,13 +365,12 @@
     <div class="dash-grid">
       <div class="dash-card"><div class="dash-hd"><span class="dash-t">🧪 <span data-en="Ingredient Risk Overview" data-cn="成分风险概览">Ingredient Risk Overview</span></span><span class="tag tag-warn" data-en="3 Flags" data-cn="3 项标记">3 Flags</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="Sodium Benzoate (E211)" data-cn="苯甲酸钠 (E211)">Sodium Benzoate (E211)</span><span class="tag tag-pass">GRAS</span></div><div class="dash-row"><span class="dash-row-l" data-en="Red No. 40 (Allura Red)" data-cn="诱惑红40号">Red No. 40 (Allura Red)</span><span class="tag tag-warn" data-en="Requires Listing" data-cn="需标注">Requires Listing</span></div><div class="dash-row"><span class="dash-row-l" data-en="Steviol Glycosides" data-cn="甜菊糖苷">Steviol Glycosides</span><span class="tag tag-pass">GRAS</span></div><div class="dash-row"><span class="dash-row-l" data-en="Titanium Dioxide (E171)" data-cn="二氧化钛 (E171)">Titanium Dioxide (E171)</span><span class="tag tag-fail" data-en="Review" data-cn="需审查">Review</span></div><div class="risk-wrap"><div class="risk-label"><span data-en="Risk Level" data-cn="风险等级">Risk Level</span><span data-en="Medium" data-cn="中等">Medium</span></div><div class="risk-bar"><div class="risk-fill" style="width:55%;background:linear-gradient(90deg,var(--success),var(--warn))"></div></div></div></div></div>
       <div class="dash-card"><div class="dash-hd"><span class="dash-t">🏷️ <span data-en="Label Compliance Review" data-cn="标签合规审查">Label Compliance Review</span></span><span class="tag tag-pass">7/9</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="Nutrition Facts (2020)" data-cn="营养成分表 (2020)">Nutrition Facts (2020)</span><span class="tag tag-pass" data-en="Pass" data-cn="通过">Pass</span></div><div class="dash-row"><span class="dash-row-l" data-en="Allergen Declaration" data-cn="过敏原声明">Allergen Declaration</span><span class="tag tag-warn" data-en="Review" data-cn="待审查">Review</span></div><div class="dash-row"><span class="dash-row-l" data-en="Net Weight (Dual)" data-cn="净含量（双单位）">Net Weight (Dual)</span><span class="tag tag-fail" data-en="Missing oz" data-cn="缺少 oz">Missing oz</span></div><div class="dash-row"><span class="dash-row-l" data-en="Country of Origin" data-cn="原产国">Country of Origin</span><span class="tag tag-pass" data-en="Pass" data-cn="通过">Pass</span></div></div></div>
-      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🏭 <span data-en="Facility Registration" data-cn="工厂注册状态">Facility Registration</span></span><span class="tag tag-info" data-en="Verify" data-cn="待验证">Verify</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="FDA Registration" data-cn="FDA 注册">FDA Registration</span><span class="tag tag-info" data-en="Needed" data-cn="需提供">Needed</span></div><div class="dash-row"><span class="dash-row-l" data-en="US Agent" data-cn="美国代理人">US Agent</span><span class="tag tag-warn" data-en="Unknown" data-cn="未知">Unknown</span></div><div class="dash-row"><span class="dash-row-l" data-en="FSVP Importer" data-cn="FSVP 进口商">FSVP Importer</span><span class="tag tag-warn" data-en="Pending" data-cn="待确认">Pending</span></div></div></div>
+      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🏭 <span data-en="Facility Registration" data-cn="工厂注册状态">Facility Registration</span></span><span class="tag tag-info" data-en="Pending Verification" data-cn="待核验">Pending Verification</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="FDA Facility (FEI)" data-cn="FDA 设施编号 (FEI)">FDA Facility (FEI)</span><span class="tag tag-info" data-en="Verify with facility" data-cn="需与工厂确认">Verify with facility</span></div><div class="dash-row"><span class="dash-row-l" data-en="DUNS Number" data-cn="DUNS 编号">DUNS Number</span><span class="tag tag-info" data-en="Verify with facility" data-cn="需与工厂确认">Verify with facility</span></div><div class="dash-row"><span class="dash-row-l" data-en="FSVP Importer" data-cn="FSVP 进口商">FSVP Importer</span><span class="tag tag-warn" data-en="Pending" data-cn="待确认">Pending</span></div><div style="margin-top:8px;padding:8px 10px;background:var(--info-dim);border-radius:8px;font-size:10px;color:var(--info);line-height:1.5" data-en="Note: Facility FEI/DUNS information must be confirmed with the manufacturer and verified as currently active." data-cn="注：需与工厂确认是否持有设施 FEI 或 DUNS 编号，并确保在有效期内。">Note: Facility FEI/DUNS information must be confirmed with the manufacturer and verified as currently active.</div></div><div class="dash-summary" data-en="This platform does not directly access FDA internal databases. Verification is based on publicly available information and client-provided documentation." data-cn="本平台不直接访问 FDA 内部数据库，仅基于公开信息与客户提供资料进行核查。">This platform does not directly access FDA internal databases. Verification is based on publicly available information and client-provided documentation.</div></div>
       <div class="dash-card"><div class="dash-hd"><span class="dash-t">💬 <span data-en="Marketing Claim Risk" data-cn="宣传语言风险">Marketing Claim Risk</span></span><span class="tag tag-warn" data-en="2 Issues" data-cn="2 项问题">2 Issues</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l">"All Natural"</span><span class="tag tag-warn" data-en="Vague" data-cn="模糊">Vague</span></div><div class="dash-row"><span class="dash-row-l">"Boosts Immunity"</span><span class="tag tag-fail" data-en="Unauthorized" data-cn="未授权">Unauthorized</span></div><div class="dash-row"><span class="dash-row-l">"Low Sugar"</span><span class="tag tag-pass" data-en="OK" data-cn="合规">OK</span></div><div class="risk-wrap"><div class="risk-label"><span data-en="Claim Risk" data-cn="宣称风险">Claim Risk</span><span data-en="High" data-cn="较高">High</span></div><div class="risk-bar"><div class="risk-fill" style="width:72%;background:linear-gradient(90deg,var(--warn),var(--danger))"></div></div></div></div></div>
     </div>
     <div class="dash-actions">
-      <button class="btn btn-accent btn-sm" onclick="exportPDF()" data-en="⬇ Export PDF" data-cn="⬇ 导出 PDF">⬇ Export PDF</button>
-      <button class="btn btn-ghost btn-sm" data-en="📧 Email Report" data-cn="📧 邮件发送">📧 Email Report</button>
-      <button class="btn btn-ghost btn-sm" data-en="🔄 Request Expert Review" data-cn="🔄 申请专家审查">🔄 Request Expert Review</button>
+      <button class="btn btn-accent btn-sm" onclick="requestConsult()" data-en="💬 Request Expert Consultation" data-cn="💬 申请人工咨询" style="background:linear-gradient(135deg,var(--accent),var(--accent-dim))">💬 Request Expert Consultation</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportPDF()" data-en="⬇ Export PDF Report" data-cn="⬇ 导出 PDF 报告">⬇ Export PDF Report</button>
     </div>
   </div>
 </section>
@@ -362,6 +393,13 @@
   <div class="footer-l"><span data-en="© 2026 GoToMarket Compliance Lab. For informational purposes only." data-cn="© 2026 GoToMarket Compliance Lab. 仅供信息参考。">© 2026 GoToMarket Compliance Lab. For informational purposes only.</span></div>
   <div class="footer-r"><a href="#" data-en="Privacy" data-cn="隐私政策">Privacy</a><a href="#" data-en="Terms" data-cn="服务条款">Terms</a><a href="#" data-en="Contact" data-cn="联系我们">Contact</a></div>
 </footer>
+<div style="text-align:center;padding:0 var(--pad) 24px;font-size:10px;color:var(--text-3);opacity:0.7;line-height:1.6;font-family:var(--font-cn)"><span data-en="This platform provides structural compliance assessment and risk advisory only. It does not constitute legal advice, regulatory approval, or official certification." data-cn="本平台提供的是结构性合规评估与风险提示，不构成法律意见或监管批准。">This platform provides structural compliance assessment and risk advisory only. It does not constitute legal advice, regulatory approval, or official certification.</span></div>
+
+<!-- Report Full-Screen Overlay -->
+<div class="report-overlay" id="reportOverlay">
+  <button class="report-close" onclick="closeReport()">✕</button>
+  <div class="report-inner" id="reportOverlayContent"></div>
+</div>
 
 <script>
 // ===== State =====
@@ -444,43 +482,67 @@ async function startAnalysis(){
   }
 }
 
-// ===== Render Report =====
+// ===== Render Report (Full-Screen Overlay) =====
 function renderReport(d){
   lastReportData=d;
   const cn=lang==='cn';
-  const rc=document.getElementById('reportContent');
+  const now=new Date();
+  const dateStr=now.toLocaleDateString(cn?'zh-CN':'en-US',{year:'numeric',month:'long',day:'numeric'});
+  const reportId='GTM-'+Date.now().toString(36).toUpperCase();
 
   function tagClass(s){return s==='pass'?'tag-pass':s==='warn'?'tag-warn':s==='fail'?'tag-fail':'tag-info'}
   function riskGrad(p){return p>65?'linear-gradient(90deg,var(--warn),var(--danger))':p>35?'linear-gradient(90deg,var(--success),var(--warn))':'linear-gradient(90deg,var(--success),var(--accent))'}
 
-  let html='<div class="dash-grid">';
+  let html='';
+  // Report Header
+  html+=`<div class="report-header">
+    <div class="report-brand">GoToMarket Compliance Lab</div>
+    <div class="report-title">${cn?'产品合规风险与结构评估报告':'Product Compliance Risk & Structural Assessment Report'}</div>
+    <div class="report-meta">${cn?'报告日期':'Report Date'}: ${dateStr}　|　ID: ${reportId}</div>
+    <div class="report-note">${cn?'本报告由 AI 系统基于上传资料自动生成，仅作为结构性合规风险参考，不构成法律意见。最终合规确认请咨询持牌法规顾问。':'This report is auto-generated by AI based on uploaded materials for structural compliance risk reference only. It does not constitute legal advice. Please consult licensed regulatory professionals for final confirmation.'}</div>
+  </div>`;
 
-  // Ingredient Risk
+  html+='<div class="dash-grid">';
+
+  // Ingredient Risk - with regulatory citations
   const ir=d.ingredientRisk;
   html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🧪 ${cn?'成分风险概览':'Ingredient Risk Overview'}</span><span class="tag ${tagClass(ir.status)}">${ir.flagCount} ${cn?'项标记':'Flags'}</span></div><div class="dash-body">`;
-  ir.items.forEach(it=>{html+=`<div class="dash-row"><span class="dash-row-l">${cn?it.nameCn:it.name}</span><span class="tag ${tagClass(it.status)}">${it.note||it.status}</span></div>`});
-  html+=`<div class="risk-wrap"><div class="risk-label"><span>${cn?'风险等级':'Risk Level'}</span><span>${cn?(ir.overallRisk==='high'?'高':ir.overallRisk==='medium'?'中':'低'):ir.overallRisk}</span></div><div class="risk-bar"><div class="risk-fill" style="width:${ir.riskPercent}%;background:${riskGrad(ir.riskPercent)}"></div></div></div>`;
+  ir.items.forEach(it=>{
+    const name=cn?(it.nameCn||it.name):it.name;
+    const note=it.note||it.status;
+    html+=`<div class="dash-row"><span class="dash-row-l">${name}<span class="reg-ref">${it.regulation||''}</span></span><span class="tag ${tagClass(it.status)}">${note}</span></div>`;
+  });
+  html+=`<div class="risk-wrap"><div class="risk-label"><span>${cn?'风险等级':'Risk Level'}</span><span>${cn?(ir.overallRisk==='high'?'高风险':ir.overallRisk==='medium'?'中等风险':'低风险'):ir.overallRisk}</span></div><div class="risk-bar"><div class="risk-fill" style="width:${ir.riskPercent}%;background:${riskGrad(ir.riskPercent)}"></div></div></div>`;
   if(ir.summary)html+=`</div><div class="dash-summary">${ir.summary}</div>`;
   html+=`</div>`;
 
   // Label Compliance
   const lc=d.labelCompliance;
   html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🏷️ ${cn?'标签合规审查':'Label Compliance Review'}</span><span class="tag ${tagClass(lc.status)}">${lc.passCount}/${lc.totalCount}</span></div><div class="dash-body">`;
-  lc.items.forEach(it=>{html+=`<div class="dash-row"><span class="dash-row-l">${cn?it.nameCn:it.name}</span><span class="tag ${tagClass(it.status)}">${it.note||it.status}</span></div>`});
+  lc.items.forEach(it=>{
+    const name=cn?(it.nameCn||it.name):it.name;
+    html+=`<div class="dash-row"><span class="dash-row-l">${name}<span class="reg-ref">${it.regulation||''}</span></span><span class="tag ${tagClass(it.status)}">${it.note||it.status}</span></div>`;
+  });
   if(lc.summary)html+=`</div><div class="dash-summary">${lc.summary}</div>`;
   html+=`</div>`;
 
-  // Facility
+  // Facility Registration - with FEI/DUNS note
   const fr=d.facilityRegistration;
-  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🏭 ${cn?'工厂注册状态':'Facility Registration'}</span><span class="tag ${tagClass(fr.status)}">${cn?'已验证':'Verified'}</span></div><div class="dash-body">`;
-  fr.items.forEach(it=>{html+=`<div class="dash-row"><span class="dash-row-l">${cn?it.nameCn:it.name}</span><span class="tag ${tagClass(it.status)}">${it.value||it.status}</span></div>`});
-  if(fr.summary)html+=`</div><div class="dash-summary">${fr.summary}</div>`;
-  html+=`</div>`;
+  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🏭 ${cn?'工厂注册状态':'Facility Registration'}</span><span class="tag ${tagClass(fr.status)}">${cn?'待核验':'Pending Verification'}</span></div><div class="dash-body">`;
+  fr.items.forEach(it=>{
+    const name=cn?(it.nameCn||it.name):it.name;
+    html+=`<div class="dash-row"><span class="dash-row-l">${name}<span class="reg-ref">${it.regulation||''}</span></span><span class="tag ${tagClass(it.status)}">${it.value||it.status}</span></div>`;
+  });
+  html+=`<div class="facility-note">${cn?'注：需与工厂确认是否持有设施 FEI 或 DUNS 编号，并确保在有效期内。':'Note: Facility FEI/DUNS information must be confirmed with the manufacturer and verified as currently active.'}</div>`;
+  html+=`</div><div class="platform-note">${cn?'本平台不直接访问 FDA 内部数据库，仅基于公开信息与客户提供资料进行核查。':'This platform does not directly access FDA internal databases. Verification is based on publicly available information and client-provided documentation.'}</div></div>`;
 
   // Marketing Claims
   const mc=d.marketingClaims;
   html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">💬 ${cn?'宣传语言风险':'Marketing Claim Risk'}</span><span class="tag ${tagClass(mc.status)}">${mc.issueCount} ${cn?'项问题':'Issues'}</span></div><div class="dash-body">`;
-  mc.items.forEach(it=>{html+=`<div class="dash-row"><span class="dash-row-l">${cn?it.claimCn:it.claim}</span><span class="tag ${tagClass(it.status)}">${it.note||it.status}</span></div>`});
+  mc.items.forEach(it=>{
+    const claim=cn?(it.claimCn||it.claim):it.claim;
+    html+=`<div class="dash-row"><span class="dash-row-l">${claim}<span class="reg-ref">${it.regulation||''}</span></span><span class="tag ${tagClass(it.status)}">${it.note||it.status}</span></div>`;
+  });
   html+=`<div class="risk-wrap"><div class="risk-label"><span>${cn?'宣称风险':'Claim Risk'}</span><span>${cn?(mc.riskLevel==='high'?'较高':mc.riskLevel==='medium'?'中等':'低'):mc.riskLevel}</span></div><div class="risk-bar"><div class="risk-fill" style="width:${mc.riskPercent}%;background:${riskGrad(mc.riskPercent)}"></div></div></div>`;
   if(mc.summary)html+=`</div><div class="dash-summary">${mc.summary}</div>`;
   html+=`</div></div>`;
@@ -489,8 +551,8 @@ function renderReport(d){
   const sc=d.overallScore;
   const circ=264;
   const off=circ-(circ*sc/100);
-  const recs=cn?d.recommendationsCn:d.recommendations;
-  html+=`<div class="score-banner"><div class="score-ring-wrap"><svg viewBox="0 0 90 90"><circle class="sr-bg" cx="45" cy="45" r="42"/><circle class="sr-fill" cx="45" cy="45" r="42" style="stroke-dashoffset:${off}"/></svg><div class="score-num"><div class="score-val">${sc}</div><div class="score-max">/100</div></div></div><div class="score-text"><div class="score-verdict">${cn?'综合合规评分':'Overall Compliance Score'}</div><div class="score-sub">${cn?d.overallVerdictCn:d.overallVerdict}</div>`;
+  const recs=cn?(d.recommendationsCn||d.recommendations):d.recommendations;
+  html+=`<div class="score-banner"><div class="score-ring-wrap"><svg viewBox="0 0 90 90"><circle class="sr-bg" cx="45" cy="45" r="42"/><circle class="sr-fill" cx="45" cy="45" r="42" style="stroke-dashoffset:${off}"/></svg><div class="score-num"><div class="score-val">${sc}</div><div class="score-max">/100</div></div></div><div class="score-text"><div class="score-verdict">${cn?'综合合规风险评分':'Overall Compliance Risk Score'}</div><div class="score-sub">${cn?(d.overallVerdictCn||d.overallVerdict):d.overallVerdict}</div>`;
   if(recs&&recs.length){
     html+=`<div class="rec-list">`;
     recs.forEach(r=>{html+=`<div class="rec-item">${r}</div>`});
@@ -498,24 +560,42 @@ function renderReport(d){
   }
   html+=`</div></div>`;
 
-  // Actions
-  html+=`<div class="dash-actions"><button class="btn btn-accent btn-sm" onclick="exportPDF()">${cn?'⬇ 导出 PDF':'⬇ Export PDF'}</button><button class="btn btn-ghost btn-sm">${cn?'📧 邮件发送':'📧 Email Report'}</button><button class="btn btn-ghost btn-sm">${cn?'🔄 申请专家审查':'🔄 Request Expert Review'}</button></div>`;
+  // Actions - only 2 buttons
+  html+=`<div class="dash-actions">
+    <button class="btn btn-accent btn-sm" onclick="requestConsult()" style="background:linear-gradient(135deg,var(--accent),var(--accent-dim))">💬 ${cn?'申请人工咨询':'Request Expert Consultation'}</button>
+    <button class="btn btn-ghost btn-sm" onclick="exportPDF()">⬇ ${cn?'导出 PDF 报告':'Export PDF Report'}</button>
+  </div>`;
 
-  rc.innerHTML=html;
+  // Legal footer
+  html+=`<div style="text-align:center;padding:24px 0 0;font-size:10px;color:var(--text-3);opacity:0.6;line-height:1.6">${cn?'本平台提供的是结构性合规评估与风险提示，不构成法律意见或监管批准。':'This platform provides structural compliance assessment and risk advisory only. It does not constitute legal advice, regulatory approval, or official certification.'}</div>`;
+
+  // Open in overlay
+  const overlay=document.getElementById('reportOverlay');
+  document.getElementById('reportOverlayContent').innerHTML=html;
+  overlay.classList.add('active');
+  document.body.style.overflow='hidden';
 }
 
-// ===== PDF Export (jsPDF + autoTable) =====
+function closeReport(){
+  document.getElementById('reportOverlay').classList.remove('active');
+  document.body.style.overflow='';
+}
+
+function requestConsult(){
+  const cn=lang==='cn';
+  alert(cn?'感谢您的咨询请求！我们的合规顾问将在 24 小时内与您联系。\n\n如需即时咨询，请发送邮件至：compliance@gotomarket-lab.com':'Thank you for your consultation request! Our compliance advisor will contact you within 24 hours.\n\nFor immediate inquiries, please email: compliance@gotomarket-lab.com');
+}
+
+// ===== PDF Export (Professional with Cover, TOC, Disclaimer) =====
 function exportPDF(){
   const d = lastReportData || getDemoReportData();
-  const cn = lang==='cn';
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210, H=297, M=18, CW=W-M*2;
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const reportId='GTM-'+Date.now().toString(36).toUpperCase();
 
-  const W=210, H=297, M=18; // page width, height, margin
-  const CW=W-M*2; // content width
-  let y=M; // current y position
-
-  // Colors
   const C={
     accent:[13,147,115], accentLight:[240,250,246],
     dark:[26,26,46], mid:[100,100,120], light:[150,150,170],
@@ -526,235 +606,313 @@ function exportPDF(){
     info:[37,99,235], infoBg:[219,234,254],
     border:[229,231,235], recBg:[255,251,235], recBorder:[253,230,138]
   };
-
   function statusColor(s){return s==='pass'?C.pass:s==='warn'?C.warn:s==='fail'?C.fail:C.info}
-  function statusBg(s){return s==='pass'?C.passBg:s==='warn'?C.warnBg:s==='fail'?C.failBg:C.infoBg}
+  let y=M;
+  function checkPage(need){if(y+need>H-20){doc.addPage();y=M;return true}return false}
+  function pageFooter(){
+    doc.setFontSize(7);doc.setTextColor(...C.light);
+    doc.text('GoToMarket Compliance Lab  |  Confidential',M,H-10);
+    doc.text(`Page ${doc.internal.getNumberOfPages()}`,W-M,H-10,{align:'right'});
+  }
 
-  function checkPage(need){if(y+need>H-M){doc.addPage();y=M;return true}return false}
-
-  // ---- HEADER ----
+  // ======== PAGE 1: COVER ========
   doc.setFillColor(...C.accent);
-  doc.rect(0,0,W,3,'F'); // top accent bar
-
-  y=14;
-  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(...C.accent);
-  doc.text('GoToMarket Compliance Lab',M,y);
-  y+=5;
+  doc.rect(0,0,W,H,'F');
+  // White content area
+  doc.setFillColor(...C.white);
+  doc.roundedRect(M,M,CW,H-M*2,4,4,'F');
+  // Brand
+  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.accent);
+  doc.text('GoToMarket Compliance Lab',M+16,M+24);
   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.mid);
-  doc.text(cn?'Global Regulatory & Market Entry Intelligence Platform':'Global Regulatory & Market Entry Intelligence Platform',M,y);
-
-  // Right side meta
-  const now=new Date();
-  const dateStr=now.toLocaleDateString(cn?'zh-CN':'en-US',{year:'numeric',month:'long',day:'numeric'});
-  const timeStr=now.toLocaleTimeString(cn?'zh-CN':'en-US',{hour:'2-digit',minute:'2-digit'});
-  const reportId='GTM-'+Date.now().toString(36).toUpperCase();
-  doc.setFontSize(8);doc.setTextColor(...C.light);
-  doc.text([cn?'Report Date':'Report Date',`${dateStr}  ${timeStr}`,`ID: ${reportId}`],W-M,10,{align:'right'});
-
+  doc.text('Global Regulatory & Market Entry Intelligence Platform',M+16,M+31);
   // Divider
-  y+=4;
-  doc.setDrawColor(...C.accent);doc.setLineWidth(0.8);
-  doc.line(M,y,W-M,y);
-  y+=10;
-
-  // ---- TITLE ----
-  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...C.dark);
-  doc.text(cn?'Product Compliance Assessment Report':'Product Compliance Assessment Report',M,y);
-  y+=6;
-  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.mid);
-  doc.text(cn?'This report is generated by AI analysis for reference only.':'This report is generated by AI analysis for reference only.',M,y);
-  y+=10;
-
-  // ---- SCORE BANNER ----
-  const sc=d.overallScore;
+  doc.setDrawColor(...C.accent);doc.setLineWidth(1);
+  doc.line(M+16,M+38,M+CW-16,M+38);
+  // Title
+  doc.setFont('helvetica','bold');doc.setFontSize(26);doc.setTextColor(...C.dark);
+  doc.text('Product Compliance Risk',M+16,M+62);
+  doc.text('& Structural Assessment Report',M+16,M+72);
+  // Score
   doc.setFillColor(...C.accentLight);
-  doc.roundedRect(M,y,CW,22,3,3,'F');
-  // Circle
-  doc.setFillColor(...C.white);doc.setDrawColor(...C.accent);doc.setLineWidth(1.2);
-  doc.circle(M+14,y+11,9,'FD');
-  doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(...C.accent);
-  doc.text(String(sc),M+14,y+12.5,{align:'center'});
-  // Text
+  doc.roundedRect(M+16,M+86,CW-32,28,3,3,'F');
+  doc.setFillColor(...C.white);doc.setDrawColor(...C.accent);doc.setLineWidth(1.5);
+  doc.circle(M+32,M+100,10,'FD');
+  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...C.accent);
+  doc.text(String(d.overallScore),M+32,M+102,{align:'center'});
   doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(...C.dark);
-  doc.text(cn?'Overall Compliance Score':'Overall Compliance Score',M+28,y+8);
+  doc.text('Overall Compliance Risk Score',M+48,M+96);
   doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...C.mid);
-  const verdict=cn?d.overallVerdictCn:d.overallVerdict;
-  const vLines=doc.splitTextToSize(verdict||'',CW-32);
-  doc.text(vLines,M+28,y+14);
-  y+=28;
+  const vd=d.overallVerdict||'';
+  doc.text(doc.splitTextToSize(vd,CW-68),M+48,M+102);
+  // Meta
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.mid);
+  doc.text(`Report Date: ${dateStr}`,M+16,M+130);
+  doc.text(`Report ID: ${reportId}`,M+16,M+137);
+  // Disclaimer box
+  doc.setFillColor(248,249,250);doc.setDrawColor(...C.border);doc.setLineWidth(0.3);
+  doc.roundedRect(M+16,H-M-70,CW-32,30,2,2,'FD');
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.mid);
+  doc.text('DISCLAIMER',M+20,H-M-62);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.light);
+  const disc='This report is generated by AI for structural compliance risk reference only. It does not constitute legal advice, regulatory approval, or official certification. The U.S. FDA does not approve individual food or dietary supplement products. FDA registration applies to manufacturing facilities per 21 CFR 1.225. This platform does not directly access FDA internal databases. Final compliance must be confirmed by licensed regulatory professionals.';
+  doc.text(doc.splitTextToSize(disc,CW-40),M+20,H-M-56);
+  // Bottom brand bar
+  doc.setFillColor(...C.accent);
+  doc.rect(M,H-M-28,CW,28,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.white);
+  doc.text('GoToMarket Compliance Lab',M+16,H-M-16);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(176,232,216);
+  doc.text(`(c) ${now.getFullYear()} GoToMarket Compliance Lab. All rights reserved.`,M+16,H-M-10);
 
-  // ---- SECTION HELPER ----
-  function drawSection(icon,title,badgeText,badgeStatus,items,nameKey,noteKey,summary,riskPercent,riskLabel){
-    checkPage(20+items.length*8+20);
+  // ======== PAGE 2: TABLE OF CONTENTS ========
+  doc.addPage();
+  y=M;
+  doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
+  y=20;
+  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(...C.dark);
+  doc.text('Table of Contents',M,y);
+  y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+50,y);
+  y+=14;
+  const toc=[
+    ['1','Ingredient Risk Assessment','ingredientRisk'],
+    ['2','Label Compliance Review','labelCompliance'],
+    ['3','Facility Registration Status','facilityRegistration'],
+    ['4','Marketing Claim Risk Analysis','marketingClaims'],
+    ['5','Recommendations & Action Items','recommendations'],
+    ['6','Disclaimer & Legal Notice','disclaimer']
+  ];
+  toc.forEach(([num,title])=>{
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.accent);
+    doc.text(num+'.',M,y);
+    doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...C.dark);
+    doc.text(title,M+10,y);
+    y+=9;
+  });
+  pageFooter();
 
-    // Section header
-    doc.setFillColor(...C.bg);
-    doc.roundedRect(M,y,CW,9,2,2,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.dark);
-    doc.text(`${icon}  ${title}`,M+3,y+6.2);
-    // Badge
-    const bc=statusBg(badgeStatus),tc=statusColor(badgeStatus);
-    const bw=doc.getTextWidth(badgeText)+6;
-    doc.setFillColor(...bc);doc.roundedRect(W-M-bw-2,y+1.5,bw+2,6,1.5,1.5,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(...tc);
-    doc.text(badgeText,W-M-bw/2-1,y+5.5,{align:'center'});
-    y+=13;
+  // ======== SECTION PAGES ========
+  function drawSection(icon,title,sectionNum,badgeText,badgeStatus,items,nameKey,noteKey,summary,riskPercent,riskLabel,extraNote){
+    doc.addPage();y=M;
+    doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
+    y=16;
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
+    doc.text(`SECTION ${sectionNum}`,M,y);
+    y+=7;
+    doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
+    doc.text(`${title}`,M,y);
+    y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);
+    y+=8;
 
-    // Table
     const tableData=items.map(it=>{
-      const name=cn?(it[nameKey+'Cn']||it[nameKey]):it[nameKey];
+      const name=it[nameKey+'Cn']||it[nameKey]||'';
       const note=it[noteKey]||it.status||'';
-      return [name,note];
+      const reg=it.regulation||'';
+      return [name,note,reg];
     });
-
     doc.autoTable({
-      startY:y,
-      margin:{left:M,right:M},
-      head:[[cn?'Item':'Item',cn?'Status / Note':'Status / Note']],
+      startY:y, margin:{left:M,right:M},
+      head:[['Item','Assessment','Regulation']],
       body:tableData,
-      theme:'plain',
-      styles:{fontSize:8,cellPadding:{top:2.5,bottom:2.5,left:3,right:3},textColor:C.dark,lineColor:C.border,lineWidth:0.2},
-      headStyles:{fillColor:C.white,textColor:C.light,fontStyle:'bold',fontSize:7},
-      columnStyles:{
-        0:{cellWidth:CW*0.45},
-        1:{cellWidth:CW*0.55,halign:'right'}
-      },
+      theme:'striped',
+      styles:{fontSize:8,cellPadding:{top:3,bottom:3,left:3,right:3},textColor:C.dark,lineColor:C.border,lineWidth:0.15},
+      headStyles:{fillColor:C.bg,textColor:C.mid,fontStyle:'bold',fontSize:7},
+      columnStyles:{0:{cellWidth:CW*0.3},1:{cellWidth:CW*0.42},2:{cellWidth:CW*0.28,fontStyle:'italic',textColor:C.light,fontSize:7}},
       didParseCell:function(data){
         if(data.section==='body'&&data.column.index===1){
-          const status=items[data.row.index]?.status;
-          if(status){data.cell.styles.textColor=statusColor(status)}
+          const st=items[data.row.index]?.status;
+          if(st)data.cell.styles.textColor=statusColor(st);
         }
       }
     });
-    y=doc.lastAutoTable.finalY+4;
+    y=doc.lastAutoTable.finalY+6;
 
-    // Risk bar
     if(typeof riskPercent==='number'){
       checkPage(12);
       doc.setFontSize(7);doc.setTextColor(...C.light);
-      doc.text(riskLabel||'Risk',M,y+2);
-      const rl=riskPercent>65?'High':riskPercent>35?'Medium':'Low';
-      doc.text(cn?(rl==='High'?'High':rl==='Medium'?'Medium':'Low'):rl,W-M,y+2,{align:'right'});
+      doc.text(riskLabel||'Risk Level',M,y+2);
+      const rl=riskPercent>65?'HIGH':riskPercent>35?'MEDIUM':'LOW';
+      doc.text(rl,W-M,y+2,{align:'right'});
       y+=4;
-      doc.setFillColor(...C.border);doc.roundedRect(M,y,CW,2.5,1,1,'F');
+      doc.setFillColor(...C.border);doc.roundedRect(M,y,CW,3,1,1,'F');
       const rc=riskPercent>65?C.fail:riskPercent>35?C.warn:C.pass;
-      doc.setFillColor(...rc);doc.roundedRect(M,y,CW*riskPercent/100,2.5,1,1,'F');
-      y+=6;
+      doc.setFillColor(...rc);doc.roundedRect(M,y,CW*riskPercent/100,3,1,1,'F');
+      y+=8;
     }
-
-    // Summary
     if(summary){
-      checkPage(12);
-      doc.setFillColor(250,250,250);doc.roundedRect(M,y,CW,10,2,2,'F');
-      doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(...C.light);
-      const sLines=doc.splitTextToSize(summary,CW-8);
-      doc.text(sLines,M+4,y+4.5);
-      y+=12;
+      checkPage(14);
+      doc.setFillColor(250,250,250);doc.roundedRect(M,y,CW,12,2,2,'F');
+      doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(...C.light);
+      doc.text(doc.splitTextToSize(summary,CW-8),M+4,y+5);
+      y+=16;
     }
-    y+=4;
+    if(extraNote){
+      checkPage(14);
+      doc.setFillColor(...C.infoBg);doc.roundedRect(M,y,CW,12,2,2,'F');
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.info);
+      doc.text(doc.splitTextToSize(extraNote,CW-8),M+4,y+5);
+      y+=16;
+    }
+    pageFooter();
   }
 
-  // ---- 4 SECTIONS ----
   const ir=d.ingredientRisk;
-  drawSection('🧪',cn?'Ingredient Risk Overview':'Ingredient Risk Overview',
-    `${ir.flagCount} ${cn?'Flags':'Flags'}`,ir.status,
-    ir.items,'name','note',ir.summary,ir.riskPercent,cn?'Risk Level':'Risk Level');
+  drawSection('','Ingredient Risk Assessment','1',`${ir.flagCount} Flags`,ir.status,ir.items,'name','note',ir.summary,ir.riskPercent,'Risk Level');
 
   const lc=d.labelCompliance;
-  drawSection('🏷️',cn?'Label Compliance Review':'Label Compliance Review',
-    `${lc.passCount}/${lc.totalCount} Pass`,lc.status,
-    lc.items,'name','note',lc.summary);
+  drawSection('','Label Compliance Review','2',`${lc.passCount}/${lc.totalCount}`,lc.status,lc.items,'name','note',lc.summary);
 
   const fr=d.facilityRegistration;
-  drawSection('🏭',cn?'Facility Registration':'Facility Registration Status',
-    cn?'Status':'Status',fr.status,
-    fr.items,'name','value',fr.summary);
+  drawSection('','Facility Registration Status','3','Pending',fr.status,fr.items,'name','value',fr.summary,null,null,
+    'Note: Facility FEI/DUNS information must be confirmed with the manufacturer. This platform does not directly access FDA internal databases; verification is based on publicly available information and client-provided documentation.');
 
   const mc=d.marketingClaims;
-  drawSection('💬',cn?'Marketing Claim Risk':'Marketing Claim Risk Review',
-    `${mc.issueCount} ${cn?'Issues':'Issues'}`,mc.status,
-    mc.items,'claim','note',mc.summary,mc.riskPercent,cn?'Claim Risk':'Claim Risk');
+  drawSection('','Marketing Claim Risk Analysis','4',`${mc.issueCount} Issues`,mc.status,mc.items,'claim','note',mc.summary,mc.riskPercent,'Claim Risk');
 
-  // ---- RECOMMENDATIONS ----
-  const recs=cn?d.recommendationsCn:d.recommendations;
-  if(recs&&recs.length){
-    checkPage(16+recs.length*6);
+  // ======== RECOMMENDATIONS PAGE ========
+  const recs=d.recommendations||[];
+  if(recs.length){
+    doc.addPage();y=M;
+    doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
+    y=16;
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
+    doc.text('SECTION 5',M,y);y+=7;
+    doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
+    doc.text('Recommendations & Action Items',M,y);
+    y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);y+=10;
+
     doc.setFillColor(...C.recBg);doc.setDrawColor(...C.recBorder);doc.setLineWidth(0.3);
-    const recH=10+recs.length*6;
+    const recH=8+recs.length*8;
     doc.roundedRect(M,y,CW,recH,3,3,'FD');
-    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(146,64,14);
-    doc.text(cn?'Recommendations':'Recommendations',M+5,y+7);
-    let ry=y+13;
-    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(120,53,15);
-    recs.forEach(r=>{
-      const lines=doc.splitTextToSize(`→  ${r}`,CW-12);
-      doc.text(lines,M+5,ry);
-      ry+=lines.length*4+2;
+    let ry=y+6;
+    recs.forEach((r,i)=>{
+      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(146,64,14);
+      doc.text(`${i+1}.`,M+4,ry);
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(120,53,15);
+      doc.text(doc.splitTextToSize(r,CW-16),M+12,ry);
+      ry+=8;
     });
-    y+=recH+8;
+    pageFooter();
   }
 
-  // ---- DISCLAIMER ----
-  checkPage(28);
-  doc.setFillColor(248,249,250);doc.setDrawColor(...C.border);doc.setLineWidth(0.2);
-  doc.roundedRect(M,y,CW,24,2,2,'FD');
-  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(...C.mid);
-  doc.text(cn?'Disclaimer:':'Disclaimer:',M+4,y+5);
-  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.light);
-  const discText=cn
-    ?'This report is generated by GoToMarket Compliance Lab AI for reference only. It does not constitute legal advice. For dietary supplements and food products, the U.S. FDA does not approve individual products. FDA registration applies to manufacturing facilities, not specific products.'
-    :'This report is generated by GoToMarket Compliance Lab AI for reference only. It does not constitute legal advice. For dietary supplements and food products, the U.S. FDA does not approve individual products. FDA registration applies to manufacturing facilities, not specific products.';
-  const dLines=doc.splitTextToSize(discText,CW-8);
-  doc.text(dLines,M+4,y+9);
-  y+=28;
+  // ======== DISCLAIMER PAGE ========
+  doc.addPage();y=M;
+  doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
+  y=16;
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
+  doc.text('SECTION 6',M,y);y+=7;
+  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
+  doc.text('Disclaimer & Legal Notice',M,y);
+  y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);y+=10;
 
-  // ---- FOOTER LINE ----
-  checkPage(10);
-  doc.setDrawColor(...C.border);doc.setLineWidth(0.3);
-  doc.line(M,y,W-M,y);
-  y+=5;
-  doc.setFontSize(7);doc.setTextColor(...C.light);
-  doc.text(`© ${now.getFullYear()} GoToMarket Compliance Lab`,M,y);
-  doc.text(cn?'Confidential · Internal Use Only':'Confidential · Internal Use Only',W-M,y,{align:'right'});
+  const disclaimers=[
+    'This report is generated by the GoToMarket Compliance Lab AI system for structural compliance risk reference purposes only.',
+    'This report does not constitute legal advice, regulatory approval, or official certification of any kind.',
+    'For dietary supplements and food products, the U.S. FDA does not approve or certify individual products. FDA registration applies to manufacturing facilities (21 CFR 1.225), not to specific products or brands.',
+    'This platform does not directly access FDA internal databases. All verification is based on publicly available information and documentation provided by the client.',
+    'Final product compliance determination must be made by licensed regulatory professionals and/or qualified legal counsel.',
+    'GoToMarket Compliance Lab assumes no liability for actions taken based on the contents of this report.'
+  ];
+  disclaimers.forEach((d,i)=>{
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.dark);
+    const lines=doc.splitTextToSize(`${i+1}. ${d}`,CW-8);
+    doc.text(lines,M+4,y);
+    y+=lines.length*4.5+4;
+  });
 
-  // Save
-  const filename=`GoToMarket_Compliance_Report_${now.toISOString().split('T')[0]}.pdf`;
-  doc.save(filename);
+  y+=10;
+  doc.setFillColor(...C.accent);doc.roundedRect(M,y,CW,20,3,3,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.white);
+  doc.text('GoToMarket Compliance Lab',M+8,y+8);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(176,232,216);
+  doc.text(`(c) ${now.getFullYear()} GoToMarket Compliance Lab. All rights reserved.`,M+8,y+14);
+  pageFooter();
+
+  doc.save(`GoToMarket_Compliance_Report_${now.toISOString().split('T')[0]}.pdf`);
 }
 
 // Demo data fallback
 function getDemoReportData(){
-  const cn=lang==='cn';
   return {
     ingredientRisk:{status:'warn',flagCount:3,items:[
-      {name:'Sodium Benzoate (E211)',nameCn:'Sodium Benzoate (E211) / 苯甲酸钠',status:'pass',note:'FDA GRAS approved preservative'},
-      {name:'Red No. 40 (Allura Red)',nameCn:'Red No. 40 / 诱惑红40号',status:'warn',note:'Requires specific listing per 21 CFR 74'},
-      {name:'Steviol Glycosides',nameCn:'Steviol Glycosides / 甜菊糖苷',status:'pass',note:'GRAS approved sweetener'},
-      {name:'Titanium Dioxide (E171)',nameCn:'Titanium Dioxide / 二氧化钛',status:'fail',note:'Under FDA review — check latest guidance'}
-    ],overallRisk:'medium',riskPercent:55,summary:'3 ingredient flags detected. Overall risk level is medium.'},
+      {name:'Sodium Benzoate (E211)',nameCn:'Sodium Benzoate / 苯甲酸钠',status:'pass',note:'FDA-affirmed GRAS status. Permitted as preservative under specified concentration limits.',regulation:'21 CFR 184.1733'},
+      {name:'Red No. 40 (Allura Red)',nameCn:'Red No. 40 / 诱惑红40号',status:'warn',note:'Certified color additive. Requires batch certification and specific label declaration.',regulation:'21 CFR 74.340'},
+      {name:'Steviol Glycosides',nameCn:'Steviol Glycosides / 甜菊糖苷',status:'pass',note:'GRAS self-affirmed per FDA no-objection letters. Verify purity specifications ≥95%.',regulation:'21 CFR 170.30 (GRAS); GRN No. 252'},
+      {name:'Titanium Dioxide (E171)',nameCn:'Titanium Dioxide / 二氧化钛',status:'fail',note:'Subject to ongoing FDA safety review. Confirm compliance with current guidance before use.',regulation:'21 CFR 73.575; FDA Safety Review 2024'}
+    ],overallRisk:'medium',riskPercent:55,summary:'3 ingredient flags identified. Recommend verification of GRAS status and color additive certification prior to market entry.'},
     labelCompliance:{status:'warn',passCount:7,totalCount:9,items:[
-      {name:'Nutrition Facts Format (2020)',nameCn:'Nutrition Facts Format / 营养成分表',status:'pass',note:'Compliant'},
-      {name:'Allergen Declaration (FALCPA)',nameCn:'Allergen Declaration / 过敏原声明',status:'warn',note:'Wheat allergen needs bold or separate Contains line'},
-      {name:'Net Weight (Dual Units)',nameCn:'Net Weight / 净含量',status:'fail',note:'Missing US customary units (oz)'},
-      {name:'Country of Origin',nameCn:'Country of Origin / 原产国',status:'pass',note:'Clearly displayed'},
-      {name:'English Product Name',nameCn:'English Product Name / 英文名称',status:'pass',note:'Present and legible'}
-    ],summary:'7 of 9 label checks passed. 2 items need correction.'},
+      {name:'Nutrition Facts Panel',nameCn:'Nutrition Facts / 营养成分表',status:'pass',note:'Compliant with updated format requirements.',regulation:'21 CFR 101.9 (2020 Final Rule)'},
+      {name:'Allergen Declaration',nameCn:'Allergen Declaration / 过敏原声明',status:'warn',note:'Major allergen (wheat) requires "Contains" statement or bold type declaration.',regulation:'FALCPA Sec. 203; 21 CFR 101.4'},
+      {name:'Net Quantity (Dual Units)',nameCn:'Net Quantity / 净含量',status:'fail',note:'Missing U.S. customary units. Both metric and customary required.',regulation:'21 CFR 101.105'},
+      {name:'Country of Origin',nameCn:'Country of Origin / 原产国',status:'pass',note:'Properly declared per marking requirements.',regulation:'19 CFR 134'},
+      {name:'Product Identity Statement',nameCn:'Product Identity / 产品标识',status:'pass',note:'Common name displayed on principal display panel.',regulation:'21 CFR 101.3'}
+    ],summary:'7 of 9 label compliance checks passed. 2 items require correction before distribution.'},
     facilityRegistration:{status:'info',items:[
-      {name:'FDA Registration',nameCn:'FDA Registration / FDA注册',value:'Not provided',status:'info'},
-      {name:'US Agent',nameCn:'US Agent / 美国代理人',value:'Unknown',status:'warn'},
-      {name:'FSVP Importer',nameCn:'FSVP Importer / 进口商',value:'Pending',status:'warn'}
-    ],summary:'Facility registration details need to be provided for verification.'},
+      {name:'FDA Facility Registration (FEI)',nameCn:'FDA Facility Registration / FDA设施注册',value:'Pending — confirm with manufacturer',status:'info',regulation:'21 CFR 1.225; FSMA Sec. 301'},
+      {name:'DUNS Number',nameCn:'DUNS Number / DUNS编号',value:'Pending — confirm with manufacturer',status:'info',regulation:'FDA UFI Requirement'},
+      {name:'FSVP Importer Compliance',nameCn:'FSVP Importer / FSVP进口商',value:'Pending verification',status:'warn',regulation:'21 CFR Part 1 Subpart L'}
+    ],summary:'Facility FEI and DUNS information must be confirmed with manufacturer and verified as currently active per 21 CFR 1.225.'},
     marketingClaims:{status:'warn',issueCount:2,items:[
-      {claim:'"All Natural"',claimCn:'"All Natural" / "纯天然"',status:'warn',note:'Vague claim — FDA has no formal definition'},
-      {claim:'"Boosts Immunity"',claimCn:'"Boosts Immunity" / "增强免疫力"',status:'fail',note:'Unauthorized health claim — requires FDA pre-approval'},
-      {claim:'"Low Sugar"',claimCn:'"Low Sugar" / "低糖"',status:'pass',note:'Meets nutrient content claim criteria'}
-    ],riskLevel:'high',riskPercent:72,summary:'2 marketing claim issues found. Risk level is high.'},
-    overallScore:68,
-    overallVerdict:'Moderate compliance — several items require attention before US market entry.',
-    overallVerdictCn:'Moderate compliance — several items require attention before US market entry.',
-    recommendations:['Add US customary weight units (oz) alongside metric','Bold or add separate "Contains" line for wheat allergen','Remove or get authorization for "Boosts Immunity" claim','Clarify "All Natural" claim or remove','Provide FDA facility registration number'],
-    recommendationsCn:['Add US customary weight units (oz) alongside metric','Bold or add separate "Contains" line for wheat allergen','Remove or get authorization for "Boosts Immunity" claim','Clarify "All Natural" claim or remove','Provide FDA facility registration number']
+      {claim:'"All Natural"',claimCn:'"All Natural" / "纯天然"',status:'warn',note:'No FDA formal definition for "natural." Risk of enforcement action for misleading labeling.',regulation:'FD&C Act Sec. 403(a)(1); FDA Policy Notice 1991'},
+      {claim:'"Boosts Immunity"',claimCn:'"Boosts Immunity" / "增强免疫力"',status:'fail',note:'Constitutes unauthorized health claim. Requires FDA pre-market authorization or qualified health claim petition.',regulation:'DSHEA Sec. 403(r)(6); 21 CFR 101.93'},
+      {claim:'"Low Sugar"',claimCn:'"Low Sugar" / "低糖"',status:'pass',note:'Meets nutrient content claim criteria if product contains ≤5g sugar per RACC.',regulation:'21 CFR 101.60(c)'}
+    ],riskLevel:'high',riskPercent:72,summary:'2 marketing claim issues identified. Unauthorized health claim presents significant regulatory risk.'},
+    overallScore:65,
+    overallVerdict:'Moderate compliance risk. Multiple items require corrective action prior to U.S. market distribution.',
+    overallVerdictCn:'合规风险等级为中等。多项内容需在美国市场销售前完成整改。',
+    recommendations:[
+      'Add U.S. customary weight units (oz) per 21 CFR 101.105',
+      'Add allergen "Contains" statement or bold declaration per FALCPA Sec. 203',
+      'Remove unauthorized health claim "Boosts Immunity" or file qualified health claim petition with FDA',
+      'Clarify or remove "All Natural" claim to avoid FD&C Act Sec. 403(a)(1) violation',
+      'Confirm facility FEI number and DUNS with manufacturer per 21 CFR 1.225'
+    ],
+    recommendationsCn:[
+      '依据 21 CFR 101.105 添加美制重量单位 (oz)',
+      '依据 FALCPA Sec. 203 添加过敏原"含有"声明或加粗标注',
+      '删除未经授权的健康声称"增强免疫力"，或向 FDA 提交合格健康声称申请',
+      '明确"纯天然"声称含义或移除，避免违反 FD&C Act Sec. 403(a)(1)',
+      '依据 21 CFR 1.225 与工厂确认设施 FEI 编号及 DUNS 信息'
+    ]
   };
+}
+
+// ===== PPT Export =====
+async function exportPPTX(){
+  const d = lastReportData || getDemoReportData();
+  const cn = lang==='cn';
+
+  // Show loading state on button
+  const btns = document.querySelectorAll('[onclick="exportPPTX()"]');
+  btns.forEach(b=>{b.disabled=true;b.style.opacity='.6';b.textContent=cn?'⏳ 生成中...':'⏳ Generating...'});
+
+  try {
+    const res = await fetch('/api/generate-slides', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: d, lang })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to generate slides');
+    }
+
+    // Download the blob
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `GoToMarket_Compliance_Report_${new Date().toISOString().split('T')[0]}.pptx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert(`PPT export failed: ${err.message}`);
+  } finally {
+    btns.forEach(b=>{b.disabled=false;b.style.opacity='1';b.textContent=cn?'📊 导出 PPT':'📊 Export PPT'});
+  }
 }
 
 // ===== Scroll Reveal =====
