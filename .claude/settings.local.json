@@ -4,7 +4,9 @@
       "Bash(node:*)",
       "WebFetch(domain:cdnjs.cloudflare.com)",
       "WebSearch",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(curl:*)",
+      "Bash(file:*)"
     ]
   }
 }
