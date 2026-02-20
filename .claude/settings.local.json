@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "WebFetch(domain:cdnjs.cloudflare.com)",
+      "WebSearch",
+      "Bash(find:*)"
+    ]
+  }
+}

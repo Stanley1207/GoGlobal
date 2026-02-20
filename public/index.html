@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GoToMarket Compliance Lab</title>
+<title>GoToMarket - Product Compliance & Market Entry Architecture</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Sora:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.3/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
 <style>
   :root {
@@ -167,15 +167,17 @@
   .dash-summary{padding:10px 20px 16px;font-size:11px;color:var(--text-3);line-height:1.5;border-top:1px solid var(--border);font-style:italic}
   .dash-actions{margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 
-  /* Overall Score */
+  /* Risk Level Banner */
   .score-banner{margin-top:20px;background:var(--bg-2);border-radius:var(--r-lg);border:1px solid var(--border);padding:28px 32px;display:flex;align-items:center;gap:32px}
-  .score-ring-wrap{position:relative;width:100px;height:100px;flex-shrink:0}
-  .score-ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}
-  .sr-bg{fill:none;stroke:var(--bg-4);stroke-width:7}
-  .sr-fill{fill:none;stroke:url(#sg);stroke-width:7;stroke-linecap:round;stroke-dasharray:264;transition:stroke-dashoffset 1s ease}
-  .score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .score-val{font-family:var(--font-d);font-size:32px;color:var(--accent);line-height:1}
-  .score-max{font-size:10px;color:var(--text-3)}
+  .risk-level-badge{width:100px;height:100px;flex-shrink:0;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+  .risk-level-badge.risk-low{background:var(--success-dim);border:2px solid var(--success)}
+  .risk-level-badge.risk-medium{background:var(--warn-dim);border:2px solid var(--warn)}
+  .risk-level-badge.risk-high{background:var(--danger-dim);border:2px solid var(--danger)}
+  .risk-level-icon{font-size:28px;line-height:1}
+  .risk-level-text{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+  .risk-low .risk-level-text{color:var(--success)}
+  .risk-medium .risk-level-text{color:var(--warn)}
+  .risk-high .risk-level-text{color:var(--danger)}
   .score-text{flex:1}
   .score-verdict{font-size:15px;font-weight:600;margin-bottom:6px}
   .score-sub{font-size:13px;color:var(--text-2);line-height:1.6}
@@ -241,7 +243,9 @@
   .report-overlay .risk-label{font-size:12px}
   .report-overlay .risk-bar{height:7px}
   .report-overlay .score-banner{padding:32px 36px}
-  .report-overlay .score-val{font-size:40px}
+  .report-overlay .risk-level-badge{width:120px;height:120px;border-radius:24px}
+  .report-overlay .risk-level-icon{font-size:36px}
+  .report-overlay .risk-level-text{font-size:12px}
   .report-overlay .score-verdict{font-size:18px}
   .report-overlay .score-sub{font-size:14px}
   .report-overlay .rec-item{font-size:13px}
@@ -294,7 +298,10 @@
   .saved-left{flex:1}
   .saved-title{font-weight:600;font-size:14px;margin-bottom:4px}
   .saved-meta{font-size:11px;color:var(--text-3);font-family:var(--font-m)}
-  .saved-score{width:48px;height:48px;border-radius:50%;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--accent)}
+  .saved-score{padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+  .saved-score.risk-low{background:var(--success-dim);color:var(--success);border:1px solid var(--success)}
+  .saved-score.risk-medium{background:var(--warn-dim);color:var(--warn);border:1px solid var(--warn)}
+  .saved-score.risk-high{background:var(--danger-dim);color:var(--danger);border:1px solid var(--danger)}
   .saved-actions{display:flex;gap:8px;margin-left:12px}
   .saved-del{width:32px;height:32px;border-radius:8px;background:transparent;border:1px solid var(--border);color:var(--text-3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s}
   .saved-del:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-dim)}
@@ -317,7 +324,7 @@
     <span class="nav-link" onclick="sTo('services')" data-en="Services" data-cn="服务">Services</span>
     <span class="nav-link" onclick="sTo('layers')" data-en="Model" data-cn="服务模型">Model</span>
     <span class="nav-link" onclick="sTo('dashboard')" data-en="Report" data-cn="报告">Report</span>
-    <span class="nav-link" onclick="sTo('fda')" data-en="FDA Info" data-cn="FDA 说明">FDA Info</span>
+    <span class="nav-link" onclick="sTo('fda')" data-en="Regulatory" data-cn="法规说明">Regulatory</span>
     <div class="lang-sw">
       <button class="lang-btn active" id="lEn" onclick="setLang('en')">EN</button>
       <button class="lang-btn" id="lCn" onclick="setLang('cn')">中文</button>
@@ -345,11 +352,11 @@
   <div class="hero-orb hero-orb-2"></div>
   <div class="hero-grid"></div>
   <div class="hero-inner">
-    <div class="hero-badge" data-en="Global Regulatory & Market Entry Intelligence Platform" data-cn="全球合规与市场拓展智能平台">Global Regulatory & Market Entry Intelligence Platform</div>
-    <h1 data-en='Product <em>Compliance Risk Review</em>' data-cn='产品<em>合规风险审查</em>'>Product <em>Compliance Risk Review</em></h1>
-    <p class="hero-desc" data-en="AI-powered regulatory risk screening for food and dietary supplement exports to the U.S. market." data-cn="基于 AI 的食品及膳食补充剂出口美国市场合规风险筛查。">AI-powered regulatory risk screening for food and dietary supplement exports to the U.S. market.</p>
+    <div class="hero-badge" data-en="Product Compliance & Market Entry Architecture Platform" data-cn="产品合规与市场准入架构平台">Product Compliance & Market Entry Architecture Platform</div>
+    <h1 data-en='Product <em>Compliance & Market Entry</em> Architectural Assessment' data-cn='产品<em>合规与市场准入</em>架构评估'>Product <em>Compliance & Market Entry</em> Architectural Assessment</h1>
+    <p class="hero-desc" data-en="Structural compliance analysis for food and dietary supplement products targeting the U.S. market, covering applicable regulatory frameworks including FDA-related regulations." data-cn="面向食品及膳食补充剂的美国市场合规结构分析，涵盖FDA相关法规框架。">Structural compliance analysis for food and dietary supplement products targeting the U.S. market, covering applicable regulatory frameworks including FDA-related regulations.</p>
     <div class="hero-actions">
-      <button class="btn btn-accent" onclick="sTo('uploadArea')" data-en="⚡ Start Risk Screening" data-cn="⚡ 开始风险筛查">⚡ Start Risk Screening</button>
+      <button class="btn btn-accent" onclick="sTo('uploadArea')" data-en="⚡ Start Structural Assessment" data-cn="⚡ 开始结构评估">⚡ Start Structural Assessment</button>
       <button class="btn btn-ghost" onclick="document.getElementById('fInput').click()" data-en="📎 Upload Product Files" data-cn="📎 上传产品资料">📎 Upload Product Files</button>
     </div>
     <!-- /hero-actions -->
@@ -367,13 +374,13 @@
       <div class="file-list" id="fileList"></div>
     </div>
     <div class="upload-info">
-      <div class="info-title" data-en="📋 Report modules" data-cn="📋 报告包含模块">📋 Report modules</div>
+      <div class="info-title" data-en="📋 Assessment Dimensions" data-cn="📋 报告评估维度">📋 Assessment Dimensions</div>
       <div class="info-list">
-        <div class="info-item"><div class="info-dot" style="background:var(--accent-glow)">🧪</div><div><div class="iit-t" data-en="Ingredient Risk Screening" data-cn="成分风险筛查">Ingredient Risk Screening</div><div class="iit-d" data-en="AI analysis of ingredient legality & risk" data-cn="AI 成分合法性与风险分析">AI analysis of ingredient legality & risk</div></div></div>
-        <div class="info-item"><div class="info-dot" style="background:var(--gold-dim)">🏷️</div><div><div class="iit-t" data-en="Label Structure Optimization" data-cn="标签结构优化">Label Structure Optimization</div><div class="iit-d" data-en="Nutrition facts, allergens, labeling" data-cn="营养成分表、过敏原、标签规范">Nutrition facts, allergens, labeling</div></div></div>
-        <div class="info-item"><div class="info-dot" style="background:var(--info-dim)">🏭</div><div><div class="iit-t" data-en="Facility Registration Status" data-cn="工厂注册状态核查">Facility Registration Status</div><div class="iit-d" data-en="FDA registration verification" data-cn="FDA 工厂注册验证">FDA registration verification</div></div></div>
-        <div class="info-item"><div class="info-dot" style="background:var(--warn-dim)">⚖️</div><div><div class="iit-t" data-en="Regulatory Advisory Referral" data-cn="法规顾问对接">Regulatory Advisory Referral</div><div class="iit-d" data-en="US regulatory consultant connection" data-cn="美国法规顾问对接">US regulatory consultant connection</div></div></div>
-        <div class="info-item"><div class="info-dot" style="background:var(--success-dim)">🚀</div><div><div class="iit-t" data-en="Market Readiness Advisory" data-cn="市场准备度评估">Market Readiness Advisory</div><div class="iit-d" data-en="Go-to-market readiness assessment" data-cn="上市准备度评估">Go-to-market readiness assessment</div></div></div>
+        <div class="info-item"><div class="info-dot" style="background:var(--accent-glow)">🧪</div><div><div class="iit-t" data-en="Ingredient Compliance Analysis" data-cn="成分合规结构分析">Ingredient Compliance Analysis</div><div class="iit-d" data-en="Structural analysis of ingredient legality & GRAS status" data-cn="成分合法性与GRAS状态结构分析">Structural analysis of ingredient legality & GRAS status</div></div></div>
+        <div class="info-item"><div class="info-dot" style="background:var(--gold-dim)">🏷️</div><div><div class="iit-t" data-en="Label Architecture Review" data-cn="标签合规架构审查">Label Architecture Review</div><div class="iit-d" data-en="Nutrition facts, allergens, labeling structure" data-cn="营养成分表、过敏原、标签架构">Nutrition facts, allergens, labeling structure</div></div></div>
+        <div class="info-item"><div class="info-dot" style="background:var(--info-dim)">🏭</div><div><div class="iit-t" data-en="Facility Registration Verification" data-cn="生产设施注册状态核查">Facility Registration Verification</div><div class="iit-d" data-en="Manufacturing facility registration status" data-cn="生产设施注册状态核查">Manufacturing facility registration status</div></div></div>
+        <div class="info-item"><div class="info-dot" style="background:var(--warn-dim)">⚖️</div><div><div class="iit-t" data-en="Marketing Claims Risk Identification" data-cn="宣传语法规风险识别">Marketing Claims Risk Identification</div><div class="iit-d" data-en="Regulatory risk in promotional language" data-cn="宣传语言法规风险识别">Regulatory risk in promotional language</div></div></div>
+        <div class="info-item"><div class="info-dot" style="background:var(--success-dim)">🚀</div><div><div class="iit-t" data-en="Market Entry Readiness" data-cn="市场准入准备度评估">Market Entry Readiness</div><div class="iit-d" data-en="Overall market entry preparedness" data-cn="市场准入整体准备度评估">Overall market entry preparedness</div></div></div>
       </div>
     </div>
   </div>
@@ -391,15 +398,15 @@
 
 <!-- CORE SERVICES -->
 <section class="section" id="services">
-  <div class="sec-label" data-en="Core Modules" data-cn="核心模块">Core Modules</div>
-  <div class="sec-title" data-en="Compliance Service Modules" data-cn="合规服务模块">Compliance Service Modules</div>
-  <div class="sec-desc" data-en="Five integrated modules covering every aspect of your product's regulatory journey." data-cn="五大集成模块，覆盖产品合规之旅的每个环节。">Five integrated modules covering every aspect of your product's regulatory journey.</div>
+  <div class="sec-label" data-en="Assessment Dimensions" data-cn="评估维度">Assessment Dimensions</div>
+  <div class="sec-title" data-en="Report Assessment Dimensions" data-cn="报告评估维度">Report Assessment Dimensions</div>
+  <div class="sec-desc" data-en="Five analytical dimensions covering the structural compliance of your product." data-cn="五个分析维度，全面覆盖产品的结构性合规评估。">Five analytical dimensions covering the structural compliance of your product.</div>
   <div class="svc-grid">
-    <div class="svc-card"><div class="svc-icon" style="background:var(--accent-glow)">🧪</div><div class="svc-num">01</div><div class="svc-t" data-en="Ingredient Risk Screening" data-cn="成分风险筛查">Ingredient Risk Screening</div><div class="svc-d" data-en="Screen against FDA GRAS list, banned substances, and dietary supplement regulations." data-cn="比对 FDA GRAS 清单、禁用物质及膳食补充剂法规。">Screen against FDA GRAS list, banned substances, and dietary supplement regulations.</div></div>
-    <div class="svc-card"><div class="svc-icon" style="background:var(--gold-dim)">🏷️</div><div class="svc-num">02</div><div class="svc-t" data-en="Label Structure Optimization" data-cn="标签结构优化">Label Structure Optimization</div><div class="svc-d" data-en="Review nutrition facts, allergens, net weight, and required label statements." data-cn="审查营养成分表、过敏原、净含量及必需标注。">Review nutrition facts, allergens, net weight, and required label statements.</div></div>
-    <div class="svc-card"><div class="svc-icon" style="background:var(--info-dim)">🏭</div><div class="svc-num">03</div><div class="svc-t" data-en="Facility Registration Check" data-cn="工厂注册核查">Facility Registration Check</div><div class="svc-d" data-en="Verify FDA registration, US Agent, and FSVP importer compliance." data-cn="验证 FDA 注册、美国代理人及 FSVP 进口商合规。">Verify FDA registration, US Agent, and FSVP importer compliance.</div></div>
-    <div class="svc-card"><div class="svc-icon" style="background:var(--warn-dim)">⚖️</div><div class="svc-num">04</div><div class="svc-t" data-en="Regulatory Advisory Referral" data-cn="法规顾问对接">Regulatory Advisory Referral</div><div class="svc-d" data-en="Connect with US regulatory consultants for professional guidance." data-cn="对接美国法规顾问获取专业指导。">Connect with US regulatory consultants for professional guidance.</div></div>
-    <div class="svc-card"><div class="svc-icon" style="background:var(--success-dim)">🚀</div><div class="svc-num">05</div><div class="svc-t" data-en="Market Readiness Advisory" data-cn="市场准备度评估">Market Readiness Advisory</div><div class="svc-d" data-en="Evaluate overall go-to-market readiness and entry strategy." data-cn="评估整体上市准备度与进入策略。">Evaluate overall go-to-market readiness and entry strategy.</div></div>
+    <div class="svc-card"><div class="svc-icon" style="background:var(--accent-glow)">🧪</div><div class="svc-num">01</div><div class="svc-t" data-en="Ingredient Compliance Structural Analysis" data-cn="成分合规结构分析">Ingredient Compliance Structural Analysis</div><div class="svc-d" data-en="Structural analysis of ingredient legality, GRAS status, and dietary supplement regulatory compliance." data-cn="成分合法性、GRAS状态及膳食补充剂法规合规的结构分析。">Structural analysis of ingredient legality, GRAS status, and dietary supplement regulatory compliance.</div></div>
+    <div class="svc-card"><div class="svc-icon" style="background:var(--gold-dim)">🏷️</div><div class="svc-num">02</div><div class="svc-t" data-en="Label Compliance Architecture Review" data-cn="标签合规架构审查">Label Compliance Architecture Review</div><div class="svc-d" data-en="Structural review of nutrition facts, allergen declarations, and labeling regulatory requirements." data-cn="营养成分表、过敏原声明及标签法规要求的架构审查。">Structural review of nutrition facts, allergen declarations, and labeling regulatory requirements.</div></div>
+    <div class="svc-card"><div class="svc-icon" style="background:var(--info-dim)">🏭</div><div class="svc-num">03</div><div class="svc-t" data-en="Facility Registration Verification" data-cn="生产设施注册状态核查">Facility Registration Verification</div><div class="svc-d" data-en="Verification of manufacturing facility registration status, US Agent designation, and FSVP compliance." data-cn="生产设施注册状态、美国代理人指定及FSVP合规核查。">Verification of manufacturing facility registration status, US Agent designation, and FSVP compliance.</div></div>
+    <div class="svc-card"><div class="svc-icon" style="background:var(--warn-dim)">⚖️</div><div class="svc-num">04</div><div class="svc-t" data-en="Marketing Claims Risk Identification" data-cn="宣传语法规风险识别">Marketing Claims Risk Identification</div><div class="svc-d" data-en="Identification of regulatory risks in product marketing claims and promotional language." data-cn="产品宣传语言及营销表述的法规风险识别。">Identification of regulatory risks in product marketing claims and promotional language.</div></div>
+    <div class="svc-card"><div class="svc-icon" style="background:var(--success-dim)">🚀</div><div class="svc-num">05</div><div class="svc-t" data-en="Market Entry Readiness Assessment" data-cn="市场准入准备度评估">Market Entry Readiness Assessment</div><div class="svc-d" data-en="Assessment of overall readiness for U.S. market entry and regulatory preparedness." data-cn="美国市场准入的整体准备度与法规就绪性评估。">Assessment of overall readiness for U.S. market entry and regulatory preparedness.</div></div>
   </div>
 </section>
 
@@ -407,13 +414,13 @@
 
 <!-- LAYERED MODEL -->
 <section class="section" id="layers">
-  <div class="sec-label" data-en="Service Architecture" data-cn="服务架构">Service Architecture</div>
-  <div class="sec-title" data-en="Three-Layer Service Model" data-cn="三层服务结构">Three-Layer Service Model</div>
-  <div class="sec-desc" data-en="From automated screening to expert legal consultation." data-cn="从自动化筛查到专家法务咨询。">From automated screening to expert legal consultation.</div>
+  <div class="sec-label" data-en="Service Delivery" data-cn="服务交付">Service Delivery</div>
+  <div class="sec-title" data-en="Three-Layer Service Delivery Model" data-cn="三层服务交付结构">Three-Layer Service Delivery Model</div>
+  <div class="sec-desc" data-en="How we deliver compliance assessment services, from automated screening to expert support." data-cn="从自动化筛查到专家支持，我们如何交付合规评估服务。">How we deliver compliance assessment services, from automated screening to expert support.</div>
   <div class="layers">
-    <div class="ly-card ly-1"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">01</div><div class="ly-tag" data-en="Layer 1" data-cn="第一层">Layer 1</div><div class="ly-title" data-en="Digital Screening" data-cn="在线合规筛查">Digital Screening</div><div class="ly-cn" data-en="Online Compliance Screening" data-cn="AI 进行初步风险识别">Online Compliance Screening</div></div><div class="ly-desc" data-en="AI-powered initial risk identification. Automated ingredient analysis, label format checking, and preliminary compliance scoring. Future integration with toxicology and regulatory databases." data-cn="AI 驱动的初步风险识别。自动化成分分析、标签格式检查和初步合规评分。后期将接入毒理数据库与法规数据库。">AI-powered initial risk identification. Automated ingredient analysis, label format checking, and preliminary compliance scoring. Future integration with toxicology and regulatory databases.</div></div>
-    <div class="ly-card ly-2"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">02</div><div class="ly-tag" data-en="Layer 2" data-cn="第二层">Layer 2</div><div class="ly-title" data-en="Advisory Optimization" data-cn="人工合规优化">Advisory Optimization</div><div class="ly-cn" data-en="Manual Compliance Optimization" data-cn="人工分析标签、成分与表达">Manual Compliance Optimization</div></div><div class="ly-desc" data-en="Expert human review of labels, ingredient declarations, and marketing language. Professional optimization of compliance structure and bilingual content accuracy." data-cn="专家人工审查标签、成分声明及宣传语言。专业优化合规结构与双语内容准确性。">Expert human review of labels, ingredient declarations, and marketing language. Professional optimization of compliance structure and bilingual content accuracy.</div></div>
-    <div class="ly-card ly-3"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">03</div><div class="ly-tag" data-en="Layer 3" data-cn="第三层">Layer 3</div><div class="ly-title" data-en="Market Entry & Brand Strategy" data-cn="市场拓展与品牌战略">Market Entry & Brand Strategy</div><div class="ly-cn" data-en="Sales Channels, Legal & Global Expansion" data-cn="销售渠道 · 法务对接 · 全球化战略规划">Sales Channels, Legal & Global Expansion</div></div><div class="ly-desc" data-en="Sales channel development, legal counsel engagement, and strategic market expansion planning. Ensure compliant brand positioning and global distribution readiness." data-cn="销售渠道开发、法务顾问对接及战略性市场拓展规划。提升品牌全球竞争力，确保品牌在目标市场的合规销售与可持续增长。">Sales channel development, legal counsel engagement, and strategic market expansion planning. Ensure compliant brand positioning and global distribution readiness.</div></div>
+    <div class="ly-card ly-1"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">01</div><div class="ly-tag" data-en="Layer 1" data-cn="第一层">Layer 1</div><div class="ly-title" data-en="AI Structural Screening" data-cn="AI结构筛查">AI Structural Screening</div><div class="ly-cn" data-en="Automated Compliance Risk Identification" data-cn="自动化合规风险识别">Automated Compliance Risk Identification</div></div><div class="ly-desc" data-en="AI-powered structural risk identification. Automated ingredient analysis, label format review, and preliminary compliance structure assessment." data-cn="AI驱动的结构风险识别。自动化成分分析、标签格式审查和初步合规结构评估。">AI-powered structural risk identification. Automated ingredient analysis, label format review, and preliminary compliance structure assessment.</div></div>
+    <div class="ly-card ly-2"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">02</div><div class="ly-tag" data-en="Layer 2" data-cn="第二层">Layer 2</div><div class="ly-title" data-en="Expert Compliance Optimization" data-cn="专家合规优化">Expert Compliance Optimization</div><div class="ly-cn" data-en="Professional Compliance Structure Review" data-cn="专业合规结构审查">Professional Compliance Structure Review</div></div><div class="ly-desc" data-en="Expert review of compliance structure, ingredient declarations, label architecture, and marketing language optimization." data-cn="专家审查合规结构、成分声明、标签架构及宣传语言优化。">Expert review of compliance structure, ingredient declarations, label architecture, and marketing language optimization.</div></div>
+    <div class="ly-card ly-3"><div class="ly-bar"></div><div class="ly-hd"><div class="ly-num">03</div><div class="ly-tag" data-en="Layer 3" data-cn="第三层">Layer 3</div><div class="ly-title" data-en="Legal & Market Entry Support" data-cn="法务与市场准入支持">Legal & Market Entry Support</div><div class="ly-cn" data-en="Regulatory Counsel & Market Access Planning" data-cn="法规顾问对接 · 市场准入规划">Regulatory Counsel & Market Access Planning</div></div><div class="ly-desc" data-en="Regulatory counsel engagement, market entry strategy, and compliance framework design for sustainable market access." data-cn="法规顾问对接、市场准入策略及合规框架设计，支持可持续的市场进入。">Regulatory counsel engagement, market entry strategy, and compliance framework design for sustainable market access.</div></div>
   </div>
 </section>
 
@@ -421,18 +428,18 @@
 
 <!-- DASHBOARD / REPORT -->
 <section class="section" id="dashboard">
-  <div class="sec-label" data-en="Compliance Report" data-cn="合规报告">Compliance Report</div>
-  <div class="sec-title" data-en="Compliance Risk & Structural Assessment" data-cn="产品合规风险与结构评估报告">Compliance Risk & Structural Assessment</div>
-  <div class="sec-desc" data-en="Upload product files for AI-powered regulatory risk analysis. Full report opens in a dedicated view." data-cn="上传产品资料进行 AI 合规风险分析。完整报告将在独立页面展示。">Upload product files for AI-powered regulatory risk analysis. Full report opens in a dedicated view.</div>
+  <div class="sec-label" data-en="Structural Assessment" data-cn="结构评估">Structural Assessment</div>
+  <div class="sec-title" data-en="Product Compliance Structural Assessment" data-cn="产品合规结构评估">Product Compliance Structural Assessment</div>
+  <div class="sec-desc" data-en="Upload product files for AI-powered structural compliance analysis. Full report opens in a dedicated view." data-cn="上传产品资料进行 AI 合规结构分析。完整报告将在独立页面展示。">Upload product files for AI-powered structural compliance analysis. Full report opens in a dedicated view.</div>
 
   <!-- Dynamic results rendered here -->
   <div id="reportContent">
     <!-- Default demo content -->
     <div class="dash-grid">
-      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🧪 <span data-en="Ingredient Risk Overview" data-cn="成分风险概览">Ingredient Risk Overview</span></span><span class="tag tag-warn" data-en="3 Flags" data-cn="3 项标记">3 Flags</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="Sodium Benzoate (E211)" data-cn="苯甲酸钠 (E211)">Sodium Benzoate (E211)</span><span class="tag tag-pass">GRAS</span></div><div class="dash-row"><span class="dash-row-l" data-en="Red No. 40 (Allura Red)" data-cn="诱惑红40号">Red No. 40 (Allura Red)</span><span class="tag tag-warn" data-en="Requires Listing" data-cn="需标注">Requires Listing</span></div><div class="dash-row"><span class="dash-row-l" data-en="Steviol Glycosides" data-cn="甜菊糖苷">Steviol Glycosides</span><span class="tag tag-pass">GRAS</span></div><div class="dash-row"><span class="dash-row-l" data-en="Titanium Dioxide (E171)" data-cn="二氧化钛 (E171)">Titanium Dioxide (E171)</span><span class="tag tag-fail" data-en="Review" data-cn="需审查">Review</span></div><div class="risk-wrap"><div class="risk-label"><span data-en="Risk Level" data-cn="风险等级">Risk Level</span><span data-en="Medium" data-cn="中等">Medium</span></div><div class="risk-bar"><div class="risk-fill" style="width:55%;background:linear-gradient(90deg,var(--success),var(--warn))"></div></div></div></div></div>
-      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🏷️ <span data-en="Label Compliance Review" data-cn="标签合规审查">Label Compliance Review</span></span><span class="tag tag-pass">7/9</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="Nutrition Facts (2020)" data-cn="营养成分表 (2020)">Nutrition Facts (2020)</span><span class="tag tag-pass" data-en="Pass" data-cn="通过">Pass</span></div><div class="dash-row"><span class="dash-row-l" data-en="Allergen Declaration" data-cn="过敏原声明">Allergen Declaration</span><span class="tag tag-warn" data-en="Review" data-cn="待审查">Review</span></div><div class="dash-row"><span class="dash-row-l" data-en="Net Weight (Dual)" data-cn="净含量（双单位）">Net Weight (Dual)</span><span class="tag tag-fail" data-en="Missing oz" data-cn="缺少 oz">Missing oz</span></div><div class="dash-row"><span class="dash-row-l" data-en="Country of Origin" data-cn="原产国">Country of Origin</span><span class="tag tag-pass" data-en="Pass" data-cn="通过">Pass</span></div></div></div>
-      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🏭 <span data-en="Facility Registration" data-cn="工厂注册状态">Facility Registration</span></span><span class="tag tag-info" data-en="Pending Verification" data-cn="待核验">Pending Verification</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="FDA Facility (FEI)" data-cn="FDA 设施编号 (FEI)">FDA Facility (FEI)</span><span class="tag tag-info" data-en="Verify with facility" data-cn="需与工厂确认">Verify with facility</span></div><div class="dash-row"><span class="dash-row-l" data-en="DUNS Number" data-cn="DUNS 编号">DUNS Number</span><span class="tag tag-info" data-en="Verify with facility" data-cn="需与工厂确认">Verify with facility</span></div><div class="dash-row"><span class="dash-row-l" data-en="FSVP Importer" data-cn="FSVP 进口商">FSVP Importer</span><span class="tag tag-warn" data-en="Pending" data-cn="待确认">Pending</span></div><div style="margin-top:8px;padding:8px 10px;background:var(--info-dim);border-radius:8px;font-size:10px;color:var(--info);line-height:1.5" data-en="Note: Facility FEI/DUNS information must be confirmed with the manufacturer and verified as currently active." data-cn="注：需与工厂确认是否持有设施 FEI 或 DUNS 编号，并确保在有效期内。">Note: Facility FEI/DUNS information must be confirmed with the manufacturer and verified as currently active.</div></div><div class="dash-summary" data-en="This platform does not directly access FDA internal databases. Verification is based on publicly available information and client-provided documentation." data-cn="本平台不直接访问 FDA 内部数据库，仅基于公开信息与客户提供资料进行核查。">This platform does not directly access FDA internal databases. Verification is based on publicly available information and client-provided documentation.</div></div>
-      <div class="dash-card"><div class="dash-hd"><span class="dash-t">💬 <span data-en="Marketing Claim Risk" data-cn="宣传语言风险">Marketing Claim Risk</span></span><span class="tag tag-warn" data-en="2 Issues" data-cn="2 项问题">2 Issues</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l">"All Natural"</span><span class="tag tag-warn" data-en="Vague" data-cn="模糊">Vague</span></div><div class="dash-row"><span class="dash-row-l">"Boosts Immunity"</span><span class="tag tag-fail" data-en="Unauthorized" data-cn="未授权">Unauthorized</span></div><div class="dash-row"><span class="dash-row-l">"Low Sugar"</span><span class="tag tag-pass" data-en="OK" data-cn="合规">OK</span></div><div class="risk-wrap"><div class="risk-label"><span data-en="Claim Risk" data-cn="宣称风险">Claim Risk</span><span data-en="High" data-cn="较高">High</span></div><div class="risk-bar"><div class="risk-fill" style="width:72%;background:linear-gradient(90deg,var(--warn),var(--danger))"></div></div></div></div></div>
+      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🧪 <span data-en="Ingredient Compliance Analysis" data-cn="成分合规结构分析">Ingredient Compliance Analysis</span></span><span class="tag tag-warn" data-en="3 Flags" data-cn="3 项标记">3 Flags</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="Sodium Benzoate (E211)" data-cn="苯甲酸钠 (E211)">Sodium Benzoate (E211)</span><span class="tag tag-pass">GRAS</span></div><div class="dash-row"><span class="dash-row-l" data-en="Red No. 40 (Allura Red)" data-cn="诱惑红40号">Red No. 40 (Allura Red)</span><span class="tag tag-warn" data-en="Requires Listing" data-cn="需标注">Requires Listing</span></div><div class="dash-row"><span class="dash-row-l" data-en="Steviol Glycosides" data-cn="甜菊糖苷">Steviol Glycosides</span><span class="tag tag-pass">GRAS</span></div><div class="dash-row"><span class="dash-row-l" data-en="Titanium Dioxide (E171)" data-cn="二氧化钛 (E171)">Titanium Dioxide (E171)</span><span class="tag tag-warn" data-en="Requires Review" data-cn="需审查">Requires Review</span></div><div class="risk-wrap"><div class="risk-label"><span data-en="Risk Level" data-cn="风险等级">Risk Level</span><span data-en="Medium" data-cn="中等">Medium</span></div><div class="risk-bar"><div class="risk-fill" style="width:55%;background:linear-gradient(90deg,var(--success),var(--warn))"></div></div></div></div></div>
+      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🏷️ <span data-en="Label Architecture Review" data-cn="标签合规架构审查">Label Architecture Review</span></span><span class="tag tag-pass">7/9</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="Nutrition Facts (2020)" data-cn="营养成分表 (2020)">Nutrition Facts (2020)</span><span class="tag tag-pass" data-en="Pass" data-cn="通过">Pass</span></div><div class="dash-row"><span class="dash-row-l" data-en="Allergen Declaration" data-cn="过敏原声明">Allergen Declaration</span><span class="tag tag-warn" data-en="Review" data-cn="待审查">Review</span></div><div class="dash-row"><span class="dash-row-l" data-en="Net Weight (Dual)" data-cn="净含量（双单位）">Net Weight (Dual)</span><span class="tag tag-warn" data-en="Needs Optimization" data-cn="需优化">Needs Optimization</span></div><div class="dash-row"><span class="dash-row-l" data-en="Country of Origin" data-cn="原产国">Country of Origin</span><span class="tag tag-pass" data-en="Pass" data-cn="通过">Pass</span></div></div></div>
+      <div class="dash-card"><div class="dash-hd"><span class="dash-t">🏭 <span data-en="Facility Registration Verification" data-cn="生产设施注册核查">Facility Registration Verification</span></span><span class="tag tag-info" data-en="Pending Verification" data-cn="待核验">Pending Verification</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l" data-en="FDA Facility (FEI)" data-cn="FDA 设施编号 (FEI)">FDA Facility (FEI)</span><span class="tag tag-info" data-en="Verify with facility" data-cn="需与工厂确认">Verify with facility</span></div><div class="dash-row"><span class="dash-row-l" data-en="DUNS Number" data-cn="DUNS 编号">DUNS Number</span><span class="tag tag-info" data-en="Verify with facility" data-cn="需与工厂确认">Verify with facility</span></div><div class="dash-row"><span class="dash-row-l" data-en="FSVP Importer" data-cn="FSVP 进口商">FSVP Importer</span><span class="tag tag-warn" data-en="Pending" data-cn="待确认">Pending</span></div><div style="margin-top:8px;padding:8px 10px;background:var(--info-dim);border-radius:8px;font-size:10px;color:var(--info);line-height:1.5" data-en="Note: Facility FEI/DUNS information must be confirmed with the manufacturer and verified as currently active." data-cn="注：需与工厂确认是否持有设施 FEI 或 DUNS 编号，并确保在有效期内。">Note: Facility FEI/DUNS information must be confirmed with the manufacturer and verified as currently active.</div></div><div class="dash-summary" data-en="This platform does not directly access FDA internal databases. Verification is based on publicly available information and client-provided documentation." data-cn="本平台不直接访问 FDA 内部数据库，仅基于公开信息与客户提供资料进行核查。">This platform does not directly access FDA internal databases. Verification is based on publicly available information and client-provided documentation.</div></div>
+      <div class="dash-card"><div class="dash-hd"><span class="dash-t">💬 <span data-en="Marketing Claims Risk" data-cn="宣传语法规风险">Marketing Claims Risk</span></span><span class="tag tag-warn" data-en="2 Items" data-cn="2 项待审">2 Items</span></div><div class="dash-body"><div class="dash-row"><span class="dash-row-l">"All Natural"</span><span class="tag tag-warn" data-en="Needs Review" data-cn="需审查">Needs Review</span></div><div class="dash-row"><span class="dash-row-l">"Boosts Immunity"</span><span class="tag tag-warn" data-en="Requires Assessment" data-cn="需评估">Requires Assessment</span></div><div class="dash-row"><span class="dash-row-l">"Low Sugar"</span><span class="tag tag-pass" data-en="Compliant" data-cn="合规">Compliant</span></div><div class="risk-wrap"><div class="risk-label"><span data-en="Structural Risk" data-cn="结构风险">Structural Risk</span><span data-en="Medium-High" data-cn="中高">Medium-High</span></div><div class="risk-bar"><div class="risk-fill" style="width:65%;background:linear-gradient(90deg,var(--warn),var(--danger))"></div></div></div></div></div>
     </div>
     <div class="dash-actions">
       <button class="btn btn-accent btn-sm" onclick="requestConsult()" data-en="💬 Request Expert Consultation" data-cn="💬 申请人工咨询" style="background:linear-gradient(135deg,var(--accent),var(--accent-dim))">💬 Request Expert Consultation</button>
@@ -446,11 +453,12 @@
 <!-- FDA DISCLAIMER -->
 <section class="section" id="fda" style="padding-bottom:40px">
   <div class="fda-box">
-    <div class="fda-title" data-en="Understanding FDA Registration" data-cn="关于 FDA 注册的重要说明">Understanding FDA Registration</div>
-    <div class="fda-cn" data-en="Important clarification for food and supplement exporters" data-cn="食品及膳食补充剂出口商的重要说明">Important clarification for food and supplement exporters</div>
-    <div class="fda-cols">
-      <div class="fda-col"><h4>English</h4><div class="fda-text"><p>For dietary supplements and food products, the U.S. FDA <strong style="color:var(--accent)">does not approve individual products</strong>.</p><p>FDA registration applies to <strong>manufacturing facilities</strong>, not to single SKUs or brand names.</p><p>There is no such thing as an "FDA product certification" for supplements.</p><div class="fda-hl"><div class="fda-hl-t">What truly matters:</div><ul class="fda-kl"><li>Ingredient legality</li><li>Proper labeling structure</li><li>Valid facility registration</li><li>Regulatory-compliant marketing claims</li></ul></div></div></div>
-      <div class="fda-col"><h4>中文</h4><div class="fda-text" style="font-family:var(--font-cn)"><p>对于膳食补充剂及食品类产品，美国 FDA <strong style="color:var(--accent)">不对单个产品进行审批或认证</strong>。</p><p>FDA 注册针对的是<strong>生产设施（工厂）</strong>，而非具体产品或品牌。</p><p>市场上所谓"FDA产品认证"并不存在。</p><div class="fda-hl"><div class="fda-hl-t">真正影响产品合规性的关键在于：</div><ul class="fda-kl"><li>成分合法性</li><li>标签结构规范</li><li>工厂注册状态有效</li><li>宣传语言符合监管要求</li></ul></div></div></div>
+    <div class="fda-title" data-en="Regulatory Framework" data-cn="法规框架说明">Regulatory Framework</div>
+    <div class="fda-cn" data-en="Key regulatory context for food and dietary supplement products" data-cn="食品及膳食补充剂产品的关键法规背景">Key regulatory context for food and dietary supplement products</div>
+    <div class="fda-text" data-en="<p>For food and dietary supplement products, the U.S. FDA <strong style='color:var(--accent)'>does not approve individual products</strong>. There is no product-level certification or approval process for these categories.</p><p>FDA registration applies to <strong>manufacturing facilities</strong>. The regulatory focus is on the production site, not on individual product SKUs or brand names.</p><p>Product compliance is determined by <strong>ingredient legality, proper labeling structure, and valid facility registration status</strong>. These are the structural elements that define market entry readiness.</p>" data-cn="<p>对于食品及膳食补充剂产品，美国FDA<strong style='color:var(--accent)'>不对单品进行审批</strong>。此类产品不存在产品层面的认证或批准流程。</p><p>FDA注册对象为<strong>生产设施</strong>。监管重点在于生产场所，而非单个产品或品牌。</p><p>产品合规取决于<strong>成分合法性、标签结构规范以及设施注册有效性</strong>。这些是决定市场准入就绪度的结构性要素。</p>">
+      <p>For food and dietary supplement products, the U.S. FDA <strong style="color:var(--accent)">does not approve individual products</strong>. There is no product-level certification or approval process for these categories.</p>
+      <p>FDA registration applies to <strong>manufacturing facilities</strong>. The regulatory focus is on the production site, not on individual product SKUs or brand names.</p>
+      <p>Product compliance is determined by <strong>ingredient legality, proper labeling structure, and valid facility registration status</strong>. These are the structural elements that define market entry readiness.</p>
     </div>
   </div>
 </section>
@@ -459,7 +467,7 @@
   <div class="footer-l"><span data-en="© 2026 GoToMarket Compliance Lab. For informational purposes only." data-cn="© 2026 GoToMarket Compliance Lab. 仅供信息参考。">© 2026 GoToMarket Compliance Lab. For informational purposes only.</span></div>
   <div class="footer-r"><a href="#" data-en="Privacy" data-cn="隐私政策">Privacy</a><a href="#" data-en="Terms" data-cn="服务条款">Terms</a><a href="#" data-en="Contact" data-cn="联系我们">Contact</a></div>
 </footer>
-<div style="text-align:center;padding:0 var(--pad) 24px;font-size:10px;color:var(--text-3);opacity:0.7;line-height:1.6;font-family:var(--font-cn)"><span data-en="This platform provides structural compliance assessment and risk advisory only. It does not constitute legal advice, regulatory approval, or official certification." data-cn="本平台提供的是结构性合规评估与风险提示，不构成法律意见或监管批准。">This platform provides structural compliance assessment and risk advisory only. It does not constitute legal advice, regulatory approval, or official certification.</span></div>
+<div style="text-align:center;padding:0 var(--pad) 24px;font-size:10px;color:var(--text-3);opacity:0.7;line-height:1.6;font-family:var(--font-cn)"><span data-en="This platform provides structural compliance assessments and risk identification based on publicly available regulatory frameworks. The report does not constitute legal advice, regulatory approval, or official certification. Final compliance determinations should be confirmed by licensed legal professionals." data-cn="本平台提供基于公开法规框架的结构性合规评估与风险提示服务。报告内容不构成法律意见、监管批准或官方认证。最终合规判断应由持牌法律专业人士确认。">This platform provides structural compliance assessments and risk identification based on publicly available regulatory frameworks. The report does not constitute legal advice, regulatory approval, or official certification. Final compliance determinations should be confirmed by licensed legal professionals.</span></div>
 
 <!-- Auth Modal -->
 <div class="modal-overlay" id="authModal">
@@ -602,16 +610,16 @@ function renderReport(d){
   // Report Header
   html+=`<div class="report-header">
     <div class="report-brand">GoToMarket Compliance Lab</div>
-    <div class="report-title">${cn?'产品合规风险与结构评估报告':'Product Compliance Risk & Structural Assessment Report'}</div>
+    <div class="report-title">${cn?'产品合规结构评估报告':'Product Compliance Structural Assessment Report'}</div>
     <div class="report-meta">${cn?'报告日期':'Report Date'}: ${dateStr}　|　ID: ${reportId}</div>
-    <div class="report-note">${cn?'本报告由 AI 系统基于上传资料自动生成，仅作为结构性合规风险参考，不构成法律意见。最终合规确认请咨询持牌法规顾问。':'This report is auto-generated by AI based on uploaded materials for structural compliance risk reference only. It does not constitute legal advice. Please consult licensed regulatory professionals for final confirmation.'}</div>
+    <div class="report-note">${cn?'本平台提供基于公开法规框架的结构性合规评估与风险提示服务。报告内容不构成法律意见、监管批准或官方认证。最终合规判断应由持牌法律专业人士确认。':'This platform provides structural compliance assessments and risk identification based on publicly available regulatory frameworks. The report does not constitute legal advice, regulatory approval, or official certification. Final compliance determinations should be confirmed by licensed legal professionals.'}</div>
   </div>`;
 
   html+='<div class="dash-grid">';
 
   // Ingredient Risk - with regulatory citations
   const ir=d.ingredientRisk;
-  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🧪 ${cn?'成分风险概览':'Ingredient Risk Overview'}</span><span class="tag ${tagClass(ir.status)}">${ir.flagCount} ${cn?'项标记':'Flags'}</span></div><div class="dash-body">`;
+  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🧪 ${cn?'成分合规结构分析':'Ingredient Compliance Analysis'}</span><span class="tag ${tagClass(ir.status)}">${ir.flagCount} ${cn?'项标记':'Items'}</span></div><div class="dash-body">`;
   ir.items.forEach(it=>{
     const name=cn?(it.nameCn||it.name):it.name;
     const note=it.note||it.status;
@@ -623,7 +631,7 @@ function renderReport(d){
 
   // Label Compliance
   const lc=d.labelCompliance;
-  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🏷️ ${cn?'标签合规审查':'Label Compliance Review'}</span><span class="tag ${tagClass(lc.status)}">${lc.passCount}/${lc.totalCount}</span></div><div class="dash-body">`;
+  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🏷️ ${cn?'标签合规架构审查':'Label Architecture Review'}</span><span class="tag ${tagClass(lc.status)}">${lc.passCount}/${lc.totalCount}</span></div><div class="dash-body">`;
   lc.items.forEach(it=>{
     const name=cn?(it.nameCn||it.name):it.name;
     html+=`<div class="dash-row"><span class="dash-row-l">${name}<span class="reg-ref">${it.regulation||''}</span></span><span class="tag ${tagClass(it.status)}">${it.note||it.status}</span></div>`;
@@ -633,7 +641,7 @@ function renderReport(d){
 
   // Facility Registration - with FEI/DUNS note
   const fr=d.facilityRegistration;
-  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🏭 ${cn?'工厂注册状态':'Facility Registration'}</span><span class="tag ${tagClass(fr.status)}">${cn?'待核验':'Pending Verification'}</span></div><div class="dash-body">`;
+  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">🏭 ${cn?'生产设施注册核查':'Facility Registration Verification'}</span><span class="tag ${tagClass(fr.status)}">${cn?'待核验':'Pending Verification'}</span></div><div class="dash-body">`;
   fr.items.forEach(it=>{
     const name=cn?(it.nameCn||it.name):it.name;
     html+=`<div class="dash-row"><span class="dash-row-l">${name}<span class="reg-ref">${it.regulation||''}</span></span><span class="tag ${tagClass(it.status)}">${it.value||it.status}</span></div>`;
@@ -643,7 +651,7 @@ function renderReport(d){
 
   // Marketing Claims
   const mc=d.marketingClaims;
-  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">💬 ${cn?'宣传语言风险':'Marketing Claim Risk'}</span><span class="tag ${tagClass(mc.status)}">${mc.issueCount} ${cn?'项问题':'Issues'}</span></div><div class="dash-body">`;
+  html+=`<div class="dash-card"><div class="dash-hd"><span class="dash-t">💬 ${cn?'宣传语法规风险':'Marketing Claims Risk'}</span><span class="tag ${tagClass(mc.status)}">${mc.issueCount} ${cn?'项待审':'Items'}</span></div><div class="dash-body">`;
   mc.items.forEach(it=>{
     const claim=cn?(it.claimCn||it.claim):it.claim;
     html+=`<div class="dash-row"><span class="dash-row-l">${claim}<span class="reg-ref">${it.regulation||''}</span></span><span class="tag ${tagClass(it.status)}">${it.note||it.status}</span></div>`;
@@ -652,12 +660,13 @@ function renderReport(d){
   if(mc.summary)html+=`</div><div class="dash-summary">${mc.summary}</div>`;
   html+=`</div></div>`;
 
-  // Score Banner
-  const sc=d.overallScore;
-  const circ=264;
-  const off=circ-(circ*sc/100);
+  // Risk Level Banner
+  const rl=d.overallRiskLevel||'medium';
+  const rlIcon=rl==='low'?'&#9679;':rl==='high'?'&#9650;':'&#9670;';
+  const rlLabelEn=rl==='low'?'Low Risk':rl==='high'?'High Risk':'Medium Risk';
+  const rlLabelCn=rl==='low'?'低结构风险':rl==='high'?'高结构风险':'中等结构风险';
   const recs=cn?(d.recommendationsCn||d.recommendations):d.recommendations;
-  html+=`<div class="score-banner"><div class="score-ring-wrap"><svg viewBox="0 0 90 90"><circle class="sr-bg" cx="45" cy="45" r="42"/><circle class="sr-fill" cx="45" cy="45" r="42" style="stroke-dashoffset:${off}"/></svg><div class="score-num"><div class="score-val">${sc}</div><div class="score-max">/100</div></div></div><div class="score-text"><div class="score-verdict">${cn?'综合合规风险评分':'Overall Compliance Risk Score'}</div><div class="score-sub">${cn?(d.overallVerdictCn||d.overallVerdict):d.overallVerdict}</div>`;
+  html+=`<div class="score-banner"><div class="risk-level-badge risk-${rl}"><div class="risk-level-icon">${rlIcon}</div><div class="risk-level-text">${cn?rlLabelCn:rlLabelEn}</div></div><div class="score-text"><div class="score-verdict">${cn?'结构风险评估':'Structural Risk Assessment'}</div><div class="score-sub">${cn?(d.overallVerdictCn||d.overallVerdict):d.overallVerdict}</div>`;
   if(recs&&recs.length){
     html+=`<div class="rec-list">`;
     recs.forEach(r=>{html+=`<div class="rec-item">${r}</div>`});
@@ -673,7 +682,7 @@ function renderReport(d){
   </div>`;
 
   // Legal footer
-  html+=`<div style="text-align:center;padding:24px 0 0;font-size:10px;color:var(--text-3);opacity:0.6;line-height:1.6">${cn?'本平台提供的是结构性合规评估与风险提示，不构成法律意见或监管批准。':'This platform provides structural compliance assessment and risk advisory only. It does not constitute legal advice, regulatory approval, or official certification.'}</div>`;
+  html+=`<div style="text-align:center;padding:24px 0 0;font-size:10px;color:var(--text-3);opacity:0.6;line-height:1.6">${cn?'本平台提供基于公开法规框架的结构性合规评估与风险提示服务。报告内容不构成法律意见、监管批准或官方认证。最终合规判断应由持牌法律专业人士确认。':'This platform provides structural compliance assessments and risk identification based on publicly available regulatory frameworks. The report does not constitute legal advice, regulatory approval, or official certification. Final compliance determinations should be confirmed by licensed legal professionals.'}</div>`;
 
   // Open in overlay
   const overlay=document.getElementById('reportOverlay');
@@ -737,20 +746,23 @@ function exportPDF(){
     doc.setDrawColor(...C.accent);doc.setLineWidth(1);
     doc.line(M+16,M+38,M+CW-16,M+38);
     doc.setFont('helvetica','bold');doc.setFontSize(26);doc.setTextColor(...C.dark);
-    doc.text('Product Compliance Risk',M+16,M+62);
-    doc.text('& Structural Assessment Report',M+16,M+72);
-    // Score box
+    doc.text('Product Compliance',M+16,M+62);
+    doc.text('Structural Assessment Report',M+16,M+72);
+    // Risk level box
     doc.setFillColor(...C.accentLight);
     doc.roundedRect(M+16,M+86,CW-32,28,3,3,'F');
-    doc.setFillColor(...C.white);doc.setDrawColor(...C.accent);doc.setLineWidth(1.5);
-    doc.circle(M+32,M+100,10,'FD');
-    doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...C.accent);
-    doc.text(String(d.overallScore),M+32,M+102,{align:'center'});
+    var rlPdf=d.overallRiskLevel||'medium';
+    var rlColorPdf=rlPdf==='low'?C.pass:rlPdf==='high'?C.fail:C.warn;
+    var rlTextPdf=rlPdf==='low'?'LOW STRUCTURAL RISK':rlPdf==='high'?'HIGH STRUCTURAL RISK':'MEDIUM STRUCTURAL RISK';
+    doc.setFillColor(...rlColorPdf);
+    doc.roundedRect(M+20,M+92,36,16,3,3,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.white);
+    doc.text(rlTextPdf,M+38,M+102,{align:'center'});
     doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(...C.dark);
-    doc.text('Overall Compliance Risk Score',M+48,M+96);
+    doc.text('Structural Risk Assessment',M+62,M+96);
     doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...C.mid);
-    const vd=d.overallVerdict||'';
-    doc.text(doc.splitTextToSize(vd,CW-68),M+48,M+102);
+    var vd=d.overallVerdict||'';
+    doc.text(doc.splitTextToSize(vd,CW-68),M+62,M+102);
     doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...C.mid);
     doc.text('Report Date: '+dateStr,M+16,M+130);
     doc.text('Report ID: '+reportId,M+16,M+137);
@@ -760,7 +772,7 @@ function exportPDF(){
     doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.mid);
     doc.text('DISCLAIMER',M+20,H-M-62);
     doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...C.light);
-    var disc='This report is generated by AI for structural compliance risk reference only. It does not constitute legal advice, regulatory approval, or official certification. The U.S. FDA does not approve individual food or dietary supplement products. FDA registration applies to manufacturing facilities per 21 CFR 1.225. This platform does not directly access FDA internal databases. Final compliance must be confirmed by licensed regulatory professionals.';
+    var disc='This platform provides structural compliance assessments and risk identification based on publicly available regulatory frameworks. The report does not constitute legal advice, regulatory approval, or official certification. Final compliance determinations should be confirmed by licensed legal professionals.';
     doc.text(doc.splitTextToSize(disc,CW-40),M+20,H-M-56);
     doc.setFillColor(...C.accent);
     doc.rect(M,H-M-28,CW,28,'F');
@@ -778,7 +790,7 @@ function exportPDF(){
     doc.text('Table of Contents',M,y);
     y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+50,y);
     y+=14;
-    var toc=[['1','Ingredient Risk Assessment'],['2','Label Compliance Review'],['3','Facility Registration Status'],['4','Marketing Claim Risk Analysis'],['5','Recommendations & Action Items'],['6','Disclaimer & Legal Notice']];
+    var toc=[['1','Ingredient Compliance Structural Analysis'],['2','Label Compliance Architecture Review'],['3','Facility Registration Verification'],['4','Marketing Claims Regulatory Risk Identification'],['5','Optimization Recommendations'],['6','Disclaimer & Legal Notice']];
     toc.forEach(function(item){
       doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...C.accent);
       doc.text(item[0]+'.',M,y);
@@ -854,17 +866,17 @@ function exportPDF(){
     }
 
     var ir=d.ingredientRisk;
-    drawSection('Ingredient Risk Assessment','1',ir.items,'name','note',ir.summary,ir.riskPercent,'Risk Level',null);
+    drawSection('Ingredient Compliance Structural Analysis','1',ir.items,'name','note',ir.summary,ir.riskPercent,'Risk Level',null);
 
     var lc=d.labelCompliance;
-    drawSection('Label Compliance Review','2',lc.items,'name','note',lc.summary,null,null,null);
+    drawSection('Label Compliance Architecture Review','2',lc.items,'name','note',lc.summary,null,null,null);
 
     var fr=d.facilityRegistration;
-    drawSection('Facility Registration Status','3',fr.items,'name','value',fr.summary,null,null,
-      'Note: Facility FEI/DUNS information must be confirmed with the manufacturer. This platform does not directly access FDA internal databases; verification is based on publicly available information and client-provided documentation.');
+    drawSection('Facility Registration Verification','3',fr.items,'name','value',fr.summary,null,null,
+      'Note: Facility FEI/DUNS information must be confirmed with the manufacturer. Verification is based on publicly available information and client-provided documentation.');
 
     var mc=d.marketingClaims;
-    drawSection('Marketing Claim Risk Analysis','4',mc.items,'claim','note',mc.summary,mc.riskPercent,'Claim Risk',null);
+    drawSection('Marketing Claims Regulatory Risk Identification','4',mc.items,'claim','note',mc.summary,mc.riskPercent,'Structural Risk',null);
 
     // ======== RECOMMENDATIONS PAGE ========
     var recs=d.recommendations||[];
@@ -875,7 +887,7 @@ function exportPDF(){
       doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
       doc.text('SECTION 5',M,y);y+=7;
       doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
-      doc.text('Recommendations & Action Items',M,y);
+      doc.text('Optimization Recommendations',M,y);
       y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);y+=10;
 
       doc.setFillColor(...C.recBg);doc.setDrawColor(...C.recBorder);doc.setLineWidth(0.3);
@@ -903,11 +915,11 @@ function exportPDF(){
     y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);y+=10;
 
     var disclaimers=[
-      'This report is generated by the GoToMarket Compliance Lab AI system for structural compliance risk reference purposes only.',
-      'This report does not constitute legal advice, regulatory approval, or official certification of any kind.',
-      'For dietary supplements and food products, the U.S. FDA does not approve or certify individual products. FDA registration applies to manufacturing facilities (21 CFR 1.225), not to specific products or brands.',
-      'This platform does not directly access FDA internal databases. All verification is based on publicly available information and documentation provided by the client.',
-      'Final product compliance determination must be made by licensed regulatory professionals and/or qualified legal counsel.',
+      'This platform provides structural compliance assessments and risk identification based on publicly available regulatory frameworks.',
+      'The report does not constitute legal advice, regulatory approval, or official certification.',
+      'For food and dietary supplement products, FDA does not approve individual products. Registration applies to manufacturing facilities, not individual products or brands.',
+      'Product compliance is determined by ingredient legality, proper labeling structure, and valid facility registration status.',
+      'Final compliance determinations should be confirmed by licensed legal professionals.',
       'GoToMarket Compliance Lab assumes no liability for actions taken based on the contents of this report.'
     ];
     disclaimers.forEach(function(txt,idx){
@@ -958,21 +970,21 @@ function getDemoReportData(){
       {claim:'"Boosts Immunity"',claimCn:'"Boosts Immunity" / "增强免疫力"',status:'fail',note:'Constitutes unauthorized health claim. Requires FDA pre-market authorization or qualified health claim petition.',regulation:'DSHEA Sec. 403(r)(6); 21 CFR 101.93'},
       {claim:'"Low Sugar"',claimCn:'"Low Sugar" / "低糖"',status:'pass',note:'Meets nutrient content claim criteria if product contains ≤5g sugar per RACC.',regulation:'21 CFR 101.60(c)'}
     ],riskLevel:'high',riskPercent:72,summary:'2 marketing claim issues identified. Unauthorized health claim presents significant regulatory risk.'},
-    overallScore:65,
-    overallVerdict:'Moderate compliance risk. Multiple items require corrective action prior to U.S. market distribution.',
-    overallVerdictCn:'合规风险等级为中等。多项内容需在美国市场销售前完成整改。',
+    overallRiskLevel:'medium',
+    overallVerdict:'Medium structural risk identified. Multiple items require optimization prior to U.S. market entry.',
+    overallVerdictCn:'识别到中等结构风险。多项内容需在进入美国市场前进行优化。',
     recommendations:[
       'Add U.S. customary weight units (oz) per 21 CFR 101.105',
       'Add allergen "Contains" statement or bold declaration per FALCPA Sec. 203',
-      'Remove unauthorized health claim "Boosts Immunity" or file qualified health claim petition with FDA',
-      'Clarify or remove "All Natural" claim to avoid FD&C Act Sec. 403(a)(1) violation',
+      'Review and revise health-related marketing claim "Boosts Immunity" per DSHEA Sec. 403(r)(6)',
+      'Clarify or revise "All Natural" claim per FD&C Act Sec. 403(a)(1)',
       'Confirm facility FEI number and DUNS with manufacturer per 21 CFR 1.225'
     ],
     recommendationsCn:[
       '依据 21 CFR 101.105 添加美制重量单位 (oz)',
       '依据 FALCPA Sec. 203 添加过敏原"含有"声明或加粗标注',
-      '删除未经授权的健康声称"增强免疫力"，或向 FDA 提交合格健康声称申请',
-      '明确"纯天然"声称含义或移除，避免违反 FD&C Act Sec. 403(a)(1)',
+      '依据 DSHEA Sec. 403(r)(6) 审查并修订健康相关宣传语"增强免疫力"',
+      '依据 FD&C Act Sec. 403(a)(1) 明确或修订"纯天然"声称',
       '依据 21 CFR 1.225 与工厂确认设施 FEI 编号及 DUNS 信息'
     ]
   };
@@ -1154,9 +1166,11 @@ async function loadSavedReports() {
     }
     list.innerHTML = data.reports.map(r => {
       const date = new Date(r.created_at).toLocaleDateString(cn ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const rlClass = r.score <= 1 ? 'risk-low' : r.score <= 2 ? 'risk-medium' : 'risk-high';
+      const rlText = cn ? (r.score <= 1 ? '低风险' : r.score <= 2 ? '中风险' : '高风险') : (r.score <= 1 ? 'Low' : r.score <= 2 ? 'Medium' : 'High');
       return `<div class="saved-card" onclick="loadReport('${r.report_id}')">
         <div class="saved-left"><div class="saved-title">${r.title}</div><div class="saved-meta">${r.report_id}  ·  ${date}</div></div>
-        <div class="saved-score">${r.score}</div>
+        <div class="saved-score ${rlClass}">${rlText}</div>
         <div class="saved-actions"><button class="saved-del" onclick="event.stopPropagation();deleteReport('${r.report_id}')" title="Delete">🗑</button></div>
       </div>`;
     }).join('');
