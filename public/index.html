@@ -1122,8 +1122,9 @@ async function exportPDF(){
     doc.addFileToVFS('NotoSansSC-Bold.ttf',fonts.bold);
     doc.addFont('NotoSansSC-Bold.ttf','NotoSansSC','bold');
     const W=210, H=297, M=18, CW=W-M*2;
+    const cn=lang==='cn';
     const now=new Date();
-    const dateStr=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const dateStr=now.toLocaleDateString(cn?'zh-CN':'en-US',{year:'numeric',month:'long',day:'numeric'});
     const reportId='GTM-'+Date.now().toString(36).toUpperCase();
 
     const C={
@@ -1142,8 +1143,8 @@ async function exportPDF(){
     function pageFooter(){
       const pn=doc.internal.getNumberOfPages();
       doc.setFontSize(7);doc.setTextColor(...C.light);
-      doc.text('GoToMarket Compliance Lab  |  Confidential',M,H-10);
-      doc.text('Page '+pn,W-M,H-10,{align:'right'});
+      doc.text(cn?'GoToMarket Compliance Lab  |  机密文件':'GoToMarket Compliance Lab  |  Confidential',M,H-10);
+      doc.text((cn?'第 ':'Page ')+pn+(cn?' 页':''),W-M,H-10,{align:'right'});
     }
 
     // ======== PAGE 1: COVER ========
@@ -1154,37 +1155,48 @@ async function exportPDF(){
     doc.setFont('NotoSansSC','bold');doc.setFontSize(14);doc.setTextColor(...C.accent);
     doc.text('GoToMarket Compliance Lab',M+16,M+24);
     doc.setFont('NotoSansSC','normal');doc.setFontSize(9);doc.setTextColor(...C.mid);
-    doc.text('Global Regulatory & Market Entry Intelligence Platform',M+16,M+31);
+    doc.text(cn?'美国食品与膳食补充剂法规合规分析平台':'Global Regulatory & Market Entry Intelligence Platform',M+16,M+31);
     doc.setDrawColor(...C.accent);doc.setLineWidth(1);
     doc.line(M+16,M+38,M+CW-16,M+38);
     doc.setFont('NotoSansSC','bold');doc.setFontSize(26);doc.setTextColor(...C.dark);
-    doc.text('Product Compliance',M+16,M+62);
-    doc.text('Structural Assessment Report',M+16,M+72);
-    // Risk level box
-    doc.setFillColor(...C.accentLight);
-    doc.roundedRect(M+16,M+86,CW-32,28,3,3,'F');
+    doc.text(cn?'产品合规与市场准入':'Product Compliance',M+16,M+62);
+    doc.text(cn?'评估报告':'Assessment Report',M+16,M+72);
+    // Risk level box - calculate dynamic height
     var rlPdf=d.overallRiskLevel||'medium';
     var rlColorPdf=rlPdf==='low'?C.pass:rlPdf==='high'?C.fail:C.warn;
-    var rlTextPdf=rlPdf==='low'?'LOW STRUCTURAL RISK':rlPdf==='high'?'HIGH STRUCTURAL RISK':'MEDIUM STRUCTURAL RISK';
+    var rlTextPdf=cn?(rlPdf==='low'?'低结构风险':rlPdf==='high'?'高结构风险':'中等结构风险'):(rlPdf==='low'?'LOW STRUCTURAL RISK':rlPdf==='high'?'HIGH STRUCTURAL RISK':'MEDIUM STRUCTURAL RISK');
+    var vd=cn?(d.overallVerdictCn||d.overallVerdict||''):(d.overallVerdict||'');
+    doc.setFont('NotoSansSC','normal');doc.setFontSize(8);
+    var vdLines=doc.splitTextToSize(vd,CW-40);
+    var vdH=vdLines.length*4;
+    var riskBoxH=Math.max(36, 24+vdH);
+    doc.setFillColor(...C.accentLight);
+    doc.roundedRect(M+16,M+86,CW-32,riskBoxH,3,3,'F');
+    // Risk badge
+    var badgeW=cn?42:36;
     doc.setFillColor(...rlColorPdf);
-    doc.roundedRect(M+20,M+92,36,16,3,3,'F');
+    doc.roundedRect(M+20,M+90,badgeW,14,3,3,'F');
     doc.setFont('NotoSansSC','bold');doc.setFontSize(8);doc.setTextColor(...C.white);
-    doc.text(rlTextPdf,M+38,M+102,{align:'center'});
+    doc.text(rlTextPdf,M+20+badgeW/2,M+99,{align:'center'});
+    // Risk title - right of badge
+    var titleX=M+20+badgeW+6;
     doc.setFont('NotoSansSC','bold');doc.setFontSize(12);doc.setTextColor(...C.dark);
-    doc.text('Structural Risk Assessment',M+62,M+96);
+    doc.text(cn?'结构风险评估':'Structural Risk Assessment',titleX,M+96);
+    // Verdict text - full width below badge row
     doc.setFont('NotoSansSC','normal');doc.setFontSize(8);doc.setTextColor(...C.mid);
-    var vd=d.overallVerdict||'';
-    doc.text(doc.splitTextToSize(vd,CW-68),M+62,M+102);
+    doc.text(vdLines,M+20,M+108);
+    // Date and ID below risk box
+    var afterBox=M+86+riskBoxH+12;
     doc.setFont('NotoSansSC','normal');doc.setFontSize(9);doc.setTextColor(...C.mid);
-    doc.text('Report Date: '+dateStr,M+16,M+130);
-    doc.text('Report ID: '+reportId,M+16,M+137);
+    doc.text((cn?'报告日期：':'Report Date: ')+dateStr,M+16,afterBox);
+    doc.text((cn?'报告编号：':'Report ID: ')+reportId,M+16,afterBox+7);
     // Disclaimer box
     doc.setFillColor(248,249,250);doc.setDrawColor(...C.border);doc.setLineWidth(0.3);
     doc.roundedRect(M+16,H-M-70,CW-32,30,2,2,'FD');
     doc.setFont('NotoSansSC','bold');doc.setFontSize(8);doc.setTextColor(...C.mid);
-    doc.text('DISCLAIMER',M+20,H-M-62);
+    doc.text(cn?'免责声明':'DISCLAIMER',M+20,H-M-62);
     doc.setFont('NotoSansSC','normal');doc.setFontSize(7);doc.setTextColor(...C.light);
-    var disc='This platform provides structural compliance assessments and risk identification based on publicly available regulatory frameworks. The report does not constitute legal advice, regulatory approval, or official certification. Final compliance determinations should be confirmed by licensed legal professionals.';
+    var disc=cn?'本平台提供基于公开法规框架的结构性合规评估与风险提示服务。报告内容不构成法律意见、监管批准或官方认证。最终合规判断应由持牌法律专业人士确认。':'This platform provides structural compliance assessments and risk identification based on publicly available regulatory frameworks. The report does not constitute legal advice, regulatory approval, or official certification. Final compliance determinations should be confirmed by licensed legal professionals.';
     doc.text(doc.splitTextToSize(disc,CW-40),M+20,H-M-56);
     doc.setFillColor(...C.accent);
     doc.rect(M,H-M-28,CW,28,'F');
@@ -1199,10 +1211,10 @@ async function exportPDF(){
     doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
     y=20;
     doc.setFont('NotoSansSC','bold');doc.setFontSize(18);doc.setTextColor(...C.dark);
-    doc.text('Table of Contents',M,y);
+    doc.text(cn?'目录':'Table of Contents',M,y);
     y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+50,y);
     y+=14;
-    var toc=[['1','Ingredient Compliance Structural Analysis'],['2','Label Compliance Architecture Review'],['3','Facility Registration Verification'],['4','Marketing Claims Regulatory Risk Identification'],['5','Optimization Recommendations'],['6','Disclaimer & Legal Notice']];
+    var toc=cn?[['1','成分合规结构分析'],['2','标签合规架构审查'],['3','生产设施注册核查'],['4','宣传语法规风险识别'],['5','优化建议'],['6','免责声明与法律告知']]:[['1','Ingredient Compliance Structural Analysis'],['2','Label Compliance Architecture Review'],['3','Facility Registration Verification'],['4','Marketing Claims Regulatory Risk Identification'],['5','Optimization Recommendations'],['6','Disclaimer & Legal Notice']];
     toc.forEach(function(item){
       doc.setFont('NotoSansSC','bold');doc.setFontSize(10);doc.setTextColor(...C.accent);
       doc.text(item[0]+'.',M,y);
@@ -1218,7 +1230,7 @@ async function exportPDF(){
       doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
       y=16;
       doc.setFont('NotoSansSC','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
-      doc.text('SECTION '+sectionNum,M,y);
+      doc.text((cn?'第 ':'SECTION ')+sectionNum+(cn?' 节':''),M,y);
       y+=7;
       doc.setFont('NotoSansSC','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
       doc.text(title,M,y);
@@ -1226,14 +1238,14 @@ async function exportPDF(){
       y+=8;
 
       var tableData=items.map(function(it){
-        var name=it[nameKey+'Cn']||it[nameKey]||'';
+        var name=cn?(it[nameKey+'Cn']||it[nameKey]||''):(it[nameKey]||it[nameKey+'Cn']||'');
         var note=it[noteKey]||it.status||'';
         var reg=it.regulation||'';
         return [name,note,reg];
       });
       doc.autoTable({
         startY:y, margin:{left:M,right:M},
-        head:[['Item','Assessment','Regulation']],
+        head:[[cn?'项目':'Item',cn?'评估':'Assessment',cn?'法规引用':'Regulation']],
         body:tableData,
         theme:'striped',
         styles:{font:'NotoSansSC',fontStyle:'normal',fontSize:8,cellPadding:{top:3,bottom:3,left:3,right:3},textColor:C.dark,lineColor:C.border,lineWidth:0.15},
@@ -1251,8 +1263,8 @@ async function exportPDF(){
       if(typeof riskPercent==='number'){
         checkPage(12);
         doc.setFontSize(7);doc.setTextColor(...C.light);
-        doc.text(riskLabel||'Risk Level',M,y+2);
-        var rl=riskPercent>65?'HIGH':riskPercent>35?'MEDIUM':'LOW';
+        doc.text(riskLabel||(cn?'风险等级':'Risk Level'),M,y+2);
+        var rl=cn?(riskPercent>65?'高':riskPercent>35?'中等':'低'):(riskPercent>65?'HIGH':riskPercent>35?'MEDIUM':'LOW');
         doc.text(rl,W-M,y+2,{align:'right'});
         y+=4;
         doc.setFillColor(...C.border);doc.roundedRect(M,y,CW,3,1,1,'F');
@@ -1278,28 +1290,28 @@ async function exportPDF(){
     }
 
     var ir=d.ingredientRisk;
-    drawSection('Ingredient Compliance Structural Analysis','1',ir.items,'name','note',ir.summary,ir.riskPercent,'Risk Level',null);
+    drawSection(cn?'成分合规结构分析':'Ingredient Compliance Structural Analysis','1',ir.items,'name','note',ir.summary,ir.riskPercent,cn?'风险等级':'Risk Level',null);
 
     var lc=d.labelCompliance;
-    drawSection('Label Compliance Architecture Review','2',lc.items,'name','note',lc.summary,null,null,null);
+    drawSection(cn?'标签合规架构审查':'Label Compliance Architecture Review','2',lc.items,'name','note',lc.summary,null,null,null);
 
     var fr=d.facilityRegistration;
-    drawSection('Facility Registration Verification','3',fr.items,'name','value',fr.summary,null,null,
-      'Note: Facility FEI/DUNS information must be confirmed with the manufacturer. Verification is based on publicly available information and client-provided documentation.');
+    drawSection(cn?'生产设施注册核查':'Facility Registration Verification','3',fr.items,'name','value',fr.summary,null,null,
+      cn?'注：设施 FEI/DUNS 信息需与制造商确认。核查基于公开信息及客户提供的资料。':'Note: Facility FEI/DUNS information must be confirmed with the manufacturer. Verification is based on publicly available information and client-provided documentation.');
 
     var mc=d.marketingClaims;
-    drawSection('Marketing Claims Regulatory Risk Identification','4',mc.items,'claim','note',mc.summary,mc.riskPercent,'Structural Risk',null);
+    drawSection(cn?'宣传语法规风险识别':'Marketing Claims Regulatory Risk Identification','4',mc.items,'claim','note',mc.summary,mc.riskPercent,cn?'结构风险':'Structural Risk',null);
 
     // ======== RECOMMENDATIONS PAGE ========
-    var recs=d.recommendations||[];
+    var recs=cn?(d.recommendationsCn||d.recommendations||[]):(d.recommendations||[]);
     if(recs.length){
       doc.addPage();y=M;
       doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
       y=16;
       doc.setFont('NotoSansSC','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
-      doc.text('SECTION 5',M,y);y+=7;
+      doc.text(cn?'第 5 节':'SECTION 5',M,y);y+=7;
       doc.setFont('NotoSansSC','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
-      doc.text('Optimization Recommendations',M,y);
+      doc.text(cn?'优化建议':'Optimization Recommendations',M,y);
       y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);y+=10;
 
       doc.setFillColor(...C.recBg);doc.setDrawColor(...C.recBorder);doc.setLineWidth(0.3);
@@ -1321,12 +1333,19 @@ async function exportPDF(){
     doc.setFillColor(...C.accent);doc.rect(0,0,W,3,'F');
     y=16;
     doc.setFont('NotoSansSC','bold');doc.setFontSize(8);doc.setTextColor(...C.accent);
-    doc.text('SECTION 6',M,y);y+=7;
+    doc.text(cn?'第 6 节':'SECTION 6',M,y);y+=7;
     doc.setFont('NotoSansSC','bold');doc.setFontSize(14);doc.setTextColor(...C.dark);
-    doc.text('Disclaimer & Legal Notice',M,y);
+    doc.text(cn?'免责声明与法律告知':'Disclaimer & Legal Notice',M,y);
     y+=4;doc.setDrawColor(...C.accent);doc.setLineWidth(0.5);doc.line(M,y,M+40,y);y+=10;
 
-    var disclaimers=[
+    var disclaimers=cn?[
+      '本平台提供基于公开法规框架的结构性合规评估与风险提示服务。',
+      '报告内容不构成法律意见、监管批准或官方认证。',
+      '对于食品及膳食补充剂产品，FDA 不对单个产品进行审批。注册对象为生产设施，而非单个产品或品牌。',
+      '产品合规取决于成分合法性、标签结构规范以及设施注册有效性。',
+      '最终合规判断应由持牌法律专业人士确认。',
+      'GoToMarket Compliance Lab 对基于本报告内容所采取的行动不承担任何责任。'
+    ]:[
       'This platform provides structural compliance assessments and risk identification based on publicly available regulatory frameworks.',
       'The report does not constitute legal advice, regulatory approval, or official certification.',
       'For food and dietary supplement products, FDA does not approve individual products. Registration applies to manufacturing facilities, not individual products or brands.',
