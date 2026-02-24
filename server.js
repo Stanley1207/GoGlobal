@@ -298,9 +298,7 @@ Return ONLY valid JSON with this exact structure (no markdown, no code fences, n
     { "claim": "<marketing or health claim text in English>", "claimCn": "<Chinese translation or original if Chinese>" }
   ],
   "fdaInfo": {
-    "feiNumber": "<FEI number if visible, or empty string>",
-    "facilityName": "<facility name if visible, or empty string>",
-    "registrationInfo": "<any FDA registration info visible, or empty string>"
+    "facilityIdNumber": "<FEI or facility identification number if visible, or empty string>"
   },
   "otherInfo": "<any other relevant label information not captured above>"
 }
@@ -411,13 +409,15 @@ IMPORTANT RULES:
 5. Always provide BOTH "recommendations" (English) and "recommendationsCn" (Chinese).
 6. ALWAYS include "regulation" field with specific CFR/statutory citation for EVERY item.
 7. Use formal regulatory language: "Requires verification of GRAS status per 21 CFR 170.30" not "Generally safe".
-8. For facility registration: If FEI/DUNS/FSVP data was provided, assess it. If not provided, note "Requires confirmation of facility FEI number and valid registration status per 21 CFR 1.225".
+8. For facility registration: Assess based on user-reported status selections (not verified data). Use phrases like "Based on provided information" and "Independent verification recommended".
 9. For ingredients, specify whether GRAS self-affirmed, FDA-affirmed, or NDI notification required per DSHEA.
 10. For labels, cite specific CFR sections (21 CFR 101.9, 101.36, etc.).
 11. For marketing claims, reference FD&C Act Sec. 403, DSHEA structure/function claim rules.
 12. For overallRiskLevel, use "low", "medium", or "high" to indicate structural risk. Do NOT use numeric scores.
 13. Avoid absolute negative terms like "violation", "adulteration", "counterfeit". Use "structural risk", "requires optimization", "warrants review" instead.
-14. Do NOT use terms like "certification", "approval" for this platform's output. Use "structural assessment", "risk identification" instead.`;
+14. Do NOT use terms like "certification", "approval" for this platform's output. Use "structural assessment", "risk identification" instead.
+15. NEVER use "FDA verified", "Compliant", or "Registration confirmed" in output. Use "Based on provided information", "Independent verification recommended", "Structural risk level: Low/Moderate/Elevated" instead.
+16. All facility registration data is user-reported and NOT independently verified against FDA databases. Always note this context in facility-related assessments.`;
 }
 
 // Format confirmed data as structured text for Layer 2 prompt
@@ -473,13 +473,34 @@ function formatConfirmedDataAsText(d) {
   }
   text += "\n";
 
-  text += "FDA FACILITY REGISTRATION INFO:\n";
-  const fda = d.fdaInfo || {};
-  text += `  FEI Number: ${fda.feiNumber || "Not provided"}\n`;
-  text += `  DUNS Number: ${fda.dunsNumber || "Not provided"}\n`;
-  text += `  Facility Name: ${fda.facilityName || "Not provided"}\n`;
-  text += `  FSVP Importer: ${fda.fsvpImporter || "Not provided"}\n`;
-  text += `  US Agent: ${fda.usAgent || "Not provided"}\n`;
+  text +=
+    "FDA FACILITY REGISTRATION STATUS (user-reported, not independently verified):\n";
+  const fs = d.fdaStatus || {};
+  const regMap = {
+    active: "Confirmed active",
+    expired: "Possibly expired",
+    not_registered: "Not registered",
+    unknown: "Unknown",
+  };
+  const agentMap = {
+    appointed: "Appointed",
+    not_appointed: "Not appointed",
+    unknown: "Unknown",
+  };
+  const fsvpMap = { yes: "Yes", no: "No", tbd: "To be determined" };
+  const importerMap = {
+    us_distributor: "U.S. distributor",
+    self_import: "Self-import",
+    third_party: "Third-party importer",
+    not_determined: "Not determined",
+  };
+  text += `  Manufacturing Facility Registration: ${regMap[fs.facilityRegStatus] || "Unknown"}\n`;
+  text += `  U.S. Agent Appointment: ${agentMap[fs.usAgentStatus] || "Unknown"}\n`;
+  text += `  FSVP Importer Identified: ${fsvpMap[fs.fsvpStatus] || "To be determined"}\n`;
+  text += `  Importer of Record Structure: ${importerMap[fs.importerStructure] || "Not determined"}\n`;
+  if (fs.facilityIdNumber) {
+    text += `  Facility ID Number (user-provided, not verified): ${fs.facilityIdNumber}\n`;
+  }
 
   return text;
 }
@@ -525,10 +546,12 @@ function getDemoExtractedData(lang) {
       { claim: "Boosts Performance", claimCn: "提升表现" },
       { claim: "Low Sugar", claimCn: "低糖" },
     ],
-    fdaInfo: {
-      feiNumber: "",
-      facilityName: "",
-      registrationInfo: "",
+    fdaStatus: {
+      facilityRegStatus: "unknown",
+      usAgentStatus: "unknown",
+      fsvpStatus: "tbd",
+      importerStructure: "not_determined",
+      facilityIdNumber: "",
     },
     otherInfo: "",
   };
@@ -793,12 +816,10 @@ app.post("/api/analyze", upload.array("files", 10), async (req, res) => {
       data = parseGeminiJSON(text);
     } catch (e) {
       console.error("Gemini response parse error:", e.message);
-      return res
-        .status(500)
-        .json({
-          error: "Failed to parse AI response",
-          raw: text.substring(0, 800),
-        });
+      return res.status(500).json({
+        error: "Failed to parse AI response",
+        raw: text.substring(0, 800),
+      });
     }
 
     cleanupFiles(files);
@@ -853,12 +874,10 @@ app.post("/api/extract", upload.array("files", 10), async (req, res) => {
       data = parseGeminiJSON(text);
     } catch (e) {
       console.error("Extraction parse error:", e.message);
-      return res
-        .status(500)
-        .json({
-          error: "Failed to parse AI extraction response",
-          raw: text.substring(0, 800),
-        });
+      return res.status(500).json({
+        error: "Failed to parse AI extraction response",
+        raw: text.substring(0, 800),
+      });
     }
 
     cleanupFiles(files);
@@ -908,12 +927,10 @@ app.post("/api/analyze-confirmed", async (req, res) => {
       data = parseGeminiJSON(text);
     } catch (e) {
       console.error("Confirmed analysis parse error:", e.message);
-      return res
-        .status(500)
-        .json({
-          error: "Failed to parse AI response",
-          raw: text.substring(0, 800),
-        });
+      return res.status(500).json({
+        error: "Failed to parse AI response",
+        raw: text.substring(0, 800),
+      });
     }
 
     return res.json({ success: true, demo: false, data });
