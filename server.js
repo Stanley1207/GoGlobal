@@ -240,6 +240,300 @@ IMPORTANT RULES:
 14. Do NOT use terms like "certification", "approval" for this platform's output. Use "structural assessment", "risk identification" instead.`;
 }
 
+// Robust JSON extraction from Gemini response
+function parseGeminiJSON(text) {
+  try {
+    const cleaned = text
+      .replace(/```json\s*/gi, "")
+      .replace(/```\s*/g, "")
+      .trim();
+    return JSON.parse(cleaned);
+  } catch (e1) {
+    const firstBrace = text.indexOf("{");
+    const lastBrace = text.lastIndexOf("}");
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+      const jsonStr = text.substring(firstBrace, lastBrace + 1);
+      return JSON.parse(jsonStr);
+    }
+    throw new Error("No JSON object found in response");
+  }
+}
+
+// Build extraction prompt (Layer 1: extract structured data from images)
+function buildExtractionPrompt(lang = "en") {
+  const isEn = lang === "en";
+  const langRule = isEn
+    ? "Use English for all fields."
+    : "Use Chinese where possible for descriptive fields; use English for technical/regulatory terms and field keys.";
+
+  return `You are an expert at reading product packaging, labels, and ingredient lists for food and dietary supplement products.
+
+Analyze the uploaded product image(s) and extract ALL visible structured data. Do NOT perform compliance analysis — only extract what you see.
+
+${langRule}
+
+Return ONLY valid JSON with this exact structure (no markdown, no code fences, no extra text):
+{
+  "productName": "<product name as shown on label>",
+  "productNameCn": "<product name in Chinese if visible, or translation>",
+  "productType": "<food / dietary supplement / beverage / other>",
+  "ingredients": [
+    {
+      "name": "<ingredient name in English>",
+      "nameCn": "<ingredient name in Chinese if visible>",
+      "amount": "<amount or percentage if visible, or empty string>",
+      "unit": "<unit if visible, or empty string>"
+    }
+  ],
+  "nutritionFacts": [
+    { "nutrient": "<nutrient name>", "amount": "<value with unit>", "dailyValue": "<% DV if shown, or empty>" }
+  ],
+  "allergens": ["<allergen 1>", "<allergen 2>"],
+  "netWeight": "<net weight as shown on label>",
+  "servingSize": "<serving size as shown>",
+  "servingsPerContainer": "<servings per container if shown>",
+  "countryOfOrigin": "<country if visible>",
+  "manufacturerInfo": "<manufacturer name and/or address if visible>",
+  "labelClaims": [
+    { "claim": "<marketing or health claim text in English>", "claimCn": "<Chinese translation or original if Chinese>" }
+  ],
+  "fdaInfo": {
+    "feiNumber": "<FEI number if visible, or empty string>",
+    "facilityName": "<facility name if visible, or empty string>",
+    "registrationInfo": "<any FDA registration info visible, or empty string>"
+  },
+  "otherInfo": "<any other relevant label information not captured above>"
+}
+
+RULES:
+1. Extract ONLY what is visible on the label/packaging. Use empty string "" for fields not found.
+2. For ingredients, list EVERY ingredient separately, in the order shown on the label.
+3. If an ingredient list shows sub-ingredients in parentheses, list the parent ingredient with sub-ingredients noted in the amount field.
+4. Return ONLY valid JSON. No markdown code fences, no explanatory text.
+5. If multiple images are provided, combine information from all images into one unified response.`;
+}
+
+// Build confirmed analysis prompt (Layer 2: analyze confirmed structured data)
+function buildConfirmedAnalysisPrompt(lang = "en") {
+  const isEn = lang === "en";
+
+  const langInstruction = isEn
+    ? `CRITICAL LANGUAGE REQUIREMENT: ALL text in your response MUST be in English. Every "name", "note", "value", "summary", "claim", "overallVerdict", and "recommendations" field MUST be written in English only. Do NOT use any Chinese characters anywhere in the response.`
+    : `关键语言要求：你的回复中所有文本必须使用中文。每个 "nameCn"、"note"、"value"、"summary"、"claimCn"、"overallVerdictCn" 和 "recommendationsCn" 字段都必须用中文书写。"name" 和 "claim" 字段使用英文（作为术语标识），但 "note"、"summary"、"value" 等描述性字段必须全部使用中文。`;
+
+  return `You are a senior regulatory compliance analyst specializing in food and dietary supplement products exported to the US market. Use formal regulatory language in your analysis. Focus on structural compliance assessment rather than definitive pass/fail judgments.
+
+Analyze the following CONFIRMED product data (provided as structured text below) and provide a structured compliance assessment report. This data has been reviewed and confirmed by the product owner as accurate.
+
+${langInstruction}
+
+IMPORTANT REGULATORY CITATION RULES:
+- For each item, include a "regulation" field with the specific CFR or statutory reference.
+- Examples: "21 CFR 170.30 (GRAS)", "21 CFR 101.36 (Supplement Facts)", "DSHEA Sec. 403(r)(6)", "21 CFR 189 (Prohibited Substances)", "21 CFR 74 (Color Additives)", "FALCPA Sec. 203", "21 CFR 101.9 (Nutrition Labeling)", "FD&C Act Sec. 403(a)(1)"
+- Use precise regulatory terminology: "GRAS determination per 21 CFR 170" not just "safe"
+- For ingredients: note whether GRAS self-determination, FDA-affirmed GRAS, or NDI notification required
+- For facility: reference 21 CFR 1.225 (Registration of Food Facilities) and FSMA Sec. 301
+
+Provide your analysis in the following JSON format ONLY (no markdown, no extra text, no code fences):
+{
+  "ingredientRisk": {
+    "status": "pass|warn|fail",
+    "flagCount": <number>,
+    "items": [
+      {
+        "name": "<ingredient name in English>",
+        "nameCn": "<ingredient name in Chinese>",
+        "status": "pass|warn|fail",
+        "note": "<${isEn ? "regulatory assessment in English" : "regulatory assessment in Chinese"}>",
+        "regulation": "<e.g. 21 CFR 170.30 (GRAS)>"
+      }
+    ],
+    "overallRisk": "<low|medium|high>",
+    "riskPercent": <0-100>,
+    "summary": "<${isEn ? "1-2 sentence summary in English" : "1-2句中文总结"}>"
+  },
+  "labelCompliance": {
+    "status": "pass|warn|fail",
+    "passCount": <number>,
+    "totalCount": <number>,
+    "items": [
+      {
+        "name": "<check item in English>",
+        "nameCn": "<check item in Chinese>",
+        "status": "pass|warn|fail",
+        "note": "<${isEn ? "brief note in English" : "brief note in Chinese"}>",
+        "regulation": "<e.g. 21 CFR 101.9>"
+      }
+    ],
+    "summary": "<${isEn ? "1-2 sentence summary in English" : "1-2句中文总结"}>"
+  },
+  "facilityRegistration": {
+    "status": "pass|warn|info",
+    "items": [
+      {
+        "name": "<check item in English>",
+        "nameCn": "<check item in Chinese>",
+        "value": "<${isEn ? "status or value in English" : "status or value in Chinese"}>",
+        "status": "pass|warn|fail|info",
+        "regulation": "<e.g. 21 CFR 1.225>"
+      }
+    ],
+    "summary": "<${isEn ? "1-2 sentence summary in English" : "1-2句中文总结"}>"
+  },
+  "marketingClaims": {
+    "status": "pass|warn|fail",
+    "issueCount": <number>,
+    "items": [
+      {
+        "claim": "<the marketing claim found, in original language>",
+        "claimCn": "<claim translated to Chinese>",
+        "status": "pass|warn|fail|info",
+        "note": "<${isEn ? "explanation in English" : "explanation in Chinese"}>",
+        "regulation": "<e.g. DSHEA Sec. 403(r)(6)>"
+      }
+    ],
+    "riskLevel": "<low|medium|high>",
+    "riskPercent": <0-100>,
+    "summary": "<${isEn ? "1-2 sentence summary in English" : "1-2句中文总结"}>"
+  },
+  "overallRiskLevel": "<low|medium|high>",
+  "overallVerdict": "<${isEn ? "structural risk assessment verdict in English" : "structural risk assessment verdict in English"}>",
+  "overallVerdictCn": "<brief verdict in Chinese>",
+  "recommendations": [${isEn ? '"<English recommendation>"' : '"<English recommendation>"'}],
+  "recommendationsCn": ["<Chinese recommendation>"]
+}
+
+IMPORTANT RULES:
+1. Return ONLY valid JSON. No markdown code fences, no explanatory text before or after.
+2. ${isEn ? "All descriptive text (note, summary, value, verdict, recommendations) MUST be in English." : "All descriptive text (note, summary, value) MUST be in Chinese. recommendations and recommendationsCn both required."}
+3. Always provide BOTH "name" (English) and "nameCn" (Chinese) for each item.
+4. Always provide BOTH "overallVerdict" (English) and "overallVerdictCn" (Chinese).
+5. Always provide BOTH "recommendations" (English) and "recommendationsCn" (Chinese).
+6. ALWAYS include "regulation" field with specific CFR/statutory citation for EVERY item.
+7. Use formal regulatory language: "Requires verification of GRAS status per 21 CFR 170.30" not "Generally safe".
+8. For facility registration: If FEI/DUNS/FSVP data was provided, assess it. If not provided, note "Requires confirmation of facility FEI number and valid registration status per 21 CFR 1.225".
+9. For ingredients, specify whether GRAS self-affirmed, FDA-affirmed, or NDI notification required per DSHEA.
+10. For labels, cite specific CFR sections (21 CFR 101.9, 101.36, etc.).
+11. For marketing claims, reference FD&C Act Sec. 403, DSHEA structure/function claim rules.
+12. For overallRiskLevel, use "low", "medium", or "high" to indicate structural risk. Do NOT use numeric scores.
+13. Avoid absolute negative terms like "violation", "adulteration", "counterfeit". Use "structural risk", "requires optimization", "warrants review" instead.
+14. Do NOT use terms like "certification", "approval" for this platform's output. Use "structural assessment", "risk identification" instead.`;
+}
+
+// Format confirmed data as structured text for Layer 2 prompt
+function formatConfirmedDataAsText(d) {
+  let text = `PRODUCT NAME: ${d.productName || "Not specified"}\n`;
+  if (d.productNameCn) text += `PRODUCT NAME (CN): ${d.productNameCn}\n`;
+  if (d.productType) text += `PRODUCT TYPE: ${d.productType}\n`;
+  text += "\n";
+
+  text += "INGREDIENTS:\n";
+  if (d.ingredients && d.ingredients.length) {
+    d.ingredients.forEach((ing, i) => {
+      text += `  ${i + 1}. ${ing.name || ing.nameCn || "Unknown"}`;
+      if (ing.nameCn && ing.name) text += ` (${ing.nameCn})`;
+      if (ing.amount)
+        text += ` — ${ing.amount}${ing.unit ? " " + ing.unit : ""}`;
+      text += "\n";
+    });
+  } else {
+    text += "  No ingredients provided.\n";
+  }
+  text += "\n";
+
+  text += "NUTRITION FACTS:\n";
+  if (d.nutritionFacts && d.nutritionFacts.length) {
+    d.nutritionFacts.forEach((nf) => {
+      text += `  ${nf.nutrient}: ${nf.amount}`;
+      if (nf.dailyValue) text += ` (${nf.dailyValue} DV)`;
+      text += "\n";
+    });
+  } else {
+    text += "  No nutrition facts provided.\n";
+  }
+  text += "\n";
+
+  text += `ALLERGENS: ${d.allergens && d.allergens.length ? d.allergens.join(", ") : "None declared"}\n`;
+  text += `NET WEIGHT: ${d.netWeight || "Not specified"}\n`;
+  text += `SERVING SIZE: ${d.servingSize || "Not specified"}\n`;
+  if (d.servingsPerContainer)
+    text += `SERVINGS PER CONTAINER: ${d.servingsPerContainer}\n`;
+  text += `COUNTRY OF ORIGIN: ${d.countryOfOrigin || "Not specified"}\n`;
+  text += `MANUFACTURER: ${d.manufacturerInfo || "Not specified"}\n\n`;
+
+  text += "LABEL CLAIMS:\n";
+  if (d.labelClaims && d.labelClaims.length) {
+    d.labelClaims.forEach((c) => {
+      text += `  - ${c.claim}`;
+      if (c.claimCn) text += ` (${c.claimCn})`;
+      text += "\n";
+    });
+  } else {
+    text += "  No marketing or health claims found.\n";
+  }
+  text += "\n";
+
+  text += "FDA FACILITY REGISTRATION INFO:\n";
+  const fda = d.fdaInfo || {};
+  text += `  FEI Number: ${fda.feiNumber || "Not provided"}\n`;
+  text += `  DUNS Number: ${fda.dunsNumber || "Not provided"}\n`;
+  text += `  Facility Name: ${fda.facilityName || "Not provided"}\n`;
+  text += `  FSVP Importer: ${fda.fsvpImporter || "Not provided"}\n`;
+  text += `  US Agent: ${fda.usAgent || "Not provided"}\n`;
+
+  return text;
+}
+
+// Demo extraction data for when no API key is configured
+function getDemoExtractedData(lang) {
+  const cn = lang === "cn";
+  return {
+    productName: cn ? "超级能量饮品" : "Super Energy Drink",
+    productNameCn: "超级能量饮品",
+    productType: cn ? "饮料" : "beverage",
+    ingredients: [
+      { name: "Carbonated Water", nameCn: "碳酸水", amount: "", unit: "" },
+      {
+        name: "High Fructose Corn Syrup",
+        nameCn: "高果糖玉米糖浆",
+        amount: "",
+        unit: "",
+      },
+      { name: "Citric Acid", nameCn: "柠檬酸", amount: "", unit: "" },
+      { name: "Sodium Benzoate", nameCn: "苯甲酸钠", amount: "0.1", unit: "%" },
+      { name: "Red No. 40", nameCn: "诱惑红40号", amount: "", unit: "" },
+      { name: "Caffeine", nameCn: "咖啡因", amount: "80", unit: "mg" },
+      { name: "Taurine", nameCn: "牛磺酸", amount: "1000", unit: "mg" },
+      { name: "Steviol Glycosides", nameCn: "甜菊糖苷", amount: "", unit: "" },
+    ],
+    nutritionFacts: [
+      { nutrient: "Calories", amount: "110", dailyValue: "" },
+      { nutrient: "Total Fat", amount: "0g", dailyValue: "0%" },
+      { nutrient: "Sodium", amount: "40mg", dailyValue: "2%" },
+      { nutrient: "Total Carbohydrate", amount: "28g", dailyValue: "10%" },
+      { nutrient: "Total Sugars", amount: "27g", dailyValue: "" },
+      { nutrient: "Protein", amount: "0g", dailyValue: "" },
+    ],
+    allergens: [],
+    netWeight: "250ml",
+    servingSize: "1 can (250ml)",
+    servingsPerContainer: "1",
+    countryOfOrigin: "China",
+    manufacturerInfo: "XYZ Beverage Co., Guangzhou, China",
+    labelClaims: [
+      { claim: "All Natural Energy", claimCn: "纯天然能量" },
+      { claim: "Boosts Performance", claimCn: "提升表现" },
+      { claim: "Low Sugar", claimCn: "低糖" },
+    ],
+    fdaInfo: {
+      feiNumber: "",
+      facilityName: "",
+      registrationInfo: "",
+    },
+    otherInfo: "",
+  };
+}
+
 // --- API Routes ---
 
 // Health check
@@ -428,7 +722,37 @@ app.delete("/api/reports/:reportId", requireAuth, async (req, res) => {
   }
 });
 
-// Analyze uploaded files
+// Helper: read uploaded files as base64 parts for Gemini
+function filesToImageParts(files) {
+  const imageParts = [];
+  for (const file of files) {
+    if (file.mimetype.startsWith("image/")) {
+      imageParts.push({
+        inlineData: {
+          data: fs.readFileSync(file.path).toString("base64"),
+          mimeType: file.mimetype,
+        },
+      });
+    } else if (file.mimetype === "application/pdf") {
+      imageParts.push({
+        inlineData: {
+          data: fs.readFileSync(file.path).toString("base64"),
+          mimeType: "application/pdf",
+        },
+      });
+    }
+  }
+  return imageParts;
+}
+
+// Helper: cleanup uploaded files
+function cleanupFiles(files) {
+  for (const file of files) {
+    fs.unlink(file.path, () => {});
+  }
+}
+
+// Analyze uploaded files (legacy single-step endpoint)
 app.post("/api/analyze", upload.array("files", 10), async (req, res) => {
   try {
     const files = req.files;
@@ -440,7 +764,6 @@ app.post("/api/analyze", upload.array("files", 10), async (req, res) => {
 
     const genAI = getGeminiClient();
     if (!genAI) {
-      // Return demo data when no API key configured
       return res.json({
         success: true,
         demo: true,
@@ -449,83 +772,153 @@ app.post("/api/analyze", upload.array("files", 10), async (req, res) => {
       });
     }
 
-    // Prepare image parts for Gemini
-    const imageParts = [];
-    for (const file of files) {
-      if (file.mimetype.startsWith("image/")) {
-        const imageData = fs.readFileSync(file.path);
-        imageParts.push({
-          inlineData: {
-            data: imageData.toString("base64"),
-            mimeType: file.mimetype,
-          },
-        });
-      } else if (file.mimetype === "application/pdf") {
-        // For PDF, read as base64
-        const pdfData = fs.readFileSync(file.path);
-        imageParts.push({
-          inlineData: {
-            data: pdfData.toString("base64"),
-            mimeType: "application/pdf",
-          },
-        });
-      }
-    }
-
+    const imageParts = filesToImageParts(files);
     if (imageParts.length === 0) {
       return res.status(400).json({ error: "No valid image/PDF files found" });
     }
 
-    // Call Gemini
     const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
-    const prompt = buildAnalysisPrompt(lang);
+    const result = await model.generateContent([
+      buildAnalysisPrompt(lang),
+      ...imageParts,
+    ]);
+    const text = (await result.response).text();
 
-    const result = await model.generateContent([prompt, ...imageParts]);
-    const response = await result.response;
-    let text = response.text();
-
-    console.log("--- Gemini raw response (first 300 chars) ---");
+    console.log("--- Gemini analyze response (first 300 chars) ---");
     console.log(text.substring(0, 300));
     console.log("--- end ---");
 
-    // Robust JSON extraction: find the first { and last matching }
     let data;
     try {
-      // Method 1: Try direct parse after stripping code fences
-      let cleaned = text
-        .replace(/```json\s*/gi, "")
-        .replace(/```\s*/g, "")
-        .trim();
-      data = JSON.parse(cleaned);
-    } catch (e1) {
-      try {
-        // Method 2: Extract JSON object between first { and last }
-        const firstBrace = text.indexOf("{");
-        const lastBrace = text.lastIndexOf("}");
-        if (firstBrace !== -1 && lastBrace > firstBrace) {
-          const jsonStr = text.substring(firstBrace, lastBrace + 1);
-          data = JSON.parse(jsonStr);
-        } else {
-          throw new Error("No JSON object found in response");
-        }
-      } catch (e2) {
-        console.error("Gemini response parse error:", e2.message);
-        console.error("Full raw response:", text);
-        return res.status(500).json({
+      data = parseGeminiJSON(text);
+    } catch (e) {
+      console.error("Gemini response parse error:", e.message);
+      return res
+        .status(500)
+        .json({
           error: "Failed to parse AI response",
           raw: text.substring(0, 800),
         });
-      }
     }
 
-    // Cleanup uploaded files
-    for (const file of files) {
-      fs.unlink(file.path, () => {});
+    cleanupFiles(files);
+    return res.json({ success: true, demo: false, data });
+  } catch (err) {
+    console.error("Analysis error:", err);
+    return res
+      .status(500)
+      .json({ error: err.message || "Internal server error" });
+  }
+});
+
+// Layer 1: Extract structured product data from images
+app.post("/api/extract", upload.array("files", 10), async (req, res) => {
+  try {
+    const files = req.files;
+    const lang = req.body.lang || "en";
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({ error: "No files uploaded" });
+    }
+
+    const genAI = getGeminiClient();
+    if (!genAI) {
+      cleanupFiles(files);
+      return res.json({
+        success: true,
+        demo: true,
+        message: "GEMINI_API_KEY not configured. Returning demo extraction.",
+        data: getDemoExtractedData(lang),
+      });
+    }
+
+    const imageParts = filesToImageParts(files);
+    if (imageParts.length === 0) {
+      return res.status(400).json({ error: "No valid image/PDF files found" });
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    const result = await model.generateContent([
+      buildExtractionPrompt(lang),
+      ...imageParts,
+    ]);
+    const text = (await result.response).text();
+
+    console.log("--- Gemini extract response (first 300 chars) ---");
+    console.log(text.substring(0, 300));
+    console.log("--- end ---");
+
+    let data;
+    try {
+      data = parseGeminiJSON(text);
+    } catch (e) {
+      console.error("Extraction parse error:", e.message);
+      return res
+        .status(500)
+        .json({
+          error: "Failed to parse AI extraction response",
+          raw: text.substring(0, 800),
+        });
+    }
+
+    cleanupFiles(files);
+    return res.json({ success: true, demo: false, data });
+  } catch (err) {
+    console.error("Extraction error:", err);
+    return res
+      .status(500)
+      .json({ error: err.message || "Internal server error" });
+  }
+});
+
+// Layer 2: Analyze confirmed product data (text only, no images)
+app.post("/api/analyze-confirmed", async (req, res) => {
+  try {
+    const { confirmedData, lang } = req.body;
+    if (!confirmedData) {
+      return res.status(400).json({ error: "No confirmed data provided" });
+    }
+
+    const genAI = getGeminiClient();
+    if (!genAI) {
+      return res.json({
+        success: true,
+        demo: true,
+        message: "GEMINI_API_KEY not configured. Returning demo analysis.",
+        data: getDemoData(lang || "en"),
+      });
+    }
+
+    const dataText = formatConfirmedDataAsText(confirmedData);
+    const prompt =
+      buildConfirmedAnalysisPrompt(lang || "en") +
+      "\n\n--- CONFIRMED PRODUCT DATA ---\n" +
+      dataText;
+
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    const result = await model.generateContent(prompt);
+    const text = (await result.response).text();
+
+    console.log("--- Gemini confirmed-analysis response (first 300 chars) ---");
+    console.log(text.substring(0, 300));
+    console.log("--- end ---");
+
+    let data;
+    try {
+      data = parseGeminiJSON(text);
+    } catch (e) {
+      console.error("Confirmed analysis parse error:", e.message);
+      return res
+        .status(500)
+        .json({
+          error: "Failed to parse AI response",
+          raw: text.substring(0, 800),
+        });
     }
 
     return res.json({ success: true, demo: false, data });
   } catch (err) {
-    console.error("Analysis error:", err);
+    console.error("Confirmed analysis error:", err);
     return res
       .status(500)
       .json({ error: err.message || "Internal server error" });

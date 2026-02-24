@@ -152,10 +152,10 @@
   .dash-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
   .dash-t{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
   .dash-body{padding:18px 20px}
-  .dash-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.025);font-size:12px}
+  .dash-row{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.025);font-size:12px}
   .dash-row:last-child{border-bottom:none}
-  .dash-row-l{color:var(--text-2);flex-shrink:0}
-  .tag{padding:3px 9px;border-radius:5px;font-size:10px;font-weight:600;white-space:normal;max-width:280px;text-align:right;line-height:1.4}
+  .dash-row-l{color:var(--text-2)}
+  .tag{display:inline-block;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:600;white-space:normal;line-height:1.4}
   .tag-pass{background:var(--success-dim);color:var(--success)}
   .tag-warn{background:var(--warn-dim);color:var(--warn)}
   .tag-fail{background:var(--danger-dim);color:var(--danger)}
@@ -237,8 +237,8 @@
   .report-overlay .dash-t{font-size:16px}
   .report-overlay .dash-body{padding:20px 24px}
   .report-overlay .dash-row{padding:12px 0;font-size:14px}
-  .report-overlay .dash-row-l{font-size:14px;font-weight:500}
-  .report-overlay .tag{font-size:12px;padding:4px 12px}
+  .report-overlay .dash-row-l{font-size:14px;font-weight:500;word-break:break-word}
+  .report-overlay .tag{font-size:12px;padding:4px 12px;word-break:break-word}
   .report-overlay .dash-summary{font-size:13px;padding:14px 24px}
   .report-overlay .risk-label{font-size:12px}
   .report-overlay .risk-bar{height:7px}
@@ -308,6 +308,60 @@
   .empty-state{text-align:center;padding:60px 20px;color:var(--text-3)}
   .empty-state .empty-icon{font-size:48px;margin-bottom:12px}
   .empty-state p{font-size:14px}
+
+  /* Step Indicator */
+  .step-indicator{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:28px}
+  .step{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:500;color:var(--text-3);transition:all .3s}
+  .step.active{color:var(--accent);background:var(--accent-glow)}
+  .step.done{color:var(--success);background:var(--success-dim)}
+  .step-num{width:24px;height:24px;border-radius:50%;background:var(--bg-4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--font-m);transition:all .3s}
+  .step.active .step-num{background:var(--accent);color:var(--bg-0)}
+  .step.done .step-num{background:var(--success);color:var(--bg-0)}
+  .step-line{width:40px;height:2px;background:var(--bg-4);flex-shrink:0}
+
+  /* Extract Overlay */
+  .extract-overlay{display:none;position:fixed;inset:0;z-index:200;background:var(--bg-0);overflow-y:auto;animation:fu .3s ease both}
+  .extract-overlay.active{display:block}
+  .extract-inner{max-width:900px;margin:0 auto;padding:32px 40px 60px}
+  .extract-section{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;margin-bottom:16px}
+  .extract-section-title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .extract-section.highlight{border-left:3px solid var(--accent)}
+
+  /* Editable fields */
+  .ext-input{width:100%;padding:9px 14px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;color:var(--text-0);font-size:13px;font-family:var(--font-b);outline:none;transition:border-color .2s}
+  .ext-input:focus{border-color:var(--accent)}
+  .ext-input::placeholder{color:var(--text-3)}
+  .ext-input-sm{width:100px;padding:8px 10px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;color:var(--text-0);font-size:12px;font-family:var(--font-b);outline:none;transition:border-color .2s}
+  .ext-input-sm:focus{border-color:var(--accent)}
+  .ext-input-sm::placeholder{color:var(--text-3)}
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:600px){.field-grid{grid-template-columns:1fr}}
+  .field-group{display:flex;flex-direction:column;gap:5px}
+  .field-group label{font-size:11px;color:var(--text-2);font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+
+  /* Ingredient/Nutrition rows */
+  .ext-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+  .ext-row:last-child{border-bottom:none}
+  .ext-row .ext-input{flex:1}
+  .ext-row .ext-input-sm{flex-shrink:0}
+  .ext-row-num{width:24px;font-size:11px;color:var(--text-3);font-family:var(--font-m);flex-shrink:0;text-align:center}
+  .ext-remove{width:28px;height:28px;border-radius:6px;background:transparent;border:1px solid var(--border);color:var(--text-3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all .2s}
+  .ext-remove:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-dim)}
+
+  /* Allergen tags */
+  .allergen-tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .allergen-tag{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:var(--warn-dim);color:var(--warn);font-size:12px;font-weight:500}
+  .allergen-tag button{background:none;border:none;color:var(--warn);cursor:pointer;font-size:10px;padding:0 2px}
+  .allergen-tag button:hover{color:var(--danger)}
+  .allergen-add{display:flex;gap:6px;align-items:center}
+  .allergen-add input{width:120px}
+
+  /* Confirm bar */
+  .confirm-bar{background:var(--bg-1);border:1px solid var(--border-accent);border-radius:var(--r-lg);padding:24px 32px;display:flex;align-items:center;justify-content:center;gap:20px;margin-top:24px}
+  .confirm-check{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--text-1)}
+  .confirm-check input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+  .btn-lg{padding:14px 32px;font-size:14px;border-radius:12px}
+  @media(max-width:600px){.confirm-bar{flex-direction:column;gap:12px;padding:12px 16px}}
 </style>
 </head>
 <body id="app">
@@ -326,8 +380,8 @@
     <span class="nav-link" onclick="sTo('dashboard')" data-en="Report" data-cn="报告">Report</span>
     <span class="nav-link" onclick="sTo('fda')" data-en="Regulatory" data-cn="法规说明">Regulatory</span>
     <div class="lang-sw">
-      <button class="lang-btn active" id="lEn" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" id="lCn" onclick="setLang('cn')">中文</button>
+      <button class="lang-btn" id="lEn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn active" id="lCn" onclick="setLang('cn')">中文</button>
     </div>
     <!-- Auth: logged out -->
     <div id="authBtns" style="display:flex;gap:8px">
@@ -353,8 +407,8 @@
   <div class="hero-grid"></div>
   <div class="hero-inner">
     <div class="hero-badge" data-en="Product Compliance & Market Entry Architecture Platform" data-cn="产品合规与市场准入架构平台">Product Compliance & Market Entry Architecture Platform</div>
-    <h1 data-en='Product <em>Compliance & Market Entry</em> Architectural Assessment' data-cn='产品<em>合规与市场准入</em>架构评估'>Product <em>Compliance & Market Entry</em> Architectural Assessment</h1>
-    <p class="hero-desc" data-en="Structural compliance analysis for food and dietary supplement products targeting the U.S. market, covering applicable regulatory frameworks including FDA-related regulations." data-cn="面向食品及膳食补充剂的美国市场合规结构分析，涵盖FDA相关法规框架。">Structural compliance analysis for food and dietary supplement products targeting the U.S. market, covering applicable regulatory frameworks including FDA-related regulations.</p>
+    <h1 data-en='Product <em>Compliance and Market Entry</em> Assessment' data-cn='产品<em>合规与市场准入</em>评估'>产品<em>合规与市场准入</em>评估</h1>
+    <p class="hero-desc" data-en="U.S. Food & Supplement Regulatory Compliance Analysis" data-cn="美国食品与膳食补充剂法规合规分析">美国食品与膳食补充剂法规合规分析</p>
     <div class="hero-actions">
       <button class="btn btn-accent" onclick="sTo('uploadArea')" data-en="⚡ Start Structural Assessment" data-cn="⚡ 开始结构评估">⚡ Start Structural Assessment</button>
       <button class="btn btn-ghost" onclick="document.getElementById('fInput').click()" data-en="📎 Upload Product Files" data-cn="📎 上传产品资料">📎 Upload Product Files</button>
@@ -362,6 +416,24 @@
     <!-- /hero-actions -->
   </div>
   <!-- /hero-inner — upload lives outside to get full width -->
+
+  <!-- Step Indicator -->
+  <div class="step-indicator" id="stepIndicator" style="display:none">
+    <div class="step active" id="step1">
+      <div class="step-num">1</div>
+      <span data-en="Upload" data-cn="上传">Upload</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step2">
+      <div class="step-num">2</div>
+      <span data-en="Review & Edit" data-cn="审核编辑">Review & Edit</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step3">
+      <div class="step-num">3</div>
+      <span data-en="Report" data-cn="报告">Report</span>
+    </div>
+  </div>
 
   <!-- Upload -->
   <div class="upload-row" id="uploadArea">
@@ -388,7 +460,7 @@
   <!-- Analyze Bar -->
   <div class="analyze-bar" id="analyzeBar" style="display:none">
     <button class="btn btn-accent" id="analyzeBtn" onclick="startAnalysis()">
-      <span data-en="🔍 Analyze with AI" data-cn="🔍 AI 智能分析">🔍 Analyze with AI</span>
+      <span data-en="🔍 Extract Product Info" data-cn="🔍 AI 识别产品信息">🔍 Extract Product Info</span>
     </button>
     <span class="analyze-status" id="analyzeStatus"></span>
   </div>
@@ -514,9 +586,16 @@
   <div class="report-inner" id="reportOverlayContent"></div>
 </div>
 
+<!-- Extraction Review Overlay (Layer 1 → Layer 2) -->
+<div class="extract-overlay" id="extractOverlay">
+  <button class="report-close" onclick="closeExtractOverlay()">✕</button>
+  <div class="extract-inner" id="extractContent"></div>
+</div>
+
 <script>
 // ===== State =====
-let lang='en', uploadedFiles=[], lastReportData=null;
+let lang='cn', uploadedFiles=[], lastReportData=null, extractedData=null;
+let _ingredientCounter=0, _nutritionCounter=0, _claimCounter=0;
 
 // ===== Lang =====
 function setLang(l){
@@ -547,9 +626,10 @@ function removeFile(i){uploadedFiles.splice(i,1);renderFiles()}
 function renderFiles(){
   const list=document.getElementById('fileList');
   const bar=document.getElementById('analyzeBar');
-  if(!uploadedFiles.length){list.innerHTML='';document.getElementById('upIcon').textContent='📦';bar.style.display='none';return}
+  if(!uploadedFiles.length){list.innerHTML='';document.getElementById('upIcon').textContent='📦';bar.style.display='none';document.getElementById('stepIndicator').style.display='none';return}
   document.getElementById('upIcon').textContent='✅';
   bar.style.display='flex';
+  updateSteps(1);
   list.innerHTML=uploadedFiles.map((f,i)=>{
     const ext=f.name.split('.').pop().toUpperCase();
     const icon=ext==='PDF'?'📄':'🖼️';
@@ -558,7 +638,19 @@ function renderFiles(){
   }).join('');
 }
 
-// ===== Analysis =====
+// ===== Step Indicator =====
+function updateSteps(active){
+  const si=document.getElementById('stepIndicator');
+  si.style.display='flex';
+  ['step1','step2','step3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.classList.remove('active','done');
+    if(i+1<active)el.classList.add('done');
+    else if(i+1===active)el.classList.add('active');
+  });
+}
+
+// ===== Analysis (Layer 1: Extract) =====
 async function startAnalysis(){
   if(!uploadedFiles.length)return;
   const btn=document.getElementById('analyzeBtn');
@@ -566,32 +658,309 @@ async function startAnalysis(){
   btn.disabled=true;
   btn.style.opacity='.6';
   status.className='analyze-status';
-  status.innerHTML=`<span class="spinner"></span>${lang==='cn'?'正在分析中，请稍候...':'Analyzing with AI, please wait...'}`;
+  status.innerHTML=`<span class="spinner"></span>${lang==='cn'?'AI 正在识别产品信息...':'AI extracting product information...'}`;
+  updateSteps(1);
 
   const formData=new FormData();
   formData.append('lang',lang);
   uploadedFiles.forEach(f=>formData.append('files',f));
 
   try{
-    const res=await fetch('/api/analyze',{method:'POST',body:formData});
+    const res=await fetch('/api/extract',{method:'POST',body:formData});
     const json=await res.json();
     if(!res.ok){
       const detail=json.raw?`\n\nServer raw: ${json.raw.substring(0,200)}...`:'';
-      throw new Error((json.error||'Analysis failed')+detail);
+      throw new Error((json.error||'Extraction failed')+detail);
     }
     if(json.demo){
-      status.innerHTML=lang==='cn'?'⚠️ 演示模式 — 请配置 GEMINI_API_KEY 获取真实分析':'⚠️ Demo mode — configure GEMINI_API_KEY for real analysis';
+      status.innerHTML=lang==='cn'?'⚠️ 演示模式 — 请配置 GEMINI_API_KEY 获取真实识别':'⚠️ Demo mode — configure GEMINI_API_KEY for real extraction';
     } else {
-      status.innerHTML=lang==='cn'?'✅ 分析完成':'✅ Analysis complete';
+      status.innerHTML=lang==='cn'?'✅ 识别完成，请审核':'✅ Extraction complete — please review';
     }
-    renderReport(json.data);
-    setTimeout(()=>sTo('dashboard'),300);
+    extractedData=json.data;
+    renderExtractionForm(extractedData);
+    openExtractOverlay();
+    updateSteps(2);
   }catch(err){
     status.className='analyze-status error';
     status.textContent=`❌ ${err.message}`;
   }finally{
     btn.disabled=false;
     btn.style.opacity='1';
+  }
+}
+
+// ===== Extraction Overlay =====
+function openExtractOverlay(){
+  document.getElementById('extractOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+  // Reset confirm state (elements are rendered inside extractContent)
+  const cb=document.getElementById('confirmCheck');
+  const btn=document.getElementById('confirmAnalyzeBtn');
+  if(cb)cb.checked=false;
+  if(btn)btn.disabled=true;
+}
+function closeExtractOverlay(){
+  document.getElementById('extractOverlay').classList.remove('active');
+  document.body.style.overflow='';
+}
+function toggleConfirmBtn(){
+  document.getElementById('confirmAnalyzeBtn').disabled=!document.getElementById('confirmCheck').checked;
+}
+
+// ===== Escape HTML =====
+function escHtml(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ===== Render Extraction Form =====
+function renderExtractionForm(d){
+  const cn=lang==='cn';
+  _ingredientCounter=0;_nutritionCounter=0;_claimCounter=0;
+  let h='';
+
+  // Header
+  h+=`<div class="report-header">
+    <div class="report-brand">GoToMarket Compliance Lab</div>
+    <div class="report-title">${cn?'产品信息确认':'Product Information Review'}</div>
+    <div class="report-meta">${cn?'请核对 AI 识别的产品信息，如有错误请手动修正。确认无误后生成合规报告。':'Please review the AI-extracted product data. Correct any errors before generating the compliance report.'}</div>
+  </div>`;
+
+  // Product Name
+  h+=`<div class="extract-section">
+    <div class="extract-section-title">${cn?'产品名称':'Product Name'}</div>
+    <div class="field-grid">
+      <div class="field-group"><label>${cn?'英文名称':'English Name'}</label><input class="ext-input" id="ext-productName" value="${escHtml(d.productName||'')}"></div>
+      <div class="field-group"><label>${cn?'中文名称':'Chinese Name'}</label><input class="ext-input" id="ext-productNameCn" value="${escHtml(d.productNameCn||'')}"></div>
+      <div class="field-group"><label>${cn?'产品类型':'Product Type'}</label><input class="ext-input" id="ext-productType" value="${escHtml(d.productType||'')}" placeholder="${cn?'食品 / 膳食补充剂 / 饮料':'food / dietary supplement / beverage'}"></div>
+    </div>
+  </div>`;
+
+  // Ingredients
+  h+=`<div class="extract-section">
+    <div class="extract-section-title">${cn?'成分列表':'Ingredient List'}
+      <button class="btn btn-ghost btn-sm" onclick="addIngredient()" style="font-size:11px">+ ${cn?'添加成分':'Add Ingredient'}</button>
+    </div>
+    <div id="ingredientList">`;
+  (d.ingredients||[]).forEach(ing=>{h+=renderIngredientRow(ing)});
+  h+=`</div></div>`;
+
+  // Nutrition Facts
+  h+=`<div class="extract-section">
+    <div class="extract-section-title">${cn?'营养成分':'Nutrition Facts'}
+      <button class="btn btn-ghost btn-sm" onclick="addNutrient()" style="font-size:11px">+ ${cn?'添加':'Add'}</button>
+    </div>
+    <div id="nutritionList">`;
+  (d.nutritionFacts||[]).forEach(nf=>{h+=renderNutritionRow(nf)});
+  h+=`</div></div>`;
+
+  // Allergens
+  h+=`<div class="extract-section">
+    <div class="extract-section-title">${cn?'过敏原':'Allergens'}</div>
+    <div class="allergen-tags" id="allergenTags">`;
+  (d.allergens||[]).forEach(a=>{
+    h+=`<span class="allergen-tag">${escHtml(a)}<button onclick="this.parentElement.remove()">✕</button></span>`;
+  });
+  h+=`</div>
+    <div class="allergen-add" style="margin-top:8px">
+      <input class="ext-input-sm" id="newAllergen" placeholder="${cn?'输入过敏原':'Enter allergen'}" style="width:160px" onkeydown="if(event.key==='Enter'){event.preventDefault();addAllergen()}">
+      <button class="btn btn-ghost btn-sm" onclick="addAllergen()" style="font-size:11px;padding:6px 12px">+</button>
+    </div>
+  </div>`;
+
+  // Label Info
+  h+=`<div class="extract-section">
+    <div class="extract-section-title">${cn?'标签信息':'Label Information'}</div>
+    <div class="field-grid">
+      <div class="field-group"><label>${cn?'净含量':'Net Weight'}</label><input class="ext-input" id="ext-netWeight" value="${escHtml(d.netWeight||'')}"></div>
+      <div class="field-group"><label>${cn?'每份大小':'Serving Size'}</label><input class="ext-input" id="ext-servingSize" value="${escHtml(d.servingSize||'')}"></div>
+      <div class="field-group"><label>${cn?'每容器份数':'Servings/Container'}</label><input class="ext-input" id="ext-servingsPerContainer" value="${escHtml(d.servingsPerContainer||'')}"></div>
+      <div class="field-group"><label>${cn?'原产国':'Country of Origin'}</label><input class="ext-input" id="ext-countryOfOrigin" value="${escHtml(d.countryOfOrigin||'')}"></div>
+      <div class="field-group" style="grid-column:1/-1"><label>${cn?'制造商信息':'Manufacturer Info'}</label><input class="ext-input" id="ext-manufacturerInfo" value="${escHtml(d.manufacturerInfo||'')}"></div>
+    </div>
+  </div>`;
+
+  // Label Claims
+  h+=`<div class="extract-section">
+    <div class="extract-section-title">${cn?'宣传声称':'Label Claims'}
+      <button class="btn btn-ghost btn-sm" onclick="addClaim()" style="font-size:11px">+ ${cn?'添加声称':'Add Claim'}</button>
+    </div>
+    <div id="claimsList">`;
+  (d.labelClaims||[]).forEach(c=>{h+=renderClaimRow(c)});
+  h+=`</div></div>`;
+
+  // FDA Facility Registration
+  const fda=d.fdaInfo||{};
+  h+=`<div class="extract-section highlight">
+    <div class="extract-section-title">${cn?'FDA 设施注册信息':'FDA Facility Registration'}
+      <span style="font-size:11px;color:var(--text-3);font-weight:400">${cn?'(请手动填写或核实)':'(Please fill in or verify)'}</span>
+    </div>
+    <div class="field-grid">
+      <div class="field-group"><label>FEI Number</label><input class="ext-input" id="ext-feiNumber" value="${escHtml(fda.feiNumber||'')}" placeholder="${cn?'如有请填写':'Enter if available'}"></div>
+      <div class="field-group"><label>DUNS Number</label><input class="ext-input" id="ext-dunsNumber" value="" placeholder="${cn?'如有请填写':'Enter if available'}"></div>
+      <div class="field-group"><label>${cn?'设施名称':'Facility Name'}</label><input class="ext-input" id="ext-facilityName" value="${escHtml(fda.facilityName||'')}" placeholder="${cn?'生产设施名称':'Manufacturing facility name'}"></div>
+      <div class="field-group"><label>FSVP ${cn?'进口商':'Importer'}</label><input class="ext-input" id="ext-fsvpImporter" value="" placeholder="${cn?'美国进口商名称':'US importer name'}"></div>
+      <div class="field-group"><label>${cn?'美国代理人':'US Agent'}</label><input class="ext-input" id="ext-usAgent" value="" placeholder="${cn?'美国代理人名称':'US agent name'}"></div>
+    </div>
+  </div>`;
+
+  // Confirm bar (inline, at bottom of form)
+  h+=`<div class="confirm-bar">
+    <label class="confirm-check">
+      <input type="checkbox" id="confirmCheck" onchange="toggleConfirmBtn()">
+      <span>${cn?'我确认以上信息为最终产品成分与标签信息':'I confirm this is the final product information'}</span>
+    </label>
+    <button class="btn btn-accent btn-lg" id="confirmAnalyzeBtn" disabled onclick="startLayer2Analysis()">
+      ${cn?'🚀 生成合规报告':'🚀 Generate Compliance Report'}
+    </button>
+  </div>`;
+
+  document.getElementById('extractContent').innerHTML=h;
+}
+
+// ===== Dynamic Rows =====
+function renderIngredientRow(ing){
+  const i=_ingredientCounter++;
+  return `<div class="ext-row" id="ing-${i}">
+    <span class="ext-row-num">${i+1}</span>
+    <input class="ext-input" placeholder="Name" value="${escHtml(ing.name||'')}" data-ing-name="${i}">
+    <input class="ext-input-sm" placeholder="Amt" value="${escHtml(ing.amount||'')}" data-ing-amount="${i}" style="width:80px">
+    <input class="ext-input-sm" placeholder="Unit" value="${escHtml(ing.unit||'')}" data-ing-unit="${i}" style="width:60px">
+    <button class="ext-remove" onclick="document.getElementById('ing-${i}').remove()">✕</button>
+  </div>`;
+}
+function addIngredient(){
+  document.getElementById('ingredientList').insertAdjacentHTML('beforeend',renderIngredientRow({name:'',amount:'',unit:''}));
+}
+
+function renderNutritionRow(nf){
+  const i=_nutritionCounter++;
+  return `<div class="ext-row" id="nf-${i}">
+    <input class="ext-input" placeholder="Nutrient" value="${escHtml(nf.nutrient||'')}" data-nf-nutrient="${i}">
+    <input class="ext-input-sm" placeholder="Amount" value="${escHtml(nf.amount||'')}" data-nf-amount="${i}" style="width:100px">
+    <input class="ext-input-sm" placeholder="% DV" value="${escHtml(nf.dailyValue||'')}" data-nf-dv="${i}" style="width:70px">
+    <button class="ext-remove" onclick="document.getElementById('nf-${i}').remove()">✕</button>
+  </div>`;
+}
+function addNutrient(){
+  document.getElementById('nutritionList').insertAdjacentHTML('beforeend',renderNutritionRow({nutrient:'',amount:'',dailyValue:''}));
+}
+
+function renderClaimRow(c){
+  const i=_claimCounter++;
+  return `<div class="ext-row" id="cl-${i}">
+    <input class="ext-input" placeholder="Claim (EN)" value="${escHtml(c.claim||'')}" data-cl-claim="${i}">
+    <input class="ext-input" placeholder="中文" value="${escHtml(c.claimCn||'')}" data-cl-cn="${i}">
+    <button class="ext-remove" onclick="document.getElementById('cl-${i}').remove()">✕</button>
+  </div>`;
+}
+function addClaim(){
+  document.getElementById('claimsList').insertAdjacentHTML('beforeend',renderClaimRow({claim:'',claimCn:''}));
+}
+
+function addAllergen(){
+  const inp=document.getElementById('newAllergen');
+  const v=inp.value.trim();
+  if(!v)return;
+  document.getElementById('allergenTags').insertAdjacentHTML('beforeend',
+    `<span class="allergen-tag">${escHtml(v)}<button onclick="this.parentElement.remove()">✕</button></span>`);
+  inp.value='';
+}
+
+// ===== Collect Confirmed Data =====
+function collectConfirmedData(){
+  const data={
+    productName:(document.getElementById('ext-productName')?.value||'').trim(),
+    productNameCn:(document.getElementById('ext-productNameCn')?.value||'').trim(),
+    productType:(document.getElementById('ext-productType')?.value||'').trim(),
+    ingredients:[],
+    nutritionFacts:[],
+    allergens:[],
+    netWeight:(document.getElementById('ext-netWeight')?.value||'').trim(),
+    servingSize:(document.getElementById('ext-servingSize')?.value||'').trim(),
+    servingsPerContainer:(document.getElementById('ext-servingsPerContainer')?.value||'').trim(),
+    countryOfOrigin:(document.getElementById('ext-countryOfOrigin')?.value||'').trim(),
+    manufacturerInfo:(document.getElementById('ext-manufacturerInfo')?.value||'').trim(),
+    labelClaims:[],
+    fdaInfo:{
+      feiNumber:(document.getElementById('ext-feiNumber')?.value||'').trim(),
+      dunsNumber:(document.getElementById('ext-dunsNumber')?.value||'').trim(),
+      facilityName:(document.getElementById('ext-facilityName')?.value||'').trim(),
+      fsvpImporter:(document.getElementById('ext-fsvpImporter')?.value||'').trim(),
+      usAgent:(document.getElementById('ext-usAgent')?.value||'').trim(),
+    }
+  };
+  // Ingredients
+  document.querySelectorAll('#ingredientList .ext-row').forEach(row=>{
+    const name=row.querySelector('[data-ing-name]')?.value?.trim();
+    if(name){
+      data.ingredients.push({
+        name,
+        amount:row.querySelector('[data-ing-amount]')?.value?.trim()||'',
+        unit:row.querySelector('[data-ing-unit]')?.value?.trim()||''
+      });
+    }
+  });
+  // Nutrition
+  document.querySelectorAll('#nutritionList .ext-row').forEach(row=>{
+    const nutrient=row.querySelector('[data-nf-nutrient]')?.value?.trim();
+    if(nutrient){
+      data.nutritionFacts.push({
+        nutrient,
+        amount:row.querySelector('[data-nf-amount]')?.value?.trim()||'',
+        dailyValue:row.querySelector('[data-nf-dv]')?.value?.trim()||''
+      });
+    }
+  });
+  // Allergens
+  document.querySelectorAll('#allergenTags .allergen-tag').forEach(tag=>{
+    const txt=tag.childNodes[0]?.textContent?.trim();
+    if(txt)data.allergens.push(txt);
+  });
+  // Claims
+  document.querySelectorAll('#claimsList .ext-row').forEach(row=>{
+    const claim=row.querySelector('[data-cl-claim]')?.value?.trim();
+    if(claim){
+      data.labelClaims.push({
+        claim,
+        claimCn:row.querySelector('[data-cl-cn]')?.value?.trim()||''
+      });
+    }
+  });
+  return data;
+}
+
+// ===== Layer 2: Confirmed Analysis =====
+async function startLayer2Analysis(){
+  const confirmed=collectConfirmedData();
+  const btn=document.getElementById('confirmAnalyzeBtn');
+  const origHtml=btn.innerHTML;
+  btn.disabled=true;
+  btn.innerHTML=`<span class="spinner"></span>${lang==='cn'?'AI 合规分析中...':'Analyzing compliance...'}`;
+
+  try{
+    const res=await fetch('/api/analyze-confirmed',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({confirmedData:confirmed,lang})
+    });
+    const json=await res.json();
+    if(!res.ok){
+      const detail=json.raw?`\n\nServer raw: ${json.raw.substring(0,200)}...`:'';
+      throw new Error((json.error||'Analysis failed')+detail);
+    }
+    closeExtractOverlay();
+    updateSteps(3);
+    const statusEl=document.getElementById('analyzeStatus');
+    if(json.demo){
+      statusEl.innerHTML=lang==='cn'?'⚠️ 演示模式 — 请配置 GEMINI_API_KEY 获取真实分析':'⚠️ Demo mode — configure GEMINI_API_KEY for real analysis';
+    } else {
+      statusEl.innerHTML=lang==='cn'?'✅ 分析完成':'✅ Analysis complete';
+    }
+    renderReport(json.data);
+    setTimeout(()=>sTo('dashboard'),300);
+  }catch(err){
+    alert((lang==='cn'?'分析失败：':'Analysis failed: ')+err.message);
+    btn.disabled=false;
+    btn.innerHTML=origHtml;
   }
 }
 
@@ -1270,7 +1639,8 @@ async function saveReport() {
   }
 }
 
-// Check auth on load
+// Init: default to Chinese, check auth
+setLang('cn');
 checkAuth();
 
 // ===== Scroll Reveal =====
