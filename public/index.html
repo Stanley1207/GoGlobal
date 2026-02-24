@@ -66,8 +66,8 @@
   .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 16px;border-radius:100px;background:var(--accent-glow);border:1px solid var(--border-accent);font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:24px;animation:fu .5s ease both}
   .hero-badge::before{content:'';width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pu 2s infinite}
   @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
-  .hero h1{font-family:var(--font-d);font-size:clamp(36px,5vw,60px);line-height:1.1;letter-spacing:-1.5px;font-weight:700;margin-bottom:16px;animation:fu .5s .06s ease both}
-  .hero h1 em{font-style:italic;background:linear-gradient(135deg,var(--accent),#60A5FA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero h1{font-family:var(--font-b);font-size:clamp(32px,4.5vw,52px);line-height:1.15;letter-spacing:-0.5px;font-weight:700;margin-bottom:16px;animation:fu .5s .06s ease both}
+  .hero h1 em{font-style:normal;color:var(--accent)}
   .hero-desc{font-size:16px;line-height:1.7;color:var(--text-1);max-width:560px;margin-bottom:28px;animation:fu .5s .12s ease both}
   .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px;animation:fu .5s .18s ease both}
   @keyframes fu{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
@@ -208,7 +208,8 @@
   .footer-r a:hover{color:var(--accent)}
 
   /* CN */
-  .cn .hero h1,.cn .sec-title,.cn .fda-title,.cn .ly-title{font-family:var(--font-cn);letter-spacing:0}
+  .cn .hero h1{font-family:var(--font-cn);letter-spacing:0}
+  .cn .sec-title,.cn .fda-title,.cn .ly-title{font-family:var(--font-cn);letter-spacing:0}
   .cn .hero-desc,.cn .sec-desc,.cn .svc-d,.cn .ly-desc,.cn .dash-row-l,.cn .fda-text,.cn .info-item,.cn .score-sub,.cn .rec-item,.cn .dash-summary{font-family:var(--font-cn)}
 
   /* Responsive */
