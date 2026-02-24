@@ -1285,19 +1285,22 @@ async function exportPDF(){
       y+=8;
 
       var tableData=items.map(function(it){
-        var name=cn?(it[nameKey+'Cn']||it[nameKey]||''):(it[nameKey]||it[nameKey+'Cn']||'');
+        var en=it[nameKey]||'';
+        var zhKey=nameKey+'Cn';
+        var zh=it[zhKey]||'';
+        var name=(en&&zh&&en!==zh)?(en+' / '+zh):(en||zh);
         var note=it[noteKey]||it.status||'';
         var reg=it.regulation||'';
         return [name,note,reg];
       });
       doc.autoTable({
         startY:y, margin:{left:M,right:M},
-        head:[[cn?'项目':'Item',cn?'评估':'Assessment',cn?'法规引用':'Regulation']],
+        head:[['Item / 项目','Assessment / 评估','Regulation / 法规引用']],
         body:tableData,
         theme:'striped',
         styles:{font:'NotoSansSC',fontStyle:'normal',fontSize:8,cellPadding:{top:3,bottom:3,left:3,right:3},textColor:C.dark,lineColor:C.border,lineWidth:0.15},
         headStyles:{font:'NotoSansSC',fillColor:C.bg,textColor:C.mid,fontStyle:'bold',fontSize:7},
-        columnStyles:{0:{cellWidth:CW*0.3},1:{cellWidth:CW*0.42},2:{cellWidth:CW*0.28,fontStyle:'normal',textColor:C.light,fontSize:7}},
+        columnStyles:{0:{cellWidth:CW*0.36},1:{cellWidth:CW*0.38},2:{cellWidth:CW*0.26,fontStyle:'normal',textColor:C.light,fontSize:7}},
         didParseCell:function(data){
           if(data.section==='body'&&data.column.index===1){
             var st=items[data.row.index]?items[data.row.index].status:null;
