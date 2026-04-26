@@ -374,6 +374,87 @@
   .confirm-check input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
   .btn-lg{padding:14px 32px;font-size:14px;border-radius:12px}
   @media(max-width:600px){.confirm-bar{flex-direction:column;gap:12px;padding:12px 16px}}
+
+  /* CN font extensions for new sections */
+  .cn .partner-name,.cn .partner-desc,.cn .plan-tagline,.cn .plan-best-for,.cn .mkt-desc,.cn .mkt-name,.cn .rec-services-sub,.cn .rec-svc-desc,.cn .rec-svc-name{font-family:var(--font-cn)}
+
+  /* Partners Section */
+  .partners-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .partner-card{background:var(--bg-2);border-radius:var(--r-lg);border:1px solid var(--border);padding:26px 22px;transition:all .3s;display:flex;flex-direction:column;gap:14px}
+  .partner-card:hover{border-color:var(--border-accent);transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  .partner-logo{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .partner-name{font-size:14px;font-weight:600;margin-bottom:4px}
+  .partner-desc{font-size:12px;color:var(--text-2);line-height:1.6;flex:1}
+  .partner-cta{display:flex;gap:8px;margin-top:auto}
+  @media(max-width:1100px){.partners-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.partners-grid{grid-template-columns:1fr}}
+
+  /* Pricing Section */
+  .pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:860px;margin:0 auto}
+  .plan-card{background:var(--bg-2);border-radius:var(--r-lg);border:1px solid var(--border);padding:32px;position:relative;overflow:hidden;transition:all .3s}
+  .plan-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+  .plan-card-pro{border-top:3px solid var(--accent)}
+  .plan-card-elite{border-top:3px solid var(--gold)}
+  .plan-badge{display:inline-flex;padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+  .plan-badge-pro{background:var(--accent-glow);color:var(--accent);border:1px solid var(--border-accent)}
+  .plan-badge-elite{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(232,185,74,.25)}
+  .plan-name{font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:8px}
+  .plan-price{display:flex;align-items:baseline;gap:4px;margin-bottom:6px}
+  .plan-price-num{font-size:42px;font-weight:700}
+  .plan-card-pro .plan-price-num{color:var(--accent)}
+  .plan-card-elite .plan-price-num{color:var(--gold)}
+  .plan-price-period{font-size:13px;color:var(--text-3)}
+  .plan-tagline{font-size:12px;color:var(--text-2);margin-bottom:22px;line-height:1.5}
+  .plan-divider{height:1px;background:var(--border);margin:18px 0}
+  .plan-features{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+  .plan-feature{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--text-1);line-height:1.5}
+  .plan-feature-icon{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:2px}
+  .plan-card-pro .plan-feature-icon{background:var(--accent-glow);color:var(--accent)}
+  .plan-card-elite .plan-feature-icon{background:var(--gold-dim);color:var(--gold)}
+  .plan-best-for{padding:14px;background:var(--bg-3);border-radius:var(--r);font-size:11px;color:var(--text-2);line-height:1.6}
+  .plan-best-for-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;font-family:var(--font-m)}
+  .plan-card-pro .plan-best-for-title{color:var(--accent)}
+  .plan-card-elite .plan-best-for-title{color:var(--gold)}
+  .btn-plan{width:100%;padding:13px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-b);transition:all .25s;border:none;margin-top:20px}
+  .btn-plan-pro{background:linear-gradient(135deg,var(--accent),var(--accent-dim));color:var(--bg-0)}
+  .btn-plan-pro:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  .btn-plan-elite{background:linear-gradient(135deg,#E8B94A,#c9952a);color:var(--bg-0)}
+  .btn-plan-elite:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  @media(max-width:700px){.pricing-grid{grid-template-columns:1fr}}
+
+  /* Marketplace Section */
+  .mkt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .mkt-card{background:var(--bg-2);border-radius:var(--r-lg);border:1px solid var(--border);padding:24px 20px;transition:all .3s;display:flex;flex-direction:column;gap:12px}
+  .mkt-card:hover{border-color:var(--border-accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+  .mkt-logo{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .mkt-category{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);font-family:var(--font-m)}
+  .mkt-name{font-size:14px;font-weight:600;margin-bottom:2px;line-height:1.3}
+  .mkt-desc{font-size:11px;color:var(--text-2);line-height:1.6;flex:1}
+  .mkt-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .mkt-badge{display:inline-flex;padding:3px 8px;border-radius:5px;font-size:9px;font-weight:700;letter-spacing:0.5px;font-family:var(--font-m)}
+  .mkt-badge-verified{background:var(--accent-glow);color:var(--accent);border:1px solid var(--border-accent)}
+  @media(max-width:900px){.mkt-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.mkt-grid{grid-template-columns:1fr}}
+
+  /* Recommended Services in Report */
+  .rec-services{margin-top:24px;background:var(--bg-1);border:1px solid var(--border-accent);border-radius:var(--r-lg);overflow:hidden}
+  .rec-services-hd{padding:18px 24px;background:linear-gradient(90deg,rgba(45,212,168,.06),transparent);border-bottom:1px solid var(--border)}
+  .rec-services-title{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:3px}
+  .rec-services-sub{font-size:12px;color:var(--text-2)}
+  .rec-svc-list{padding:16px 24px;display:flex;flex-direction:column;gap:12px}
+  .rec-svc-item{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--bg-2);border-radius:var(--r);border:1px solid var(--border)}
+  .rec-svc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;margin-top:2px}
+  .rec-svc-body{flex:1;min-width:0}
+  .rec-svc-name{font-size:13px;font-weight:600;margin-bottom:4px}
+  .rec-svc-desc{font-size:11px;color:var(--text-2);line-height:1.5;margin-bottom:6px}
+  .rec-svc-pricing{font-size:11px;color:var(--text-3);line-height:1.4}
+  .rec-svc-pricing strong{color:var(--accent)}
+  .rec-svc-btn{padding:8px 16px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font-b);transition:all .2s;white-space:nowrap;flex-shrink:0}
+  .rec-svc-btn:not(.rec-svc-btn-contact){border:1px solid var(--border-accent);background:var(--accent-glow);color:var(--accent)}
+  .rec-svc-btn:not(.rec-svc-btn-contact):hover{background:var(--accent);color:var(--bg-0)}
+  .rec-svc-btn-contact{border:1px solid var(--border);background:transparent;color:var(--text-2)}
+  .rec-svc-btn-contact:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-glow)}
+  @media(max-width:600px){.rec-svc-item{flex-wrap:wrap}.rec-svc-btn{align-self:flex-start;margin-top:4px}}
 </style>
 </head>
 <body id="app">
@@ -391,6 +472,8 @@
     <span class="nav-link" onclick="sTo('layers')" data-en="Model" data-cn="服务模型">Model</span>
     <span class="nav-link" onclick="sTo('dashboard')" data-en="Report" data-cn="报告">Report</span>
     <span class="nav-link" onclick="sTo('fda')" data-en="Regulatory" data-cn="法规说明">Regulatory</span>
+    <span class="nav-link" onclick="sTo('pricing')" data-en="Pricing" data-cn="定价">Pricing</span>
+    <span class="nav-link" onclick="sTo('marketplace')" data-en="Marketplace" data-cn="服务市场">服务市场</span>
     <div class="lang-sw">
       <button class="lang-btn" id="lEn" onclick="setLang('en')">EN</button>
       <button class="lang-btn active" id="lCn" onclick="setLang('cn')">中文</button>
@@ -420,7 +503,7 @@
   <div class="hero-inner">
     <div class="hero-badge" data-en="Product Compliance & Market Entry Architecture Platform" data-cn="产品合规与市场准入架构平台">Product Compliance & Market Entry Architecture Platform</div>
     <h1 data-en='Product <em>Compliance and Market Entry</em> Assessment' data-cn='产品<em>合规与市场准入</em>评估'>产品<em>合规与市场准入</em>评估</h1>
-    <p class="hero-desc" data-en="U.S. Food & Supplement Regulatory Compliance Analysis" data-cn="美国食品与膳食补充剂法规合规分析">美国食品与膳食补充剂法规合规分析</p>
+    <p class="hero-desc" data-en="FDA Market Entry Services (Food &amp; Beverage | Dietary Supplements | Cosmetics | Medical)" data-cn="FDA相关产品出海服务平台（食品｜膳食补充剂｜美妆｜医疗）">FDA相关产品出海服务平台（食品｜膳食补充剂｜美妆｜医疗）</p>
     <div class="hero-actions">
       <button class="btn btn-accent" onclick="sTo('uploadArea')" data-en="⚡ Start Structural Assessment" data-cn="⚡ 开始结构评估">⚡ Start Structural Assessment</button>
       <button class="btn btn-ghost" onclick="document.getElementById('fInput').click()" data-en="📎 Upload Product Files" data-cn="📎 上传产品资料">📎 Upload Product Files</button>
@@ -510,6 +593,49 @@
 
 <div class="divider"></div>
 
+<!-- LAUNCH PARTNERS -->
+<section class="section" id="partners">
+  <div class="sec-label" data-en="Verified Partners" data-cn="精选合作伙伴">精选合作伙伴</div>
+  <div class="sec-title" data-en="🚀 Launch to US Market with Verified Partners" data-cn="🚀 携手精选合规伙伴，出海美国市场">🚀 携手精选合规伙伴，出海美国市场</div>
+  <div class="sec-desc" data-en="We're not just an AI tool — we're a complete market entry platform. Connect with verified service providers across compliance, logistics, and regulatory affairs." data-cn="我们不仅是AI工具，而是完整解决方案平台。对接合规、清关、注册等全流程精选服务商。">我们不仅是AI工具，而是完整解决方案平台。对接合规、清关、注册等全流程精选服务商。</div>
+  <div class="partners-grid">
+    <div class="partner-card">
+      <div class="partner-logo" style="background:var(--info-dim)">⚖️</div>
+      <div>
+        <div class="partner-name" data-en="FDA Legal &amp; Regulatory Counsel" data-cn="FDA 法律与合规顾问">FDA 法律与合规顾问</div>
+        <div class="partner-desc" data-en="Expert FDA counsel for food, supplement, and cosmetic regulatory submissions, label review, and enforcement response." data-cn="专业 FDA 法律团队，提供食品、补充剂、美妆合规申报、标签审核及执法响应服务。">专业 FDA 法律团队，提供食品、补充剂、美妆合规申报、标签审核及执法响应服务。</div>
+      </div>
+      <div class="partner-cta"><button class="btn btn-ghost btn-sm" onclick="requestConsult()" data-en="Contact" data-cn="联系我们">联系我们</button></div>
+    </div>
+    <div class="partner-card">
+      <div class="partner-logo" style="background:var(--accent-glow)">🏷️</div>
+      <div>
+        <div class="partner-name" data-en="FDA Label Design &amp; Review" data-cn="FDA 标签设计与审核">FDA 标签设计与审核</div>
+        <div class="partner-desc" data-en="Professional label redesign for full FDA compliance — nutrition facts, allergens, net weight, and claims correction." data-cn="专业标签重设计，确保营养成分表、过敏原、净含量及宣传语全面符合 FDA 要求。">专业标签重设计，确保营养成分表、过敏原、净含量及宣传语全面符合 FDA 要求。</div>
+      </div>
+      <div class="partner-cta"><button class="btn btn-ghost btn-sm" onclick="requestConsult()" data-en="Learn More" data-cn="了解更多">了解更多</button></div>
+    </div>
+    <div class="partner-card">
+      <div class="partner-logo" style="background:var(--warn-dim)">🏭</div>
+      <div>
+        <div class="partner-name" data-en="US Agent &amp; FDA Registration" data-cn="美国代理人 &amp; FDA 注册">美国代理人 &amp; FDA 注册</div>
+        <div class="partner-desc" data-en="Fast-track US Agent appointment and facility registration support. Required for all foreign food importers." data-cn="快速完成美国代理人指定和设施注册。所有境外食品进口商必备。">快速完成美国代理人指定和设施注册。所有境外食品进口商必备。</div>
+      </div>
+      <div class="partner-cta"><button class="btn btn-ghost btn-sm" onclick="requestConsult()" data-en="Contact" data-cn="联系我们">联系我们</button></div>
+    </div>
+    <div class="partner-card">
+      <div class="partner-logo" style="background:var(--success-dim)">🚢</div>
+      <div>
+        <div class="partner-name" data-en="Customs Clearance &amp; Logistics" data-cn="清关 &amp; 物流">清关 &amp; 物流</div>
+        <div class="partner-desc" data-en="End-to-end import logistics, customs brokerage, and FDA prior notice filing for smooth U.S. market entry." data-cn="全流程进口物流、报关及 FDA 预先通知申报，助力顺利进入美国市场。">全流程进口物流、报关及 FDA 预先通知申报，助力顺利进入美国市场。</div>
+      </div>
+      <div class="partner-cta"><button class="btn btn-ghost btn-sm" onclick="requestConsult()" data-en="Contact" data-cn="联系我们">联系我们</button></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- DASHBOARD / REPORT -->
 <section class="section" id="dashboard">
   <div class="sec-label" data-en="Structural Assessment" data-cn="结构评估">Structural Assessment</div>
@@ -543,6 +669,138 @@
       <p>For food and dietary supplement products, the U.S. FDA <strong style="color:var(--accent)">does not approve individual products</strong>. There is no product-level certification or approval process for these categories.</p>
       <p>FDA registration applies to <strong>manufacturing facilities</strong>. The regulatory focus is on the production site, not on individual product SKUs or brand names.</p>
       <p>Product compliance is determined by <strong>ingredient legality, proper labeling structure, and valid facility registration status</strong>. These are the structural elements that define market entry readiness.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="sec-label" data-en="Membership Plans" data-cn="会员方案">会员方案</div>
+  <div class="sec-title" data-en="Simple, Transparent Pricing" data-cn="清晰透明的会员计划">清晰透明的会员计划</div>
+  <div class="sec-desc" data-en="Everything you need to enter the U.S. market — AI tools, expert reviews, and verified partners." data-cn="进入美国市场所需的一切 — AI分析工具、专家审核、精选合规伙伴，透明无隐藏费用。">进入美国市场所需的一切 — AI分析工具、专家审核、精选合规伙伴，透明无隐藏费用。</div>
+  <div class="pricing-grid">
+    <!-- Pro -->
+    <div class="plan-card plan-card-pro">
+      <div class="plan-badge plan-badge-pro">PRO</div>
+      <div class="plan-name">GoToMarket Pro</div>
+      <div class="plan-price"><span class="plan-price-num">$399</span><span class="plan-price-period" data-en="/ month" data-cn="/ 月">/ 月</span></div>
+      <div class="plan-tagline" data-en="For early-stage brands entering the U.S. market" data-cn="适合初次进入美国市场的品牌">适合初次进入美国市场的品牌</div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="Unlimited AI Compliance Analysis + Label Correction" data-cn="无限使用AI风险分析 + 标签矫正工具">无限使用AI风险分析 + 标签矫正工具</strong></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="Service Marketplace Access" data-cn="服务市场接入">服务市场接入</strong><br><span style="font-size:10px;color:var(--text-3)" data-en="We help coordinate compliance, customs, and registration services" data-cn="我们协助对接合规、清关、注册等服务">我们协助对接合规、清关、注册等服务</span></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="1 Hour Monthly Consultation" data-cn="每月1小时产品出海咨询">每月1小时产品出海咨询</strong></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="5 FDA Label Reviews / Month" data-cn="每月5次FDA标签人工审核">每月5次FDA标签人工审核</strong><br><span style="font-size:10px;color:var(--text-3)" data-en="Additional: $199 / review" data-cn="超出部分：$199 / 次">超出部分：$199 / 次</span></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="Complimentary FDA US Agent (1 product)" data-cn="赠送1个产品的 US Agent 服务">赠送1个产品的 US Agent 服务</strong></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="Free Access to Offline Events" data-cn="免费参与线下出海交流活动">免费参与线下出海交流活动</strong><br><span style="font-size:10px;color:var(--text-3)" data-en="Shanghai / Shenzhen | San Francisco / Texas — 2 per year each" data-cn="上海/深圳 | 旧金山/德州，每年各两场">上海/深圳 | 旧金山/德州，每年各两场</span></div></div>
+      </div>
+      <div class="plan-best-for">
+        <div class="plan-best-for-title" data-en="Best For" data-cn="适合对象">适合对象</div>
+        <span data-en="First-time U.S. market entrants · 1–3 product sellers · Needs compliance guidance + execution path" data-cn="初次进入美国市场的品牌 · 1–3个产品卖家 · 需要合规指导+执行路径">初次进入美国市场的品牌 · 1–3个产品卖家 · 需要合规指导+执行路径</span>
+      </div>
+      <button class="btn-plan btn-plan-pro" onclick="requestConsult()" data-en="Get Started with Pro" data-cn="开始使用 Pro">开始使用 Pro</button>
+    </div>
+    <!-- Elite -->
+    <div class="plan-card plan-card-elite">
+      <div class="plan-badge plan-badge-elite">ELITE</div>
+      <div class="plan-name">GoToMarket Elite</div>
+      <div class="plan-price"><span class="plan-price-num">$1,599</span><span class="plan-price-period" data-en="/ month" data-cn="/ 月">/ 月</span></div>
+      <div class="plan-tagline" data-en="For scaling brands entering the U.S. market" data-cn="适合快速扩展的品牌进入美国市场">适合快速扩展的品牌进入美国市场</div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="Everything in Pro, plus:" data-cn="包含 Pro 全部权益，并额外提供：">包含 Pro 全部权益，并额外提供：</strong></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="8 Hours Monthly Consultation" data-cn="每月8小时深度咨询">每月8小时深度咨询</strong></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="10 FDA Label Reviews / Month" data-cn="每月10次标签审核">每月10次标签审核</strong></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="10% Off Service Marketplace" data-cn="服务市场9折优惠">服务市场9折优惠</strong></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="Dedicated Risk Mitigation Support (1 Product)" data-cn="1个产品风险托管服务">1个产品风险托管服务</strong><br><span style="font-size:10px;color:var(--text-3)" data-en="Compliance / customs / label issues — we coordinate third-party resolution. Execution fees apply." data-cn="出现合规/清关/标签问题，我们协助对接第三方解决（执行费用额外收取）">出现合规/清关/标签问题，我们协助对接第三方解决（执行费用额外收取）</span></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="Priority Support (Fast Response)" data-cn="优先响应支持">优先响应支持</strong></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="Complimentary FDA US Agent (1 product)" data-cn="赠送1个产品 US Agent 服务">赠送1个产品 US Agent 服务</strong></div></div>
+        <div class="plan-feature"><div class="plan-feature-icon">✓</div><div><strong data-en="Free Access to Offline Events" data-cn="免费参与线下活动">免费参与线下活动</strong><br><span style="font-size:10px;color:var(--text-3)" data-en="China / U.S. — 2 events per year each" data-cn="中国/美国各两场">中国/美国各两场</span></div></div>
+      </div>
+      <div class="plan-best-for">
+        <div class="plan-best-for-title" data-en="Best For" data-cn="适合对象">适合对象</div>
+        <span data-en="Scaling brands · Multi-product portfolios · Full compliance + execution support" data-cn="快速扩展品牌 · 多产品组合 · 需要完整合规+执行支持">快速扩展品牌 · 多产品组合 · 需要完整合规+执行支持</span>
+      </div>
+      <button class="btn-plan btn-plan-elite" onclick="requestConsult()" data-en="Get Started with Elite" data-cn="开始使用 Elite">开始使用 Elite</button>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SERVICE MARKETPLACE -->
+<section class="section" id="marketplace">
+  <div class="sec-label" data-en="Service Marketplace" data-cn="服务市场">服务市场</div>
+  <div class="sec-title" data-en="Service Marketplace" data-cn="服务市场">服务市场</div>
+  <div class="sec-desc" data-en="Verified partners across regulatory, logistics, and compliance services. Everything you need to enter and scale in the U.S. market — in one place." data-cn="经过筛选的合规、物流、清关等全类别服务商。进入美国市场所需的一切资源，一站汇集。">经过筛选的合规、物流、清关等全类别服务商。进入美国市场所需的一切资源，一站汇集。</div>
+  <div class="mkt-grid">
+    <div class="mkt-card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="mkt-logo" style="background:var(--info-dim)">⚖️</div>
+        <div><div class="mkt-category" data-en="FDA / Legal" data-cn="FDA / 法律">FDA / 法律</div><div class="mkt-name" data-en="XXX Law Firm" data-cn="XXX 律所">XXX 律所</div></div>
+        <span class="mkt-badge mkt-badge-verified" style="margin-left:auto" data-en="Verified" data-cn="已认证">已认证</span>
+      </div>
+      <div class="mkt-desc" data-en="Specialized in FDA regulatory submissions, warning letter response, label compliance review, and GRAS notifications for food &amp; supplement brands." data-cn="专注FDA合规申报、警告信应对、标签合规审核及食品/补充剂 GRAS 通知服务。">专注FDA合规申报、警告信应对、标签合规审核及食品/补充剂 GRAS 通知服务。</div>
+      <div class="mkt-actions">
+        <button class="btn btn-ghost btn-sm" onclick="requestConsult()" data-en="Contact" data-cn="联系我们">联系我们</button>
+        <button class="btn btn-ghost btn-sm" style="border-color:var(--border-accent);color:var(--accent)" onclick="requestConsult()" data-en="Learn More" data-cn="了解更多">了解更多</button>
+      </div>
+    </div>
+    <div class="mkt-card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="mkt-logo" style="background:var(--success-dim)">🚢</div>
+        <div><div class="mkt-category" data-en="Logistics" data-cn="国际物流">国际物流</div><div class="mkt-name" data-en="XXX Logistics" data-cn="XXX 物流">XXX 物流</div></div>
+        <span class="mkt-badge mkt-badge-verified" style="margin-left:auto" data-en="Verified" data-cn="已认证">已认证</span>
+      </div>
+      <div class="mkt-desc" data-en="International freight, temperature-controlled shipping, FDA prior notice filing, and U.S. last-mile delivery for food &amp; supplement brands." data-cn="国际货运、温控运输、FDA 预先通知申报及美国末端配送，专注食品及补充剂品牌。">国际货运、温控运输、FDA 预先通知申报及美国末端配送，专注食品及补充剂品牌。</div>
+      <div class="mkt-actions">
+        <button class="btn btn-ghost btn-sm" onclick="requestConsult()" data-en="Contact" data-cn="联系我们">联系我们</button>
+        <button class="btn btn-ghost btn-sm" style="border-color:var(--border-accent);color:var(--accent)" onclick="requestConsult()" data-en="Learn More" data-cn="了解更多">了解更多</button>
+      </div>
+    </div>
+    <div class="mkt-card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="mkt-logo" style="background:var(--warn-dim)">🛃</div>
+        <div><div class="mkt-category" data-en="Customs" data-cn="清关">清关</div><div class="mkt-name" data-en="XXX Customs Clearance" data-cn="XXX 清关">XXX 清关</div></div>
+        <span class="mkt-badge mkt-badge-verified" style="margin-left:auto" data-en="Verified" data-cn="已认证">已认证</span>
+      </div>
+      <div class="mkt-desc" data-en="U.S. customs brokerage, FDA hold release, FSVP importer representation, and compliance documentation for import clearance." data-cn="美国报关行服务、FDA 扣押货物释放、FSVP 进口商代理及合规文件准备，助力顺利清关。">美国报关行服务、FDA 扣押货物释放、FSVP 进口商代理及合规文件准备，助力顺利清关。</div>
+      <div class="mkt-actions">
+        <button class="btn btn-ghost btn-sm" onclick="requestConsult()" data-en="Contact" data-cn="联系我们">联系我们</button>
+        <button class="btn btn-ghost btn-sm" style="border-color:var(--border-accent);color:var(--accent)" onclick="requestConsult()" data-en="Learn More" data-cn="了解更多">了解更多</button>
+      </div>
+    </div>
+    <div class="mkt-card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="mkt-logo" style="background:var(--accent-glow)">🏷️</div>
+        <div><div class="mkt-category" data-en="Label Design" data-cn="标签设计">标签设计</div><div class="mkt-name" data-en="XXX Label Design" data-cn="XXX 标签设计">XXX 标签设计</div></div>
+        <span class="mkt-badge mkt-badge-verified" style="margin-left:auto" data-en="Verified" data-cn="已认证">已认证</span>
+      </div>
+      <div class="mkt-desc" data-en="FDA-compliant label design, nutrition facts panel creation, allergen statement formatting, and print-ready artwork for U.S. market." data-cn="符合FDA标准的标签设计、营养成分表制作、过敏原声明排版及印刷用稿，专为美国市场打造。">符合FDA标准的标签设计、营养成分表制作、过敏原声明排版及印刷用稿，专为美国市场打造。</div>
+      <div class="mkt-actions">
+        <button class="btn btn-ghost btn-sm" onclick="requestConsult()" data-en="Contact" data-cn="联系我们">联系我们</button>
+        <button class="btn btn-ghost btn-sm" style="border-color:var(--border-accent);color:var(--accent)" onclick="requestConsult()" data-en="Learn More" data-cn="了解更多">了解更多</button>
+      </div>
+    </div>
+    <div class="mkt-card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="mkt-logo" style="background:var(--danger-dim)">🔬</div>
+        <div><div class="mkt-category" data-en="FDA Consulting" data-cn="FDA 注册咨询">FDA 注册咨询</div><div class="mkt-name" data-en="XXX FDA Consulting" data-cn="XXX FDA 咨询">XXX FDA 咨询</div></div>
+        <span class="mkt-badge mkt-badge-verified" style="margin-left:auto" data-en="Verified" data-cn="已认证">已认证</span>
+      </div>
+      <div class="mkt-desc" data-en="Facility registration, US Agent services, FSVP compliance, FSMA readiness, and ongoing regulatory monitoring for food importers." data-cn="设施注册、US Agent 服务、FSVP 合规、FSMA 就绪及持续监管合规，为食品进口商提供全流程支持。">设施注册、US Agent 服务、FSVP 合规、FSMA 就绪及持续监管合规，为食品进口商提供全流程支持。</div>
+      <div class="mkt-actions">
+        <button class="btn btn-ghost btn-sm" onclick="requestConsult()" data-en="Contact" data-cn="联系我们">联系我们</button>
+        <button class="btn btn-ghost btn-sm" style="border-color:var(--border-accent);color:var(--accent)" onclick="requestConsult()" data-en="Learn More" data-cn="了解更多">了解更多</button>
+      </div>
+    </div>
+    <div class="mkt-card" style="background:var(--bg-3);border-color:var(--border-accent);align-items:center;justify-content:center;text-align:center">
+      <div style="font-size:32px;margin-bottom:10px">🤝</div>
+      <div class="mkt-name" data-en="Become a Partner" data-cn="申请成为合作伙伴">申请成为合作伙伴</div>
+      <div class="mkt-desc" style="text-align:center" data-en="Are you a compliance firm, logistics provider, or regulatory consultant? Join our marketplace and reach thousands of brands entering the U.S. market." data-cn="您是合规机构、物流服务商或法规顾问？加入我们的服务市场，触达数千个进入美国市场的品牌。">您是合规机构、物流服务商或法规顾问？加入我们的服务市场，触达数千个进入美国市场的品牌。</div>
+      <button class="btn btn-accent btn-sm" style="margin-top:8px" onclick="requestConsult()" data-en="Apply to Join" data-cn="申请入驻">申请入驻</button>
     </div>
   </div>
 </section>
@@ -1093,6 +1351,41 @@ function renderReport(d){
   }
   html+=`</div></div>`;
 
+  // Recommended Services — dynamically matched to report issues
+  const recServices=[];
+  if(lc&&(lc.status==='warn'||lc.status==='fail')){
+    recServices.push({icon:'🏷️',bg:'var(--accent-glow)',
+      name:cn?'FDA 标签设计 / 标签审核':'Label Design / FDA Label Review',
+      desc:cn?'专业标签重设计，确保营养成分表、过敏原、净含量及宣传语全面符合 FDA 要求。':'Professional label redesign for FDA compliance — nutrition facts, allergens, net weight, and claims correction.',
+      pricing:cn?'<strong>Pro</strong>：每月5次免费　<strong>Elite</strong>：每月10次免费　超出：$199/次':'<strong>Pro</strong>: 5 free/mo &nbsp; <strong>Elite</strong>: 10 free/mo &nbsp; Additional: $199/review',
+      btn:cn?'查看套餐':'View Plans',action:'sTo("pricing")',contact:false});
+  }
+  if(fr&&fr.items&&fr.items.some(function(it){const n=(it.name||it.nameCn||'').toLowerCase();return n.includes('agent')||n.includes('代理');})){
+    recServices.push({icon:'🏭',bg:'var(--warn-dim)',
+      name:cn?'US Agent 指定服务':'US Agent Setup',
+      desc:cn?'快速完成美国代理人指定，境外食品进口商的法定要求。':'Fast-track US Agent appointment — required for all foreign food and supplement importers.',
+      pricing:null,btn:cn?'联系我们':'Contact Us',action:'requestConsult()',contact:true});
+  }
+  if(fr&&(fr.status==='info'||fr.status==='warn'||fr.status==='fail')){
+    recServices.push({icon:'🔬',bg:'var(--danger-dim)',
+      name:cn?'FDA 注册支持':'FDA Registration Support',
+      desc:cn?'协助完成 FDA 设施注册、FSVP 合规及进口商结构搭建。':'Assistance with FDA facility registration, FSVP compliance, and importer structure setup.',
+      pricing:null,btn:cn?'联系我们':'Contact Us',action:'requestConsult()',contact:true});
+  }
+  if(mc&&(mc.status==='warn'||mc.status==='fail')){
+    recServices.push({icon:'⚖️',bg:'var(--info-dim)',
+      name:cn?'宣传语合规审核':'Marketing Claims Compliance Review',
+      desc:cn?'FDA 法律顾问审核您的宣传声称，规避 FD&C Act 及 DSHEA 违规风险。':'FDA legal review of your marketing claims to avoid FD&C Act and DSHEA violations.',
+      pricing:null,btn:cn?'联系我们':'Contact Us',action:'requestConsult()',contact:true});
+  }
+  if(recServices.length>0){
+    html+=`<div class="rec-services"><div class="rec-services-hd"><div class="rec-services-title">🔧 ${cn?'推荐服务 — 针对您的合规问题':'Recommended Services — Fix Your Issues'}</div><div class="rec-services-sub">${cn?'根据您的报告风险动态匹配，以下服务可帮助解决发现的合规问题。':'Dynamically matched to your report findings. These services address your specific compliance gaps.'}</div></div><div class="rec-svc-list">`;
+    recServices.forEach(function(svc){
+      html+=`<div class="rec-svc-item"><div class="rec-svc-icon" style="background:${svc.bg}">${svc.icon}</div><div class="rec-svc-body"><div class="rec-svc-name">${svc.name}</div><div class="rec-svc-desc">${svc.desc}</div>${svc.pricing?`<div class="rec-svc-pricing">${svc.pricing}</div>`:''}</div><button class="rec-svc-btn${svc.contact?' rec-svc-btn-contact':''}" onclick="${svc.action}">${svc.btn}</button></div>`;
+    });
+    html+=`</div></div>`;
+  }
+
   // Actions
   html+=`<div class="dash-actions">
     <button class="btn btn-accent btn-sm" onclick="requestConsult()" style="background:linear-gradient(135deg,var(--accent),var(--accent-dim))">💬 ${cn?'申请人工咨询':'Request Expert Consultation'}</button>
@@ -1117,7 +1410,7 @@ function closeReport(){
 
 function requestConsult(){
   const cn=lang==='cn';
-  alert(cn?'感谢您的咨询请求！我们的合规顾问将在 24 小时内与您联系。\n\n如需即时咨询，请发送邮件至：compliance@gotomarket-lab.com':'Thank you for your consultation request! Our compliance advisor will contact you within 24 hours.\n\nFor immediate inquiries, please email: compliance@gotomarket-lab.com');
+  alert(cn?'感谢您的咨询请求！我们的合规顾问将在 24 小时内与您联系。\n\n如需即时咨询，请发送邮件至：bojund2@gmail.com':'Thank you for your consultation request! Our compliance advisor will contact you within 24 hours.\n\nFor immediate inquiries, please email: compliance@gotomarket-lab.com');
 }
 
 // ===== CJK Font Loading for PDF =====
